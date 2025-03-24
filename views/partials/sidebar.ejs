@@ -1,399 +1,66 @@
 <!-- ========== Left Sidebar Start ========== -->
 <div class="vertical-menu">
+  <div data-simplebar class="h-100">
+    <!--- Sidemenu -->
+    <div id="sidebar-menu">
+      <!-- Left Menu Start -->
+      <ul class="metismenu list-unstyled" id="side-menu">
+        <li class="menu-title" key="t-menu"><%=translation.t_menu %></li>
 
-    <div data-simplebar class="h-100">
+        <li>
+          <a href="javascript: void(0);" class="has-arrow waves-effect">
+            <i class="bx bx-home-circle"></i>
+            <span key="t-dashboards"><%=translation.t_dashboards %></span>
+          </a>
+          <ul class="sub-menu" aria-expanded="false">
+            <li>
+              <a href="index" key="t-default"><%=translation.t_default %></a>
+            </li>
+            <li>
+              <a href="dashboard-saas" key="t-saas"><%=translation.t_saas %></a>
+            </li>
+            <li>
+              <a href="dashboard-crypto" key="t-crypto"
+                ><%=translation.t_crypto %></a
+              >
+            </li>
+            <li>
+              <a href="dashboard-blog" key="t-blog"><%=translation.t_blog %></a>
+            </li>
+            <li>
+              <a href="dashboard-job" key="t-jobs"><%=translation.t_jobs %></a>
+            </li>
+          </ul>
+        </li>
 
-        <!--- Sidemenu -->
-        <div id="sidebar-menu">
-            <!-- Left Menu Start -->
-            <ul class="metismenu list-unstyled" id="side-menu">
-                <li class="menu-title" key="t-menu"><%=translation.t_menu %></li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-home-circle"></i>
-                        <span key="t-dashboards"><%=translation.t_dashboards %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="index" key="t-default"><%=translation.t_default %></a></li>
-                        <li><a href="dashboard-saas" key="t-saas"><%=translation.t_saas %></a></li>
-                        <li><a href="dashboard-crypto" key="t-crypto"><%=translation.t_crypto %></a></li>
-                        <li><a href="dashboard-blog" key="t-blog"><%=translation.t_blog %></a></li>
-                        <li><a href="dashboard-job" key="t-jobs"><%=translation.t_jobs %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="waves-effect">
-                        <span class="badge rounded-pill bg-danger float-end" key="t-hot">Hot</span>
-                        <i class="bx bx-layout"></i>
-                        <span key="t-layouts"><%=translation.t_layouts %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="true">
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow" key="t-vertical"><%=translation.t_vertical %></a>
-                            <ul class="sub-menu" aria-expanded="true">
-                                <li><a href="layouts-light-sidebar" key="t-light-sidebar"><%=translation.t_light_sidebar %></a></li>
-                                <li><a href="layouts-compact-sidebar" key="t-compact-sidebar"><%=translation.t_compact_sidebar %></a></li>
-                                <li><a href="layouts-icon-sidebar" key="t-icon-sidebar"><%=translation.t_icon_sidebar %></a></li>
-                                <li><a href="layouts-boxed" key="t-boxed-width"><%=translation.t_boxed_width %></a></li>
-                                <li><a href="layouts-preloader" key="t-preloader"><%=translation.t_preloader %></a></li>
-                                <li><a href="layouts-colored-sidebar" key="t-colored-sidebar"><%=translation.t_colored_sidebar %></a></li>
-                                <li><a href="layouts-scrollable" key="t-scrollable"><%=translation.t_scrollable %></a></li>
-                            </ul>
-                        </li>
-
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow" key="t-horizontal"><%=translation.t_horizontal %></a>
-                            <ul class="sub-menu" aria-expanded="true">
-                                <li><a href="layouts-horizontal" key="t-horizontal"><%=translation.t_horizontal %></a></li>
-                                <li><a href="layouts-hori-topbar-light" key="t-topbar-light"><%=translation.t_topbar_light %></a></li>
-                                <li><a href="layouts-hori-boxed-width" key="t-boxed-width"><%=translation.t_boxed_width %></a></li>
-                                <li><a href="layouts-hori-preloader" key="t-preloader"><%=translation.t_preloader %></a></li>
-                                <li><a href="layouts-hori-colored-header" key="t-colored-topbar"><%=translation.t_colored_topbar %></a></li>
-                                <li><a href="layouts-hori-scrollable" key="t-scrollable"><%=translation.t_scrollable %></a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="menu-title" key="t-apps"><%=translation.t_apps %></li>
-
-
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-calendar"></i>
-                        <span key="t-dashboards"><%=translation.calendar %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="calendar" key="t-tui-calendar"><%=translation.t_tui_calendar %></a></li>
-                        <li><a href="calendar-full" key="t-full-calendar"><%=translation.t_full_calendar %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="chat" class="waves-effect">
-                        <i class="bx bx-chat"></i>
-                        <span key="t-chat"><%=translation.t_chat %></span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="apps-filemanager" class="waves-effect">
-                        <i class="bx bx-file"></i>
-                        <span key="t-file-manager"><%=translation.t_file_manager %></span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-store"></i>
-                        <span key="t-ecommerce"><%=translation.t_ecommerce %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="ecommerce-products" key="t-products"><%=translation.t_products %></a></li>
-                        <li><a href="ecommerce-product-detail" key="t-product-detail"><%=translation.t_product_detail %></a></li>
-                        <li><a href="ecommerce-orders" key="t-orders"><%=translation.t_orders %></a></li>
-                        <li><a href="ecommerce-customers" key="t-customers"><%=translation.t_customers %></a></li>
-                        <li><a href="ecommerce-cart" key="t-cart"><%=translation.t_cart %></a></li>
-                        <li><a href="ecommerce-checkout" key="t-checkout"><%=translation.t_checkout %></a></li>
-                        <li><a href="ecommerce-shops" key="t-shops"><%=translation.t_shops %></a></li>
-                        <li><a href="ecommerce-add-product" key="t-add-product"><%=translation.t_add_product %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-bitcoin"></i>
-                        <span key="t-crypto"><%=translation.t_crypto %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="crypto-wallet" key="t-wallet"><%=translation.t_wallet %></a></li>
-                        <li><a href="crypto-buy-sell" key="t-buy"><%=translation.t_buy %></a></li>
-                        <li><a href="crypto-exchange" key="t-exchange"><%=translation.t_exchange %></a></li>
-                        <li><a href="crypto-lending" key="t-lending"><%=translation.t_lending %></a></li>
-                        <li><a href="crypto-orders" key="t-orders"><%=translation.t_orders %></a></li>
-                        <li><a href="crypto-kyc-application" key="t-kyc"><%=translation.t_kyc %></a></li>
-                        <li><a href="crypto-ico-landing" key="t-ico"><%=translation.t_ico %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-envelope"></i>
-                        <span key="t-email"><%=translation.t_email %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="email-inbox" key="t-inbox"><%=translation.t_inbox %></a></li>
-                        <li><a href="email-read" key="t-read-email"><%=translation.t_read_email %></a></li>
-                        <li>
-                            <a href="javascript: void(0);">
-                                <span key="t-email-templates"><%=translation.t_email_templates %></span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="true">
-                                <li><a href="email-template-basic" key="t-basic-action"><%=translation.t_basic_action %></a></li>
-                                <li><a href="email-template-alert" key="t-alert-email"><%=translation.t_alert_email %></a></li>
-                                <li><a href="email-template-billing" key="t-bill-email"><%=translation.t_bill_email %></a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-receipt"></i>
-                        <span key="t-invoices"><%=translation.t_invoices %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="invoices-list" key="t-invoice-list"><%=translation.t_invoice_list %></a></li>
-                        <li><a href="invoices-detail" key="t-invoice-detail"><%=translation.t_invoice_detail %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-briefcase-alt-2"></i>
-                        <span key="t-projects"><%=translation.t_projects %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="projects-grid" key="t-p-grid"><%=translation.t_p_grid %></a></li>
-                        <li><a href="projects-list" key="t-p-list"><%=translation.t_p_list %></a></li>
-                        <li><a href="projects-overview" key="t-p-overview"><%=translation.t_p_overview %></a></li>
-                        <li><a href="projects-create" key="t-create-new"><%=translation.t_create_new %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-task"></i>
-                        <span key="t-tasks"><%=translation.t_tasks %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="tasks-list" key="t-task-list"><%=translation.t_task_list %></a></li>
-                        <li><a href="tasks-kanban" key="t-kanban-board"><%=translation.t_kanban_board %></a></li>
-                        <li><a href="tasks-create" key="t-create-task"><%=translation.t_create_task %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bxs-user-detail"></i>
-                        <span key="t-contacts"><%=translation.t_contacts %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="contacts-grid" key="t-user-grid"><%=translation.t_user_grid %></a></li>
-                        <li><a href="contacts-list" key="t-user-list"><%=translation.t_user_list %></a></li>
-                        <li><a href="contacts-profile" key="t-profile"><%=translation.t_profile %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-detail"></i>
-                        <span key="t-blog"><%=translation.t_blog %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="blog-list" key="t-blog-list"><%=translation.t_blog_list %></a></li>
-                        <li><a href="blog-grid" key="t-blog-grid"><%=translation.t_blog_grid %></a></li>
-                        <li><a href="blog-details" key="t-blog-details"><%=translation.t_blog_details %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="waves-effect has-arrow">
-                        <i class="bx bx-briefcase-alt"></i>
-                        <span key="t-jobs"><%=translation.t_jobs %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="job-list" key="t-job-list"><%=translation.t_job_list %></a></li>
-                        <li><a href="job-grid" key="t-job-grid"><%=translation.t_job_grid %></a></li>
-                        <li><a href="job-apply" key="t-apply-job"><%=translation.t_apply_job %></a></li>
-                        <li><a href="job-details" key="t-job-details"><%=translation.t_job_details %></a></li>
-                        <li><a href="job-categories" key="t-Jobs-categories"><%=translation.t_Jobs_categories %></a></li>
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow" key="t-candidate"><%=translation.t_candidate %></a>
-                            <ul class="sub-menu" aria-expanded="true">
-                                <li><a href="candidate-list" key="t-list"><%=translation.t_list %></a></li>
-                                <li><a href="candidate-overview" key="t-overview"><%=translation.t_overview %></a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="menu-title" key="t-pages"><%=translation.t_pages %></li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-user-circle"></i>
-                        <span key="t-authentication"><%=translation.t_authentication %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="auth-login" key="t-login"><%=translation.t_login %></a></li>
-                        <li><a href="auth-login-2" key="t-login-2"><%=translation.t_login_2 %></a></li>
-                        <li><a href="auth-register" key="t-register"><%=translation.t_register %></a></li>
-                        <li><a href="auth-register-2" key="t-register-2"><%=translation.t_register_2 %></a></li>
-                        <li><a href="auth-recoverpw" key="t-recover-password"><%=translation.t_recover_password %></a></li>
-                        <li><a href="auth-recoverpw-2" key="t-recover-password-2"><%=translation.t_recover_password_2 %></a></li>
-                        <li><a href="auth-lock-screen" key="t-lock-screen"><%=translation.t_lock_screen %></a></li>
-                        <li><a href="auth-lock-screen-2" key="t-lock-screen-2"><%=translation.t_lock_screen_2 %></a></li>
-                        <li><a href="auth-confirm-mail" key="t-confirm-mail"><%=translation.t_confirm_mail %></a></li>
-                        <li><a href="auth-confirm-mail-2" key="t-confirm-mail-2"><%=translation.t_confirm_mail_2 %></a></li>
-                        <li><a href="auth-email-verification" key="t-email-verification"><%=translation.t_email_verification %></a></li>
-                        <li><a href="auth-email-verification-2" key="t-email-verification-2"><%=translation.t_email_verification_2 %></a>
-                        </li>
-                        <li><a href="auth-two-step-verification" key="t-two-step-verification"><%=translation.t_two_step_verification %></a>
-                        </li>
-                        <li><a href="auth-two-step-verification-2" key="t-two-step-verification-2"><%=translation.t_two_step_verification_2 %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-file"></i>
-                        <span key="t-utility"><%=translation.t_utility %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="pages-starter" key="t-starter-page"><%=translation.t_starter_page %></a></li>
-                        <li><a href="pages-maintenance" key="t-maintenance"><%=translation.t_maintenance %></a></li>
-                        <li><a href="pages-comingsoon" key="t-coming-soon"><%=translation.t_coming_soon %></a></li>
-                        <li><a href="pages-timeline" key="t-timeline"><%=translation.t_timeline %></a></li>
-                        <li><a href="pages-faqs" key="t-faqs"><%=translation.t_faqs %></a></li>
-                        <li><a href="pages-pricing" key="t-pricing"><%=translation.t_pricing %></a></li>
-                        <li><a href="pages-404" key="t-error-404"><%=translation.t_error_404 %></a></li>
-                        <li><a href="pages-500" key="t-error-500"><%=translation.t_error_500 %></a></li>
-                    </ul>
-                </li>
-
-                <li class="menu-title" key="t-components"><%=translation.t_components %></li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-tone"></i>
-                        <span key="t-ui-elements"><%=translation.t_ui_elements %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="ui-alerts" key="t-alerts"><%=translation.t_alerts %></a></li>
-                        <li><a href="ui-buttons" key="t-buttons"><%=translation.t_buttons %></a></li>
-                        <li><a href="ui-cards" key="t-cards"><%=translation.t_cards %></a></li>
-                        <li><a href="ui-carousel" key="t-carousel"><%=translation.t_carousel %></a></li>
-                        <li><a href="ui-dropdowns" key="t-dropdowns"><%=translation.t_dropdowns %></a></li>
-                        <li><a href="ui-grid" key="t-grid"><%=translation.t_grid %></a></li>
-                        <li><a href="ui-images" key="t-images"><%=translation.t_images %></a></li>
-                        <li><a href="ui-lightbox" key="t-lightbox"><%=translation.t_lightbox %></a></li>
-                        <li><a href="ui-modals" key="t-modals"><%=translation.t_modals %></a></li>
-                        <li><a href="ui-offcanvas" key="t-offcanvas"><%=translation.t_offcanvas %></a></li>
-                        <li><a href="ui-rangeslider" key="t-range-slider"><%=translation.t_range_slider %></a></li>
-                        <li><a href="ui-session-timeout" key="t-session-timeout"><%=translation.t_session_timeout %></a></li>
-                        <li><a href="ui-progressbars" key="t-progress-bars"><%=translation.t_progress_bars %></a></li>
-                        <li><a href="ui-placeholders" key="t-placeholders"><%=translation.t_placeholders %></a></li>
-                        <li><a href="ui-sweet-alert" key="t-sweet-alert"><%=translation.t_sweet_alert %></a></li>
-                        <li><a href="ui-tabs-accordions" key="t-tabs-accordions"><%=translation.t_tabs_accordions %></a></li>
-                        <li><a href="ui-typography" key="t-typography"><%=translation.t_typography %></a></li>
-                        <li><a href="ui-toasts" key="t-toasts"><%=translation.t_toasts %></a></li>
-                        <li><a href="ui-video" key="t-video"><%=translation.t_video %></a></li>
-                        <li><a href="ui-general" key="t-general"><%=translation.t_general %></a></li>
-                        <li><a href="ui-colors" key="t-colors"><%=translation.t_colors%></a></li>
-                        <li><a href="ui-rating" key="t-rating"><%=translation.t_rating %></a></li>
-                        <li><a href="ui-notifications" key="t-notifications"><%=translation.t_notifications%></a></li>
-                        <li><a href="ui-utilities"><%=translation.t_utilities %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="waves-effect">
-                        <i class="bx bxs-eraser"></i>
-                        <span class="badge rounded-pill bg-danger float-end">10</span>
-                        <span key="t-forms"><%=translation.t_forms %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="form-elements" key="t-form-elements"><%=translation.t_form_elements %></a></li>
-                        <li><a href="form-layouts" key="t-form-layouts"><%=translation.t_form_layouts %></a></li>
-                        <li><a href="form-validation" key="t-form-validation"><%=translation.t_form_validation %></a></li>
-                        <li><a href="form-advanced" key="t-form-advanced"><%=translation.t_form_advanced %></a></li>
-                        <li><a href="form-editors" key="t-form-editors"><%=translation.t_form_editors %></a></li>
-                        <li><a href="form-uploads" key="t-form-upload"><%=translation.t_form_upload %></a></li>
-                        <li><a href="form-xeditable" key="t-form-xeditable"><%=translation.t_form_xeditable %></a></li>
-                        <li><a href="form-repeater" key="t-form-repeater"><%=translation.t_form_repeater %></a></li>
-                        <li><a href="form-wizard" key="t-form-wizard"><%=translation.t_form_wizard %></a></li>
-                        <li><a href="form-mask" key="t-form-mask"><%=translation.t_form_mask %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-list-ul"></i>
-                        <span key="t-tables"><%=translation.t_tables %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="tables-basic" key="t-basic-tables"><%=translation.t_basic_tables %></a></li>
-                        <li><a href="tables-datatable" key="t-data-tables"><%=translation.t_data_tables %></a></li>
-                        <li><a href="tables-responsive" key="t-responsive-table"><%=translation.t_responsive_table %></a></li>
-                        <li><a href="tables-editable" key="t-editable-table"><%=translation.t_editable_table %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bxs-bar-chart-alt-2"></i>
-                        <span key="t-charts"><%=translation.t_charts %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="charts-apex" key="t-apex-charts"><%=translation.t_apex_charts %></a></li>
-                        <li><a href="charts-echart" key="t-e-charts"><%=translation.t_e_charts %></a></li>
-                        <li><a href="charts-chartjs" key="t-chartjs-charts"><%=translation.t_chartjs_charts %></a></li>
-                        <li><a href="charts-flot" key="t-flot-charts"><%=translation.t_flot_charts %></a></li>
-                        <li><a href="charts-tui" key="t-ui-charts"><%=translation.t_ui_charts %></a></li>
-                        <li><a href="charts-knob" key="t-knob-charts"><%=translation.t_knob_charts %></a></li>
-                        <li><a href="charts-sparkline" key="t-sparkline-charts"><%=translation.t_sparkline_charts %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-aperture"></i>
-                        <span key="t-icons"><%=translation.t_icons %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="icons-boxicons" key="t-boxicons"><%=translation.t_boxicons %></a></li>
-                        <li><a href="icons-materialdesign" key="t-material-design"><%=translation.t_material_design %></a></li>
-                        <li><a href="icons-dripicons" key="t-dripicons"><%=translation.t_dripicons %></a></li>
-                        <li><a href="icons-fontawesome" key="t-font-awesome"><%=translation.t_font_awesome %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-map"></i>
-                        <span key="t-maps"><%=translation.t_maps %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="maps-google" key="t-g-maps"><%=translation.t_g_maps %></a></li>
-                        <li><a href="maps-vector" key="t-v-maps"><%=translation.t_v_maps %></a></li>
-                        <li><a href="maps-leaflet" key="t-l-maps"><%=translation.t_l_maps %></a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="javascript: void(0);" class="has-arrow waves-effect">
-                        <i class="bx bx-share-alt"></i>
-                        <span key="t-multi-level"><%=translation.t_multi_level %></span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="true">
-                        <li><a href="javascript: void(0);" key="t-level-1-1"><%=translation.t_level_1_1 %></a></li>
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow" key="t-level-1-2"><%=translation.t_level_1_2 %></a>
-                            <ul class="sub-menu" aria-expanded="true">
-                                <li><a href="javascript: void(0);" key="t-level-2-1"><%=translation.t_level_2_1 %></a></li>
-                                <li><a href="javascript: void(0);" key="t-level-2-2"><%=translation.t_level_2_2 %></a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-
-            </ul>
-        </div>
-        <!-- Sidebar -->
+        <li>
+          <a href="/companies" class="waves-effect">
+            <i class="fas fa-users"></i>
+            <span key="t-chat">Companies</span> 
+          </a>
+        </li>
+        <!-- Only render the Account Type link if company_id exists in localStorage -->
+        <li id="accountsLink" class="d-none">
+          <a href="/companies/:id/accounts" class="waves-effect">
+            <i class="fas fa-book"></i>
+            <span key="t-chat">Accounts</span>
+          </a>
+        </li>
+        <li id="accountstypeLink" class="d-none">
+          <a href="/companies/:id/account_type" class="waves-effect">
+            <i class="fas fa-link"></i>
+            <span key="t-chat">Account Type</span>
+          </a>
+        </li>
+        <li id="usersLink" class="d-none">
+          <a href="/companies/:id/account_type" class="waves-effect">
+            <i class="fas fa-users"></i>
+            <span key="t-chat">Users</span>
+          </a>
+        </li>
+      </ul>
     </div>
+    <!-- Sidebar -->
+  </div>
 </div>
 <!-- Left Sidebar End -->

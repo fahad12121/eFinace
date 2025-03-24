@@ -1,49 +1,73 @@
-const mongoose = require('mongoose');
-const bcrypt = require("bcryptjs");
-const crypto = require("crypto");
-
-const UserSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
+// models/Company.js
+const { DataTypes } = require('sequelize');
+const sequelize = require('../db'); // Import the Sequelize instance
+const Company = require('./Company');
+const User = sequelize.define('User', {
+    // Define the columns and their data types
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
     },
-    email: {
-        type: String,
-        required: [true, 'Please provide your email'],
+    account_pk: {
+        type: DataTypes.STRING,
         unique: true,
+        default: null,
+    },
+    name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    username: {
+        type: DataTypes.STRING,
+        allowNull: true,
     },
     password: {
-        type: String,
-        required: true
+        type: DataTypes.STRING,
+        allowNull: true,
     },
-    created_at: Date,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
-})
+    user_type: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: 'User',
+    },
+    balance: {
+        type: DataTypes.DECIMAL,
+        default: 0,
+    },
+    company_id: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Company, // The target model to reference (Company)
+            key: 'id', // The primary key in the Company table
+        },
+        allowNull: true, // Ensure company_id is not null
+    },
+    last_login: {
+        type: DataTypes.DATE,
+        defaultValue: null,
+    },
+    last_ip: {
+        type: DataTypes.DATE,
+        defaultValue: null,
+    },
+    notes: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: 'User',
+    },
 
-UserSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next();
-
-    // Hash the password with cost of 12
-    this.password = await bcrypt.hash(this.password, 12);
-
-    // Delete passwordConfirm field
-    this.passwordConfirm = undefined;
-    next();
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+    },
+}, {
+    timestamps: true, // Enable automatic timestamps for `createdAt` and `updatedAt`
+    tableName: 'users', // Specify the table name
 });
 
-/**
- * Reset Password
- */
-UserSchema.methods.createPasswordResetToken = function () {
-    let resetToken = crypto.randomBytes(32).toString('hex');
-    this.passwordResetToken = resetToken;
-    resetToken = resetToken + "|" + this._id;
-    this.created_at = Date.now()
-    this.passwordResetExpires = Date.now() + 60 * 60 * 1000;
-    let bufferObj = Buffer.from(resetToken, "utf8");
-    resetToken = bufferObj.toString("base64");
-    return resetToken;
-}
-const user = mongoose.model('users', UserSchema);
-module.exports = user;
+module.exports = User;

@@ -1,13 +1,12 @@
-const mongoose = require('mongoose');
-mongoose.set('strictQuery', false);
 const dotenv = require('dotenv');
-dotenv.config({ path: "./config.env" });
+dotenv.config();  // Load environment variables from .env file
+
 var app = require('express')();
 var express = require('express');
 var path = require('path');
 var http = require('http').Server(app);
 
-// import Router file
+// Import Router file
 var pageRouter = require('./routes/routes');
 var user = require("./models/UserModel");
 
@@ -20,20 +19,17 @@ app.use(urlencodeParser);
 app.use(session({ resave: false, saveUninitialized: true, secret: 'nodedemo' }));
 app.use(flash());
 
-/* ---------for Local database connection---------- */
-const DB = process.env.DATABASE_LOCAL;
-mongoose.connect(DB, {
-    useNewUrlParser: true
-}).then((con) => console.log("DB connection successfully..!"));
+// Import DB connection (Sequelize)
+const db = require('./db'); // Import the Sequelize instance
 
-// for i18 usr
+// for i18n usage
 app.use(i18n({
-    translationsPath: path.join(__dirname, 'i18n'), // <--- use here. Specify translations files path.
+    translationsPath: path.join(__dirname, 'i18n'), // Specify translations files path
     siteLangs: ["es", "en", "fr", "ru", "it", "gr", "sp"],
     textsVarName: 'translation'
 }));
-app.use(express.static(__dirname + '/public'));
 
+app.use(express.static(__dirname + '/public'));
 app.use('/public', express.static('public'));
 app.set('layout', 'layouts/layout');
 var expressLayouts = require('express-ejs-layouts');
@@ -41,7 +37,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
 
-// Define All Route 
+// Define all routes
 pageRouter(app);
 
 app.all('*', function (req, res) {
@@ -49,4 +45,16 @@ app.all('*', function (req, res) {
     res.render('auth/auth-500', { layout: "layouts/layout-without-nav" });
 });
 
-http.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`));
+// Test the database connection (Sequelize)
+db.authenticate()
+    .then(() => {
+        console.log('Database connection has been established successfully.');
+    })
+    .catch((error) => {
+        console.error('Unable to connect to the database:', error);
+    });
+
+// Start the server and listen on the specified port
+http.listen(process.env.PORT, () => {
+    console.log(`Server running on port ${process.env.PORT}`);
+});
