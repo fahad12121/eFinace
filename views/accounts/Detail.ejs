@@ -1,0 +1,272 @@
+<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
+{"title":"Account Detail"}) %>
+<!-- DataTables -->
+<link
+  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+
+<!-- Responsive datatable examples -->
+<link
+  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+<link
+  href="/assets/libs/select2/css/select2.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+<style>
+  .select2-container--default .select2-dropdown {
+    z-index: 9999 !important; /* Ensure dropdown is above modal */
+  }
+
+  .select2-container--default .select2-selection--single {
+    height: auto !important;
+  }
+</style>
+<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
+"Account Detail" , "title" : "Account Detail" }) %>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="row card-title mt-3">
+        <div class="col-md-8">
+          <h4 class="card-title">
+            <%- account.username.charAt(0).toUpperCase() +
+            account.username.slice(1) %> Account Detail
+          </h4>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="row card-title mt-3">
+        <div class="col-md-8">
+          <h4 class="card-title">Sub Accounts</h4>
+        </div>
+      </div>
+      <div class="card-body">
+        <table
+          id="datatable"
+          class="table table-bordered dt-responsive nowrap w-100"
+        >
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Balance</th>
+              <th>Account Type</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% account.subAccounts.forEach(function(account) { %>
+            <tr>
+              <td><%= account.sub_account_pk %></td>
+              <td><%= account.account_username %></td>
+              <td><%= account.balance %></td>
+              <td><%= account?.AccountType?.name || 'N/A' %></td>
+              <td><%= account.notes %></td>
+              <td>
+                <button
+                  class="btn btn-sm btn-warning edit-btn"
+                  data-id="<%= account.id %>"
+                  title="Edit"
+                >
+                  <i class="fas fa-pencil-alt"></i>
+                </button>
+                <% if (account.AccountType && account.AccountType.name !==
+                'DASTI') { %>
+                <button
+                  class="btn btn-sm btn-danger del-btn"
+                  data-id="<%= account.id %>"
+                  title="Delete"
+                >
+                  <i class="fa fa-trash"></i>
+                </button>
+                <% } %>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+</div>
+<!-- end row -->
+
+<!-- Start Sub Account Model -->
+<div
+  class="modal fade"
+  id="subAccountModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="row px-2 mt-1">
+        <div class="col-md-11">
+          <strong>Edit</strong>
+        </div>
+        <div class="col-md-1">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <form id="subAccountmodalForm">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="mb-3">
+                <input type="hidden" name="id" id="id" />
+                <label for="notes" class="col-form-label">Notes:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="sub_notes"
+                  name="sub_notes"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          id="closeModalButton"
+          data-bs-dismiss="modal"
+        >
+          Close
+        </button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          form="subAccountmodalForm"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Sub Account Model -->
+
+<%- contentFor('FooterJs') %>
+<!-- Required datatable js -->
+<script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+<!-- Responsive examples -->
+<script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+
+<!-- Datatable init js -->
+<script src="/assets/js/pages/datatables.init.js"></script>
+<!-- Select 2 -->
+<script src="/assets/libs/select2/js/select2.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Initialize DataTable
+    const dataTable = $("#datatable").DataTable();
+
+    // Function to extract companyId from URL
+    function getCompanyIdFromUrl() {
+      return window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
+    }
+
+    const subAccountModal = new bootstrap.Modal(
+      document.getElementById("subAccountModal"),
+      { keyboard: false }
+    );
+
+    $(document).on("click", ".edit-btn", function () {
+      const userId = $(this).data("id");
+      console.log(userId);
+      // Perform view action, for example, redirect to a view page
+      subAccountModal.show();
+    });
+
+    // Close modal when "close" button (X) is clicked
+    $("#closeModalButton").click(function () {
+      subAccountModal.hide();
+    });
+
+    // Close modal if clicked outside
+    $(window).click(function (event) {
+      if ($(event.target).is(subAccountModal._element)) {
+        subAccountModal.hide();
+      }
+    });
+
+    // Handle sub-account form submission
+    $("#subAccountmodalForm").submit(function (event) {
+      event.preventDefault();
+
+      const id = $("#id").val();
+      const notes = $("#sub_notes").val();
+
+      $.ajax({
+        type: "POST",
+        url: `/companies/${companyId}/sub_accounts`, // Correct endpoint for subaccounts
+        data: {
+          id: id,
+          notes: notes,
+        },
+        success: function (response) {
+          fetchUsersTable(); // Update the users table after adding a new sub-account
+          subAccountModal.hide();
+          $("#subAccountmodalForm")[0].reset(); // Reset the sub-account form
+        },
+        error: function (error) {
+          alert("Error submitting the sub-account. Please try again.");
+        },
+      });
+    });
+
+    // Function to show sidebar links based on company_id in localStorage
+    function showSidebarLinks(companyId) {
+      $("#accountsLink").removeClass("d-none");
+      $("#usersLink").removeClass("d-none");
+      $("#importsLink").removeClass("d-none");
+      $("#accountstypeLink").removeClass("d-none");
+
+      $("#accountsLink a").attr(
+        "href",
+        `/companies/${companyId}/account_types`
+      );
+      $("#usersLink a").attr("href", `/companies/${companyId}/users`);
+      $("#importsLink a").attr("href", `/companies/${companyId}/imports`);
+      $("#accountstypeLink a").attr(
+        "href",
+        `/companies/${companyId}/account_types`
+      );
+    }
+
+    // If company_id exists in localStorage, display the relevant links in the sidebar
+    const storedCompanyId = localStorage.getItem("company_id");
+    if (storedCompanyId) {
+      showSidebarLinks(storedCompanyId);
+    }
+
+  });
+</script>

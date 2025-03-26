@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const User = require("../models/UserModel");
 const CompanyUser = require("../models/CompanyUsers");
+const subAccount = require("../models/subAccounts");
+const AccountType = require("../models/AccountType");
 const asyncHandler = require("../middleware/async");
 const { Op } = require('sequelize');
 
@@ -134,6 +136,8 @@ exports.getUsersAjax = asyncHandler(async (req, res, next) => {
 // Get all companies
 exports.getAccountUsers = asyncHandler(async (req, res, next) => {
     try {
+        const company_id = req.headers['company_id'];
+        console.log(company_id);
         // Generate account_pk based on the last user (if any)
         const all_users = await User.findAll({
             where: {
@@ -142,6 +146,28 @@ exports.getAccountUsers = asyncHandler(async (req, res, next) => {
                 }
             }
         });
+
+        const parent_accounts = await User.findAll({
+            where: {
+                user_type: {
+                    [Op.eq]: 'User'  // Filter out users with user_type 'User'
+                }
+            }
+        });
+
+        // Fetch all sub accounts to determine the last sub account
+        const allSubAccounts = await subAccount.findAll();
+        let sub_account_pk;
+        // Check if there are existing sub accounts
+        if (allSubAccounts.length > 0) {
+            let lastSubAccount = allSubAccounts[allSubAccounts.length - 1];
+            let lastSubAccountNumber = parseFloat(lastSubAccount.sub_account_pk.split('SA')[1]);
+            sub_account_pk = 'SA' + (lastSubAccountNumber + 1);
+        } else {
+            // First sub account in the system
+            sub_account_pk = 'SA1';
+        }
+
 
         let account_pk;
         if (all_users.length > 0) {
@@ -153,8 +179,44 @@ exports.getAccountUsers = asyncHandler(async (req, res, next) => {
             account_pk = 'A1';
         }
 
-        res.render('accounts/index', { account_pk });  // Render the companies.ejs view with companies data
+        res.render('accounts/index', { account_pk, parent_accounts, sub_account_pk });  // Render the companies.ejs view with companies data
     } catch (error) {
         next(error);
     }
 });
+
+exports.getSingleAccountUser = asyncHandler(async (req, res, next) => {
+    try {
+        // Extract company_id (user_id) and account_id from the URL
+        const company_id = req.params.id;
+        const account_id = req.params.account_id;
+
+        // Fetch the user and include related subAccounts and AccountType
+        const account = await User.findOne({
+            where: {
+                id: account_id,  // account_id in the User table
+                company_id: company_id  // company_id to filter the account under the specific company
+            },
+            include: [{
+                model: subAccount,  // Include the associated subAccounts for the user
+                where: {
+                    user_id: account_id  // Filter the subAccount for the specific user
+                },
+                required: false,  // Make this optional if not all users have subAccounts
+                include: [{
+                    model: AccountType,  // Include AccountType model
+                }]
+            }]
+        });
+
+
+        // Render the account details page with the fetched account data
+        res.render('accounts/Detail', {
+            account: account,  // Pass the account data (with included subAccounts and AccountType) to the view
+        });
+    } catch (error) {
+        next(error);  // Handle any errors
+    }
+});
+
+

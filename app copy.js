@@ -8,6 +8,7 @@ var http = require('http').Server(app);
 const cookieParser = require('cookie-parser');
 // Import Router file
 var pageRouter = require('./routes/routes');
+
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var flash = require('connect-flash');
@@ -16,7 +17,7 @@ var urlencodeParser = bodyParser.urlencoded({ extended: true });
 app.use(urlencodeParser);
 app.use(session({ resave: false, saveUninitialized: true, secret: 'nodedemo' }));
 app.use(flash());
-app.use(cookieParser());
+
 // Import DB connection (Sequelize)
 const db = require('./db'); // Import the Sequelize instance
 

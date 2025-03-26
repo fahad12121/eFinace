@@ -57,6 +57,7 @@
               <th>Title</th>
               <th>Balance</th>
               <th>Notes</th>
+              <th>Actions</th>
             </tr>
           </thead>
 
@@ -147,7 +148,7 @@
     <div class="modal-content">
       <div class="row px-2 mt-1">
         <div class="col-md-4">
-          <span>S. A/C: <%- account_pk %></span>
+          <span>S. A/C: <%- sub_account_pk %></span>
         </div>
         <div class="col-md-7">
           <strong>Add New Sub-Account</strong>
@@ -162,15 +163,18 @@
         </div>
       </div>
       <div class="modal-body">
-        <form id="modalForm">
+        <form id="subAccountmodalForm">
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="username" class="col-form-label">Title:</label>
+                <label for="account_username" class="col-form-label"
+                  >Title:</label
+                >
                 <input
                   type="text"
                   class="form-control"
-                  id="username"
+                  id="account_username"
+                  name="account_username"
                   required
                 />
               </div>
@@ -178,7 +182,14 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="notes" class="col-form-label">Website:</label>
-                <input type="text" class="form-control" id="notes" required />
+                <select
+                  class="form-control select2 account_types"
+                  style="width: 100%"
+                  id="account_type_id"
+                  name="account_type_id"
+                >
+                  <option value="" selected disabled>--Select--</option>
+                </select>
               </div>
             </div>
           </div>
@@ -186,18 +197,31 @@
             <div class="col-md-6 mt-2">
               <div class="mb-3">
                 <label class="form-label">Parent Account</label>
-                <select class="form-control select2" style="width: 100%;">
-                  <option value="AK">Alaska</option>
-                  <option value="HI">Hawaii</option>
-                  <option value="CA">California</option>
-                  <option value="NY">New York</option>
+                <select
+                  class="form-control select2"
+                  style="width: 100%"
+                  id="user_id"
+                  name="user_id"
+                >
+                  <option value="" selected disabled>--Select--</option>
+                  <% parent_accounts.forEach(account => { %>
+                  <option value="<%= account.id %>">
+                    <%= account.username %>
+                  </option>
+                  <% }) %>
                 </select>
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="notes" class="col-form-label">Notes:</label>
-                <input type="text" class="form-control" id="notes" required />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="sub_notes"
+                  name="sub_notes"
+                  required
+                />
               </div>
             </div>
           </div>
@@ -212,7 +236,11 @@
         >
           Close
         </button>
-        <button type="submit" class="btn btn-primary" form="modalForm">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          form="subAccountmodalForm"
+        >
           Submit
         </button>
       </div>
@@ -238,101 +266,138 @@
   $(document).ready(function () {
     // Initialize DataTable
     const dataTable = $("#datatable").DataTable();
-    // Function to fetch all companies and update the DataTable
-    var companyId = window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
+
+    // Function to extract companyId from URL
+    function getCompanyIdFromUrl() {
+      return window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
+    }
+
+    // Function to fetch users and update the DataTable
     function fetchUsersTable() {
+      const companyId = getCompanyIdFromUrl();
       $.ajax({
         type: "GET",
-        url: `/companies/${companyId}/users/ajax?user_type=User`, // Adjust the endpoint to fetch all companies
+        url: `/companies/${companyId}/users/ajax?user_type=User`,
         success: function (response) {
-          // Clear the current table data
           dataTable.clear();
-
-          // Loop through all companies and append them to the table
           response.users.forEach(function (user) {
+            const balance = user.balance === null ? 0 : user.balance;
+
             dataTable.row.add([
-              user.account_pk, // Company Name
-              user.username, // Company ID
-              user.balance, // Company ID
+              user.account_pk,
+              user.username,
+              balance,
               user.notes,
+              // Actions column with eye and pencil icons
+              `<button class="btn btn-sm btn-info view-btn" data-id="${user.id}" title="View">
+                 <i class="fa fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-warning edit-btn" data-id="${user.id}" title="Edit">
+                 <i class="fas fa-pencil-alt"></i>
+                </button>`,
             ]);
           });
 
-          // Draw the table to display the updated data
           dataTable.draw();
+
           // Add event listener to the "show" links
           $(".show-company").click(function () {
-            // Get the company ID from the clicked link's data-id attribute
-            var companyId = $(this).data("id");
-
-            // Store the company ID in localStorage
+            const companyId = $(this).data("id");
             localStorage.setItem("company_id", companyId);
-
-            // Show the relevant sidebar links
             showSidebarLinks(companyId);
           });
         },
         error: function (error) {
           console.log(error);
-          // alert("Error fetching updated companies list.");
         },
       });
     }
-    // Check if a company_id exists in localStorage on page load
-    var storedCompanyId = localStorage.getItem("company_id");
-    // Get the modal and the open modal button
-    var modal = new bootstrap.Modal(document.getElementById("userModal"), {
-      keyboard: false,
+
+    // Function to fetch account types based on companyId
+    function fetchAccounttype() {
+      const companyId = getCompanyIdFromUrl();
+      $.ajax({
+        type: "GET",
+        url: `/companies/${companyId}/account_types/ajax`,
+        success: function (response) {
+          const accountTypes = response.accountTypes;
+          $(".account_types")
+            .empty()
+            .append('<option value="" selected disabled>--Select--</option>');
+
+          accountTypes.forEach(function (accountType) {
+            const option = `<option value="${accountType.id}">${accountType.name}</option>`;
+            $(".account_types").append(option);
+          });
+
+          $(".select2").select2(); // Re-initialize select2 after appending options
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+
+    $(document).on("click", ".view-btn", function () {
+      const userId = $(this).data("id");
+      // Perform view action, for example, redirect to a view page
+      window.location.href = `/companies/${getCompanyIdFromUrl()}/accounts/${userId}`;
     });
 
-    // Get the sub Account modal and the open modal button
-    var subAccountmodal = new bootstrap.Modal(
+    $(document).on("click", ".edit-btn", function () {
+      const userId = $(this).data("id");
+
+      // Perform edit action, for example, open an edit modal
+      window.location.href = `/companies/${getCompanyIdFromUrl()}/accounts/userId`;
+    });
+
+    // Modal logic
+    const modal = new bootstrap.Modal(document.getElementById("userModal"), {
+      keyboard: false,
+    });
+    const subAccountModal = new bootstrap.Modal(
       document.getElementById("subAccountModal"),
-      {
-        keyboard: false,
-      }
+      { keyboard: false }
     );
 
     // Open the modal when the "Add+" button is clicked
     $("#openModal").click(function () {
-      modal.show(); // Show the modal using Bootstrap's modal API
+      modal.show();
     });
 
-    // Open the sub account modal when the "Add+" button is clicked
+    // Open the sub-account modal
     $("#openSubModal").click(function () {
-      subAccountmodal.show(); // Show the modal using Bootstrap's modal API
+      subAccountModal.show();
       $(".select2").select2({
         minimumResultsForSearch: 0,
-        dropdownParent: $('#subAccountModal')
+        dropdownParent: $("#subAccountModal"),
       });
     });
 
-    // Close the modal when the "close" button (X) is clicked
+    // Close modal when "close" button (X) is clicked
     $("#closeModalButton").click(function () {
-      modal.hide(); // Hide the modal using Bootstrap's modal API
+      modal.hide();
     });
 
-    // Close the modal when the user clicks outside of the modal
+    // Close modal if clicked outside
     $(window).click(function (event) {
       if ($(event.target).is(modal._element)) {
-        modal.hide(); // Hide the modal if the user clicks outside of it
+        modal.hide();
       }
     });
 
-    // Handle form submission inside the modal
+    // Handle form submission inside the modal (User Form)
     $("#modalForm").submit(function (event) {
-      event.preventDefault(); // Prevent the default form submission behavior
+      event.preventDefault();
 
-      // Get the value from the form input (company name)
-      var username = $("#username").val();
-      var notes = $("#notes").val();
-      var user_type = "User";
-      var companyId = window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
+      const username = $("#username").val();
+      const notes = $("#notes").val();
+      const user_type = "User";
+      const companyId = getCompanyIdFromUrl();
 
-      // Example of submitting the form data to the backend (using AJAX)
       $.ajax({
         type: "POST",
-        url: `/companies/${companyId}/users`, // Adjust this to your API endpoint
+        url: `/companies/${companyId}/users`,
         data: {
           company_id: companyId,
           username: username,
@@ -340,42 +405,74 @@
           notes: notes,
         },
         success: function (response) {
-          // Call the GET method to fetch and update the table
-          fetchUsersTable();
-          //   alert("Company submitted successfully!");
-          modal.hide(); // Hide the modal after successful submission
+          fetchUsersTable(); // Update the users table after adding a new user
+          modal.hide();
           $("#modalForm")[0].reset(); // Reset the form
         },
         error: function (error) {
-          alert("Error submitting the company. Please try again.");
+          alert("Error submitting the user. Please try again.");
         },
       });
     });
-    // Function to show the sidebar links based on company_id in localStorage
+
+    // Handle sub-account form submission
+    $("#subAccountmodalForm").submit(function (event) {
+      event.preventDefault();
+
+      const account_username = $("#account_username").val();
+      const user_id = $("#user_id").val();
+      const account_type_id = $("#account_type_id").val();
+      const notes = $("#sub_notes").val();
+      const companyId = getCompanyIdFromUrl();
+
+      $.ajax({
+        type: "POST",
+        url: `/companies/${companyId}/sub_accounts`, // Correct endpoint for subaccounts
+        data: {
+          company_id: companyId,
+          account_username: account_username,
+          user_id: user_id,
+          account_type_id: account_type_id,
+          notes: notes,
+        },
+        success: function (response) {
+          fetchUsersTable(); // Update the users table after adding a new sub-account
+          subAccountModal.hide();
+          $("#subAccountmodalForm")[0].reset(); // Reset the sub-account form
+        },
+        error: function (error) {
+          alert("Error submitting the sub-account. Please try again.");
+        },
+      });
+    });
+
+    // Function to show sidebar links based on company_id in localStorage
     function showSidebarLinks(companyId) {
-      // Show the sidebar links for the selected company
       $("#accountsLink").removeClass("d-none");
       $("#usersLink").removeClass("d-none");
       $("#importsLink").removeClass("d-none");
       $("#accountstypeLink").removeClass("d-none");
 
-      // Set the correct href for each link
       $("#accountsLink a").attr(
         "href",
-        "/companies/" + companyId + "/account_types"
+        `/companies/${companyId}/account_types`
       );
-      $("#usersLink a").attr("href", "/companies/" + companyId + "/users");
-      $("#importsLink a").attr("href", "/companies/" + companyId + "/imports");
+      $("#usersLink a").attr("href", `/companies/${companyId}/users`);
+      $("#importsLink a").attr("href", `/companies/${companyId}/imports`);
       $("#accountstypeLink a").attr(
         "href",
-        "/companies/" + companyId + "/account_types"
+        `/companies/${companyId}/account_types`
       );
     }
 
-    // If a company_id exists, display the relevant links in the sidebar
+    // If company_id exists in localStorage, display the relevant links in the sidebar
+    const storedCompanyId = localStorage.getItem("company_id");
     if (storedCompanyId) {
       showSidebarLinks(storedCompanyId);
     }
+
+    // Fetch and display the users table and account types
     fetchUsersTable();
+    fetchAccounttype();
   });
 </script>
