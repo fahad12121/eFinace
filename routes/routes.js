@@ -1,4 +1,15 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
+
+// Ensure the 'uploads' directory exists
+const uploadDir = path.join(__dirname, 'uploads');  // Adjust the path if necessary
+
+// Check if the 'uploads' directory exists, if not, create it
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
 const route = express.Router();
 const { protect } = require('../middleware/auth');
 // Contorller
@@ -7,6 +18,8 @@ const companyController = require('../controller/CompanyController');
 const AccountTypeController = require('../controller/AccountTypeController');
 const UserController = require('../controller/UserController');
 const subAccountController = require('../controller/subAccountController');
+const importController = require('../controller/ImportController');
+const upload = multer({ dest: 'uploads/' }).single('import_data');
 
 // const route = express.Router();
 module.exports = function (route) {
@@ -49,6 +62,16 @@ module.exports = function (route) {
     route.post('/companies/:id/sub_accounts', subAccountController.createSubaccount);
 
 
+    //import file Routes
+    route.get('/companies/:id/import', importController.getImport);
+    route.post('/companies/:id/read-csv', upload, importController.readCsv);
+    route.post('/companies/:id/store-csv', upload, importController.store);
+
+    //Balance Sheet Route
+    route.get('/companies/:id/balance-sheet', UserController.getUsersBalanceSheet);
+
+    //Ledger Sheet Route
+    route.get('/companies/:id/ledger/:user_id', UserController.getUsersLedger);
     //500
     route.get('/error', (req, res, next) => {
         res.render('auth/auth-500', { title: '500 Error', layout: 'layouts/layout-without-nav' });

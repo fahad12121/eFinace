@@ -1,0 +1,267 @@
+<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
+{"title":"Import Form"}) %>
+<!-- DataTables -->
+<link
+  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+
+<!-- Responsive datatable examples -->
+<link
+  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+
+<link
+  href="/assets/libs/select2/css/select2.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css"
+  rel="stylesheet"
+/>
+
+<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
+"Import Form" , "title" : "Import Form" }) %>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="row card-title mt-3">
+        <div class="col-md-11">
+          <h4 class="card-title">Import Form</h4>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="mb-3">
+              <label class="form-label">Account Type</label>
+              <select
+                class="form-control select2"
+                style="width: 100%"
+                id="account_type"
+                name="account_type"
+              >
+                <option value="" selected disabled>--Select--</option>
+                <% accountTypes.forEach(account => { %>
+                <option value="<%= account.id %>"><%= account.name %></option>
+                <% }) %>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-3">
+              <label class="form-label">File</label>
+              <input
+                type="file"
+                class="form-control"
+                name="import_data"
+                id="import_data"
+              />
+            </div>
+          </div>
+          <div class="col-md-3 mt-4">
+            <div class="mb-3">
+              <button
+                class="btn btn-primary"
+                type="submit"
+                class="form-label"
+                id="submitBtn"
+              >
+                Submit
+              </button>
+              <button class="btn btn-info" type="button" id="validateBtn">
+                Validate
+              </button>
+            </div>
+          </div>
+        </div>
+        <table
+          id="import"
+          class="table table-bordered dt-responsive nowrap w-100"
+        >
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Give</th>
+              <th>Take</th>
+            </tr>
+          </thead>
+
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+</div>
+<!-- end row -->
+
+<%- contentFor('FooterJs') %>
+<!-- Required datatable js -->
+<script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+<!-- Responsive examples -->
+<script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+
+<!-- Datatable init js -->
+<script src="/assets/js/pages/datatables.init.js"></script>
+<!-- Select 2 -->
+<script src="/assets/libs/select2/js/select2.min.js"></script>
+<!-- Toast -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    $("#import").DataTable({
+      order: [],
+      pageLength: 30, // Show 20 records per page
+      lengthMenu: [
+        [30, 50, 100, -1],
+        [30, 50, 100, "All"],
+      ], // Options for records per page
+      paging: true,
+      searching: true,
+      ordering: true,
+      autoWidth: false,
+    });
+    $(".select2").select2();
+    // Function to extract companyId from URL
+    function getCompanyIdFromUrl() {
+      return window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
+    }
+
+    // Handle Validate Button Click
+    $("#validateBtn").on("click", function () {
+      // Prepare the form data
+      const formData = new FormData();
+      const accountType = $("#account_type").val();
+      const importData = $("#import_data")[0].files[0];
+
+      // Check if the required fields are selected/filled
+      if (!accountType || !importData) {
+        alert("Please select an Account Type and upload a file.");
+        return;
+      }
+
+      // Append data to formData
+      formData.append("account_type", accountType);
+      formData.append("import_data", importData);
+
+      // Send the request to the read_csv API
+      $.ajax({
+        url: `/companies/${getCompanyIdFromUrl()}/read-csv`, // API endpoint for validation
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          console.log("Validation success:", response);
+          // Clear any existing data in the table
+          const table = $("#import").DataTable();
+          table.clear();
+
+          // Assuming response.sheetJson is the array containing data
+          response.sheetJson.forEach(function (row) {
+            // Add row to the table
+            table.row.add([
+              row.username, // Name
+              row.give, // Give
+              row.take, // Take
+            ]);
+          });
+
+          // Redraw the table with new data
+          table.draw();
+          // Handle success response here
+        },
+        error: function (error) {
+          console.log("Validation failed:", error);
+          alert("Validation failed. Please try again.");
+        },
+      });
+    });
+
+    // Handle Submit Button Click
+    $("#submitBtn").on("click", function () {
+      // Prepare the form data
+      const formData = new FormData();
+      const accountType = $("#account_type").val();
+      const importData = $("#import_data")[0].files[0];
+
+      // Check if the required fields are selected/filled
+      if (!accountType || !importData) {
+        alert("Please select an Account Type and upload a file.");
+        return;
+      }
+
+      // Append data to formData
+      formData.append("account_type", accountType);
+      formData.append("import_data", importData);
+
+      // Send the request to the store API
+      $.ajax({
+        url: `/companies/${getCompanyIdFromUrl()}/store-csv`, // API endpoint for storing data
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          console.log("Data submitted successfully:", response);
+          toastr.success(response.message, 'Success');
+        },
+        error: function (error) {
+          console.log("Submission failed:", error);
+          alert("Submission failed. Please try again.");
+        },
+      });
+    });
+    // Function to show the sidebar links based on company_id in localStorage
+    function showSidebarLinks(companyId) {
+      // Show the sidebar links for the selected company
+      $("#accountstypeLink").removeClass("d-none");
+      $("#usersLink").removeClass("d-none");
+      $("#importsLink").removeClass("d-none");
+      $("#accountsLink").removeClass("d-none");
+
+      // Set the correct href for each link
+      $("#accountstypeLink a").attr(
+        "href",
+        "/companies/" + companyId + "/account_types"
+      );
+      $("#usersLink a").attr("href", "/companies/" + companyId + "/users");
+      $("#importsLink a").attr("href", "/companies/" + companyId + "/imports");
+      $("#accountsLink a").attr(
+        "href",
+        "/companies/" + companyId + "/accounts"
+      );
+    }
+
+    // Check if we are on the /companies page
+    if (window.location.pathname === "/companies") {
+      // If we are on the /companies page, remove company_id from localStorage
+      localStorage.removeItem("company_id");
+
+      // Optionally hide the sidebar links if no company_id is present
+      $("#accountstypeLink").addClass("d-none");
+      $("#usersLink").addClass("d-none");
+      $("#importsLink").addClass("d-none");
+      $("#accountsLink").addClass("d-none");
+    }
+
+    // Check if a company_id exists in localStorage on page load
+    var storedCompanyId = localStorage.getItem("company_id");
+
+    // If a company_id exists, display the relevant links in the sidebar
+    if (storedCompanyId) {
+      showSidebarLinks(storedCompanyId);
+    }
+    // Fetch and display companies on page load
+  });
+</script>

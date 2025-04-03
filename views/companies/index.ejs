@@ -202,8 +202,8 @@
       // Show the sidebar links for the selected company
       $("#accountstypeLink").removeClass("d-none");
       $("#usersLink").removeClass("d-none");
-      $("#importsLink").removeClass("d-none");
       $("#accountsLink").removeClass("d-none");
+      $("#importLink").removeClass("d-none");
 
       // Set the correct href for each link
       $("#accountstypeLink a").attr(
@@ -211,8 +211,8 @@
         "/companies/" + companyId + "/account_types"
       );
       $("#usersLink a").attr("href", "/companies/" + companyId + "/users");
-      $("#importsLink a").attr("href", "/companies/" + companyId + "/imports");
-      $("#accountsLink a").attr("href", "/companies/" + companyId + "/accounts");
+      $("#importLink a").attr("href", "/companies/" + companyId + "/import");
+      $("#balanceLink a").attr("href", "/companies/" + companyId + "/balance-sheet");
     }
 
     // Check if we are on the /companies page

@@ -6,6 +6,8 @@ const AccountType = require("../models/AccountType");
 const asyncHandler = require("../middleware/async");
 const { Op } = require('sequelize');
 
+// User Crud Starts here
+
 exports.createUser = asyncHandler(async (req, res, next) => {
     const { name, password, user_type, username, company_id, notes } = req.body;
 
@@ -86,7 +88,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
 });
 
 
-// Get all companies
+
 exports.getUsers = asyncHandler(async (req, res, next) => {
     try {
 
@@ -133,7 +135,7 @@ exports.getUsersAjax = asyncHandler(async (req, res, next) => {
 });
 
 
-// Get all companies
+// Account function starts here
 exports.getAccountUsers = asyncHandler(async (req, res, next) => {
     try {
         const company_id = req.headers['company_id'];
@@ -218,5 +220,149 @@ exports.getSingleAccountUser = asyncHandler(async (req, res, next) => {
         next(error);  // Handle any errors
     }
 });
+
+//balance sheet function start here
+exports.getUsersBalanceSheet = asyncHandler(async (req, res, next) => {
+    try {
+        // Extract company_id (user_id) and account_id from the URL
+        const company_id = req.params.id;
+
+        // Fetch the user and include related subAccounts and AccountType
+        const users = await User.findAll({
+            where: {
+                company_id: company_id  // company_id to filter the account under the specific company
+            },
+        });
+
+        let totalMinus = 0;
+        let totalPlus = 0;
+
+        // Prepare the data for rendering
+        const minusAccounts = [];
+        const plusAccounts = [];
+
+        users.forEach(user => {
+            // Check if the user's balance is negative or positive
+            if (user.balance < 0) {
+                // Negative balance (Minus)
+                minusAccounts.push({
+                    account: user.username,  // User's username as the account
+                    minus: user.balance.toLocaleString()  // Format number with commas
+                });
+                totalMinus += user.balance;  // Add to total minus
+            } else if (user.balance > 0) {
+                // Positive balance (Plus)
+                plusAccounts.push({
+                    account: user.username,  // User's username as the account
+                    plus: user.balance.toLocaleString()  // Format number with commas
+                });
+                totalPlus += user.balance;  // Add to total plus
+            }
+        });
+
+        // Render the balance sheet page with the data
+        res.render('balancesheet/index', {
+            minusAccounts: minusAccounts,  // Pass minus account data
+            plusAccounts: plusAccounts,    // Pass plus account data
+            totalMinus: totalMinus.toLocaleString(),  // Pass total minus
+            totalPlus: totalPlus.toLocaleString(),
+            company_id// Pass total plus
+        });
+    } catch (error) {
+        next(error);  // Handle any errors
+    }
+});
+
+//Ledger function start here
+exports.getUsersLedger = asyncHandler(async (req, res, next) => {
+    try {
+        const company_id = req.params.id;  // Extract the company_id from the URL
+        const user_id = req.params.user_id;  // Extract the user_id from the URL
+
+        // Fetch the user by user_id and company_id
+        const user = await User.findByPk(user_id, {
+            where: {
+                company_id: company_id  // Only fetch the user under the specific company
+            },
+            include: [
+                {
+                    model: SubAccount,  // Assuming SubAccount is the related model for user accounts
+                    required: false,  // Optional if the user has no sub-accounts
+                }
+            ]
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found under this company." });
+        }
+
+        let totalMinus = 0;
+        let totalPlus = 0;
+
+        const minusAccounts = [];
+        const plusAccounts = [];
+
+        // Process the sub-accounts and segregate them into Minus and Plus based on balance
+        user.subAccounts.forEach(subAccount => {
+            let userBalance = subAccount.balance;
+
+            if (userBalance < 0) {
+                // If balance is negative, show it in Plus (without the negative sign)
+                plusAccounts.push({
+                    account: subAccount.account_username,
+                    plus: Math.abs(userBalance).toLocaleString(),  // Convert negative to positive for Plus
+                    balance: userBalance.toLocaleString(),  // Balance for Minus
+                });
+                totalPlus += Math.abs(userBalance);
+            } else if (userBalance > 0) {
+                // If balance is positive, show it in Minus (with the negative sign)
+                minusAccounts.push({
+                    account: subAccount.account_username,
+                    minus: `-${userBalance.toLocaleString()}`,  // Show negative value on Minus side
+                    balance: `-${userBalance.toLocaleString()}`,  // Balance for Minus
+                });
+                totalMinus += userBalance;
+            }
+        });
+
+        // Handle the parent user's balance and add them to the correct side
+        if (user) {
+            let parentBalance = user.balance;
+
+            if (parentBalance < 0) {
+                // If parent user's balance is negative, show it on the Plus side as positive
+                plusAccounts.push({
+                    account: `${user.username} (Parent)`,
+                    plus: Math.abs(parentBalance).toLocaleString(),  // Convert negative to positive for Plus
+                    balance: parentBalance.toLocaleString(),  // Parent balance
+                });
+                totalPlus += Math.abs(parentBalance);
+            } else if (parentBalance > 0) {
+                // If parent user's balance is positive, show it on the Minus side as negative
+                minusAccounts.push({
+                    account: `${user.username} (Parent)`,
+                    minus: `-${parentBalance.toLocaleString()}`,  // Negative value on Minus side
+                    balance: `-${parentBalance.toLocaleString()}`,  // Parent balance
+                });
+                totalMinus += parentBalance;
+            }
+        }
+
+        // Render the ledger page with the data and totals
+        res.render('ledger/index', {
+            minusAccounts: minusAccounts,
+            plusAccounts: plusAccounts,
+            totalMinus: totalMinus.toLocaleString(),
+            totalPlus: totalPlus.toLocaleString(),
+            balanceKey: 'Balance',  // Key for the balance row
+        });
+
+    } catch (error) {
+        next(error);  // Handle any errors
+    }
+});
+
+
+
 
 
