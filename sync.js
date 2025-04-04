@@ -3,8 +3,10 @@ const sequelize = require('./db');  // Import the Sequelize instance
 const Company = require('./models/Company'); // Import the Company model
 const AccountType = require('./models/AccountType'); // Import the Company model
 const User = require('./models/UserModel'); // Import the Company model
-const CompanyUser = require('./models/CompanyUsers'); // Import the Company model
-const subAccounts = require('./models/subAccounts'); // Import the Company model
+const CompanyUser = require('./models/CompanyUsers'); // CompanyUsers the Company model
+const subAccounts = require('./models/subAccounts'); // subAccounts the Company model
+const Transaction = require('./models/Transaction'); // Transaction the Company model
+const Accessbility = require('./models/Accessbility'); // Transaction the Company model
 
 async function syncDatabase() {
   try {

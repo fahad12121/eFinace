@@ -5,7 +5,6 @@ const { Op } = require('sequelize');
 
 // Function to create a new sub account
 exports.createSubaccount = asyncHandler(async (req, res, next) => {
-    console.log('body', req.body);
     const { account_username, account_type_id, user_id, notes, company_id } = req.body;
 
     try {

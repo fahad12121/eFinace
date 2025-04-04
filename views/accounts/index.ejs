@@ -446,25 +446,6 @@
       });
     });
 
-    // Function to show sidebar links based on company_id in localStorage
-    function showSidebarLinks(companyId) {
-      $("#accountsLink").removeClass("d-none");
-      $("#usersLink").removeClass("d-none");
-      $("#importsLink").removeClass("d-none");
-      $("#accountstypeLink").removeClass("d-none");
-
-      $("#accountsLink a").attr(
-        "href",
-        `/companies/${companyId}/account_types`
-      );
-      $("#usersLink a").attr("href", `/companies/${companyId}/users`);
-      $("#importsLink a").attr("href", `/companies/${companyId}/imports`);
-      $("#accountstypeLink a").attr(
-        "href",
-        `/companies/${companyId}/account_types`
-      );
-    }
-
     // If company_id exists in localStorage, display the relevant links in the sidebar
     const storedCompanyId = localStorage.getItem("company_id");
     if (storedCompanyId) {

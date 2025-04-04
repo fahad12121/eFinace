@@ -100,3 +100,10 @@
 
 <!-- Datatable init js -->
 <script src="/assets/js/pages/datatables.init.js"></script>
+<script>
+  // If company_id exists in localStorage, display the relevant links in the sidebar
+  const storedCompanyId = localStorage.getItem("company_id");
+  if (storedCompanyId) {
+    showSidebarLinks(storedCompanyId);
+  }
+</script>

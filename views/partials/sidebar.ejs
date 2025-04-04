@@ -40,34 +40,40 @@
           </a>
         </li>
         <!-- Only render the Account Type link if company_id exists in localStorage -->
-        <li id="accountsLink" class="">
+        <li id="accountsLink" class="d-none">
           <a href="/companies/:id/accounts" class="waves-effect">
             <i class="fas fa-book"></i>
             <span key="t-chat">Accounts</span>
           </a>
         </li>
-        <li id="accountstypeLink" class="">
+        <li id="transactionsLink" class="d-none">
+          <a href="/companies/:id/transactions" class="waves-effect">
+            <i class="fas fa-money-bill-wave"></i>
+            <span key="t-chat">Transactions</span>
+          </a>
+        </li>
+        <li id="accountstypeLink" class="d-none">
           <a href="/companies/:id/account_type" class="waves-effect">
             <i class="fas fa-link"></i>
             <span key="t-chat">Account Type</span>
           </a>
         </li>
-        <li id="usersLink" class="">
-          <a href="/companies/:id/account_type" class="waves-effect">
-            <i class="fas fa-users"></i>
-            <span key="t-chat">Users</span>
+        <li id="balanceLink" class="d-none">
+          <a href="/companies/:id/balance-sheet" class="waves-effect">
+            <i class="fas fa-money-check-alt"></i>
+            <span key="t-chat">Balance Sheet</span>
           </a>
         </li>
-        <li id="importLink" class="">
+        <li id="importLink" class="d-none">
           <a href="/companies/:id/account_type" class="waves-effect">
-            <i class="fas fa-file"></i>
+            <i class="fas fa-file-csv"></i>
             <span key="t-chat">Import</span>
           </a>
         </li>
-        <li id="balanceLink" class="">
-          <a href="/companies/:id/balance-sheet" class="waves-effect">
-            <i class="fas fa-file"></i>
-            <span key="t-chat">Balance Sheet</span>
+        <li id="usersLink" class="d-none">
+          <a href="/companies/:id/account_type" class="waves-effect">
+            <i class="fas fa-users"></i>
+            <span key="t-chat">Users</span>
           </a>
         </li>
       </ul>

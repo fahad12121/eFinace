@@ -4,3 +4,49 @@
 <script src="/assets/libs/metismenu/metisMenu.min.js"></script>
 <script src="/assets/libs/simplebar/simplebar.min.js"></script>
 <script src="/assets/libs/node-waves/waves.min.js"></script>
+<script>
+  // Function to show the sidebar links based on company_id in localStorage
+  function showSidebarLinks(companyId) {
+    // Show the sidebar links for the selected company
+    $("#accountsLink").removeClass("d-none");
+    $("#transactionsLink").removeClass("d-none");
+    $("#accountstypeLink").removeClass("d-none");
+    $("#balanceLink").removeClass("d-none");
+    $("#importLink").removeClass("d-none");
+    $("#usersLink").removeClass("d-none");
+
+    // Set the correct href for each link
+    $("#accountsLink a").attr("href", "/companies/" + companyId + "/accounts");
+
+    $("#transactionsLink a").attr(
+      "href",
+      "/companies/" + companyId + "/transactions"
+    );
+
+    $("#accountstypeLink a").attr(
+      "href",
+      "/companies/" + companyId + "/account_types"
+    );
+
+    $("#balanceLink a").attr(
+      "href",
+      "/companies/" + companyId + "/balance-sheet"
+    );
+    $("#importLink a").attr("href", "/companies/" + companyId + "/import");
+    $("#usersLink a").attr("href", "/companies/" + companyId + "/users");
+  }
+
+  // Check if we are on the /companies page
+  if (window.location.pathname === "/companies") {
+    // If we are on the /companies page, remove company_id from localStorage
+    localStorage.removeItem("company_id");
+
+    // Optionally hide the sidebar links if no company_id is present
+    $("#accountsLink").addClass("d-none");
+    $("#transactionsLink").addClass("d-none");
+    $("#accountstypeLink").addClass("d-none");
+    $("#balanceLink").addClass("d-none");
+    $("#importsLink").addClass("d-none");
+    $("#usersLink").addClass("d-none");
+  }
+</script>

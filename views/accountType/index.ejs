@@ -194,22 +194,6 @@
         },
       });
     });
-    // Function to show the sidebar links based on company_id in localStorage
-    function showSidebarLinks(companyId) {
-      // Show the sidebar links for the selected company
-      $("#accountstypeLink").removeClass("d-none");
-      $("#usersLink").removeClass("d-none");
-      $("#importsLink").removeClass("d-none");
-
-      // Set the correct href for each link
-      $("#accountstypeLink a").attr(
-        "href",
-        "/companies/" + companyId + "/account_types"
-      );
-      $("#usersLink a").attr("href", "/companies/" + companyId + "/users");
-      $("#importsLink a").attr("href", "/companies/" + companyId + "/imports");
-    }
-
 
     // If a company_id exists, display the relevant links in the sidebar
     if (storedCompanyId) {

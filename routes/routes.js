@@ -18,6 +18,7 @@ const companyController = require('../controller/CompanyController');
 const AccountTypeController = require('../controller/AccountTypeController');
 const UserController = require('../controller/UserController');
 const subAccountController = require('../controller/subAccountController');
+const TransactionController = require('../controller/TransactionController');
 const importController = require('../controller/ImportController');
 const upload = multer({ dest: 'uploads/' }).single('import_data');
 
@@ -72,6 +73,9 @@ module.exports = function (route) {
 
     //Ledger Sheet Route
     route.get('/companies/:id/ledger/:user_id', UserController.getUsersLedger);
+
+    //Transaction Route
+    route.get('/companies/:id/transactions', TransactionController.getTransaction);
     //500
     route.get('/error', (req, res, next) => {
         res.render('auth/auth-500', { title: '500 Error', layout: 'layouts/layout-without-nav' });

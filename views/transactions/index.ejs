@@ -1,5 +1,5 @@
 <%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
-{"title":"Data Tables"}) %>
+{"title":"Transactions"}) %>
 <!-- DataTables -->
 <link
   href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
@@ -15,14 +15,14 @@
 />
 
 <%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
-"Company Table" , "title" : "Company Table" }) %>
+"Transactions Table" , "title" : "Transactions Table" }) %>
 
 <div class="row">
   <div class="col-12">
     <div class="card">
       <div class="row card-title mt-3">
         <div class="col-md-11">
-          <h4 class="card-title">Companies Table</h4>
+          <h4 class="card-title">Transactions</h4>
         </div>
         <div class="col-md-1">
           <button class="btn btn-primary" id="openModal">Add+</button>
@@ -36,8 +36,11 @@
           <thead>
             <tr>
               <th>ID</th>
-              <th>Name</th>
-              <th>Actions</th>
+              <th>Plus</th>
+              <th>Amount</th>
+              <th>Minus</th>
+              <th>Narration</th>
+              <th>Notes</th>
             </tr>
           </thead>
 
@@ -52,15 +55,15 @@
 <!-- Start Model -->
 <div
   class="modal fade"
-  id="companyModal"
+  id="AccountTypeModal"
   tabindex="-1"
   aria-labelledby="exampleModalLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+        <h5 class="modal-title" id="exampleModalLabel">New Transaction</h5>
         <button
           type="button"
           class="btn-close"
@@ -70,12 +73,65 @@
       </div>
       <div class="modal-body">
         <form id="modalForm">
-          <div class="mb-3">
-            <label for="recipient-name" class="col-form-label">Name:</label>
-            <input type="text" class="form-control" id="name" required />
+          <div class="row">
+            <!-- Sender Select -->
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="sender_id" class="col-form-label">Sender</label>
+                <select
+                  class="form-control select2 sender_id"
+                  style="width: 100%"
+                  id="sender_id"
+                  name="sender_id"
+                >
+                  <!-- Options will be populated dynamically -->
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="amount" class="col-form-label">Amount</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="amount"
+                  name="amount"
+                />
+              </div>
+            </div>
+
+            <!-- Receiver Select Select -->
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="receiver_id" class="col-form-label">Receiver</label>
+                <select
+                  class="form-control select2 receiver_id"
+                  style="width: 100%"
+                  id="receiver_id"
+                  name="receiver_id"
+                >
+                  <option value="" selected disabled>--Select--</option>
+                  <!-- Options will be populated dynamically -->
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="narration" class="col-form-label">Narration</label>
+                <input type="text" name="narration" class="form-control" id="narration" />
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="notes" class="col-form-label">Notes</label>
+                <input type="text" class="form-control" name="notes" id="notes" />
+              </div>
+            </div>
           </div>
         </form>
       </div>
+
       <div class="modal-footer">
         <button
           type="button"
@@ -107,52 +163,21 @@
 <script src="/assets/js/pages/datatables.init.js"></script>
 <script>
   $(document).ready(function () {
+    // Check if a company_id exists in localStorage on page load
+    var storedCompanyId = localStorage.getItem("company_id");
     // Initialize DataTable
     const dataTable = $("#datatable").DataTable();
     // Function to fetch all companies and update the DataTable
-    function fetchCompaniesAndUpdateTable() {
-      $.ajax({
-        type: "GET",
-        url: "/get/companies/ajax", // Adjust the endpoint to fetch all companies
-        success: function (response) {
-          // Clear the current table data
-          dataTable.clear();
-
-          // Loop through all companies and append them to the table
-          response.companies.forEach(function (company) {
-            dataTable.row.add([
-              company.id, // Company ID
-              company.name, // Company Name
-              '<a href="javascript:void(0);" class="show-company" data-id="' +
-                company.id +
-                '"><i class="fas fa-eye"></i></a>', // Eye icon for "show"
-            ]);
-          });
-
-          // Draw the table to display the updated data
-          dataTable.draw();
-          // Add event listener to the "show" links
-          $(".show-company").click(function () {
-            // Get the company ID from the clicked link's data-id attribute
-            var companyId = $(this).data("id");
-
-            // Store the company ID in localStorage
-            localStorage.setItem("company_id", companyId);
-
-            // Show the relevant sidebar links
-            showSidebarLinks(companyId);
-          });
-        },
-        error: function (error) {
-          console.log(error);
-          // alert("Error fetching updated companies list.");
-        },
-      });
-    }
+ 
     // Get the modal and the open modal button
-    var modal = new bootstrap.Modal(document.getElementById("companyModal"), {
-      keyboard: false,
-    });
+    var modal = new bootstrap.Modal(
+      document.getElementById("AccountTypeModal"),
+      {
+        keyboard: false,
+      }
+    );
+
+    // Extract company ID from URL
 
     // Open the modal when the "Add+" button is clicked
     $("#openModal").click(function () {
@@ -177,16 +202,15 @@
 
       // Get the value from the form input (company name)
       var name = $("#name").val();
+      var companyId = window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
 
       // Example of submitting the form data to the backend (using AJAX)
       $.ajax({
         type: "POST",
-        url: "/company/store", // Adjust this to your API endpoint
-        data: { name: name },
+        url: `/companies/${companyId}/account_types`, // Adjust this to your API endpoint
+        data: { name: name, company_id: companyId },
         success: function (response) {
           // Call the GET method to fetch and update the table
-          fetchCompaniesAndUpdateTable();
-
           //   alert("Company submitted successfully!");
           modal.hide(); // Hide the modal after successful submission
           $("#modalForm")[0].reset(); // Reset the form
@@ -197,14 +221,9 @@
       });
     });
 
-    // Check if a company_id exists in localStorage on page load
-    var storedCompanyId = localStorage.getItem("company_id");
-
     // If a company_id exists, display the relevant links in the sidebar
     if (storedCompanyId) {
       showSidebarLinks(storedCompanyId);
     }
-    // Fetch and display companies on page load
-    fetchCompaniesAndUpdateTable();
   });
 </script>
