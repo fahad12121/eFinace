@@ -115,6 +115,7 @@
     "rtlcss": "^4.1.1",
     "sass": "1.63.4",
     "sass-loader": "^13.3.2",
+    "sequelize-cli": "^6.6.2",
     "terser-webpack-plugin": "^5.3.9",
     "validator": "13.9.0",
     "webpack": "^5.89.0",

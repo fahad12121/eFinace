@@ -49,14 +49,6 @@ exports.getCompaniesAjax = asyncHandler(async (req, res, next) => {
     try {
         const companies = await Company.findAll(); // Fetch all companies from the DB
 
-        // Check if companies are found
-        if (!companies || companies.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'No companies found'
-            });
-        }
-
         // Return the companies data as JSON (for AJAX response)
         res.status(200).json({
             success: true,
@@ -66,24 +58,3 @@ exports.getCompaniesAjax = asyncHandler(async (req, res, next) => {
         next(error);
     }
 });
-
-// // Get a single company by ID
-// exports.getSingleCompany = asyncHandler(async (req, res, next) => {
-//     try {
-//         // // Get the company ID from the route parameters
-//         // const companyId = req.params.id;
-
-//         // // Fetch the company from the database by ID
-//         // const company = await Company.findOne({ where: { id: companyId } });
-
-//         // // Check if the company exists
-//         // if (!company) {
-//         //     return res.status(404).json({ success: false, message: 'Company not found' });
-//         // }
-
-//         // Render the single company page and pass the company data
-//         res.render('companies/index');  // Assuming you're rendering 'single.ejs'
-//     } catch (error) {
-//         next(error);
-//     }
-// });

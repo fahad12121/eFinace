@@ -13,16 +13,9 @@ const Company = sequelize.define('Company', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
 }, {
-  timestamps: true, // Enable automatic timestamps for `createdAt` and `updatedAt`
+  timestamps: true,  // Sequelize will automatically add createdAt and updatedAt
+  underscored: true,  // Tells Sequelize to use snake_case for column names
   tableName: 'companies', // Specify the table name
 });
 

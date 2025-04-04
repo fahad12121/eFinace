@@ -31,8 +31,8 @@ exports.protect = asyncHandler(async (req, res, next) => {
 
         // If user doesn't exist
         if (!req.user) {
-            
-            return next(new ErrorResponse('Not authorized to access this route', 401));
+            return res.redirect('/'); // Redirect to the root (login) page
+            // return next(new ErrorResponse('Not authorized to access this route', 401));
         }
 
         next(); // Proceed to next middleware or route handler

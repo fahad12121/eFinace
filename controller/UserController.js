@@ -116,14 +116,6 @@ exports.getUsersAjax = asyncHandler(async (req, res, next) => {
             where: whereClause // Apply the where clause with both company_id and user_type if available
         });
 
-        // Check if users are found
-        if (!users || users.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'No users found for the provided company ID and user type'
-            });
-        }
-
         // Return the users data as JSON (for AJAX response)
         res.status(200).json({
             success: true,
@@ -224,54 +216,56 @@ exports.getSingleAccountUser = asyncHandler(async (req, res, next) => {
 //balance sheet function start here
 exports.getUsersBalanceSheet = asyncHandler(async (req, res, next) => {
     try {
-        // Extract company_id (user_id) and account_id from the URL
         const company_id = req.params.id;
 
-        // Fetch the user and include related subAccounts and AccountType
         const users = await User.findAll({
             where: {
-                company_id: company_id  // company_id to filter the account under the specific company
+                company_id: company_id
             },
         });
 
-        let totalMinus = 0;
-        let totalPlus = 0;
+        let totalMinus = '';
+        let totalPlus = '';
 
-        // Prepare the data for rendering
         const minusAccounts = [];
         const plusAccounts = [];
 
         users.forEach(user => {
-            // Check if the user's balance is negative or positive
+            // Handling the balance check and populating the minus and plus account lists
             if (user.balance < 0) {
-                // Negative balance (Minus)
                 minusAccounts.push({
-                    account: user.username,  // User's username as the account
-                    minus: user.balance.toLocaleString()  // Format number with commas
+                    user_id: user.id,
+                    account: user.username,
+                    minus: user.balance.toLocaleString(),  // Format negative balance with commas
                 });
-                totalMinus += user.balance;  // Add to total minus
+                totalMinus += user.balance;
             } else if (user.balance > 0) {
-                // Positive balance (Plus)
                 plusAccounts.push({
-                    account: user.username,  // User's username as the account
-                    plus: user.balance.toLocaleString()  // Format number with commas
+                    user_id: user.id,
+                    account: user.username,
+                    plus: user.balance.toLocaleString(),  // Format positive balance with commas
                 });
-                totalPlus += user.balance;  // Add to total plus
+                totalPlus += user.balance;
             }
         });
 
-        // Render the balance sheet page with the data
+        // Format totals
+        const formattedTotalMinus = totalMinus.toLocaleString();
+        const formattedTotalPlus = totalPlus.toLocaleString();
+
         res.render('balancesheet/index', {
-            minusAccounts: minusAccounts,  // Pass minus account data
-            plusAccounts: plusAccounts,    // Pass plus account data
-            totalMinus: totalMinus.toLocaleString(),  // Pass total minus
-            totalPlus: totalPlus.toLocaleString(),
-            company_id// Pass total plus
+            minusAccounts,
+            plusAccounts,
+            totalMinus: formattedTotalMinus,  // Pass the formatted total minus
+            totalPlus: formattedTotalPlus,    // Pass the formatted total plus
+            company_id
         });
+
     } catch (error) {
-        next(error);  // Handle any errors
+        next(error);
     }
 });
+
 
 //Ledger function start here
 exports.getUsersLedger = asyncHandler(async (req, res, next) => {
@@ -286,7 +280,7 @@ exports.getUsersLedger = asyncHandler(async (req, res, next) => {
             },
             include: [
                 {
-                    model: SubAccount,  // Assuming SubAccount is the related model for user accounts
+                    model: subAccount,  // Assuming SubAccount is the related model for user accounts
                     required: false,  // Optional if the user has no sub-accounts
                 }
             ]

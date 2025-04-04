@@ -26,16 +26,9 @@ const CompanyUser = sequelize.define('CompanyUser', {
         },
         allowNull: false, // Ensure company_id is not null
     },
-    createdAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
-    updatedAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
 }, {
-    timestamps: true, // Enable automatic timestamps for `createdAt` and `updatedAt`
+    timestamps: true,  // Sequelize will automatically add createdAt and updatedAt
+    underscored: true,  // Tells Sequelize to use snake_case for column names
     tableName: 'company_users', // Specify the table name
 });
 

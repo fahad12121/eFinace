@@ -1,5 +1,5 @@
 <%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
-{"title":"Ledger"}) %>
+{"title":"Balance Sheet"}) %>
 <!-- DataTables -->
 <link
   href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
@@ -15,14 +15,14 @@
 />
 
 <%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
-"Ledger" , "title" : "Ledger" }) %>
+"Balance Sheet" , "title" : "Balance Sheet" }) %>
 
 <div class="row">
   <div class="col-12">
     <div class="card">
       <div class="row card-title mt-3">
         <div class="col-md-11">
-          <h4 class="card-title">Ledger</h4>
+          <h4 class="card-title">Balance Sheet</h4>
         </div>
       </div>
       <div class="card-body">
@@ -43,7 +43,9 @@
             <!-- Display Minus Accounts -->
             <% minusAccounts.forEach(function(data) { %>
             <tr>
-              <td><%= data.account %></td>
+              <a href="/companies/<%= company_id %>/ledger/<%= data.user_id %>">
+                <%= data.account %>
+              </a>
               <td style="color: red"><%= data.minus %></td>
               <!-- Display Minus in red -->
               <td></td>
@@ -71,12 +73,10 @@
           <!-- Table Footer for Totals -->
           <tfoot>
             <tr>
-              <th><%= balanceKey %></th>
-              <!-- Display the 'Balance' key -->
+              <th>Total</th>
               <th style="color: red"><%= totalMinus %></th>
               <!-- Display total Minus in red -->
-              <th><%= balanceKey %></th>
-              <!-- Display the 'Balance' key -->
+              <th>Total</th>
               <th style="color: green"><%= totalPlus %></th>
               <!-- Display total Plus in green -->
             </tr>

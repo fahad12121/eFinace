@@ -54,14 +54,6 @@ exports.getAccountTypesAjax = asyncHandler(async (req, res, next) => {
             where: { company_id: companyId } // Filter account types by company_id
         });
 
-        // Check if account types are found
-        if (!accountTypes || accountTypes.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'No account types found for the provided company ID'
-            });
-        }
-
         // Return the account types data as JSON (for AJAX response)
         res.status(200).json({
             success: true,

@@ -41,13 +41,18 @@
 
           <tbody>
             <!-- Display Minus Accounts -->
+            <!-- Display Minus Accounts -->
             <% minusAccounts.forEach(function(data) { %>
             <tr>
-              <a href="/companies/<%= company_id %>/ledger/<%= data.user_id %>">
-                <%= data.account %>
-              </a>
+              <td>
+                <a
+                  href="/companies/<%= company_id %>/ledger/<%= data.user_id %>"
+                >
+                  <%= data.account %>
+                </a>
+              </td>
               <td style="color: red"><%= data.minus %></td>
-              <!-- Display Minus in red -->
+              <!-- Display Minus balance in red -->
               <td></td>
               <!-- Empty cell for Plus -->
               <td></td>
@@ -69,8 +74,6 @@
             </tr>
             <% }) %>
           </tbody>
-
-          <!-- Table Footer for Totals -->
           <tfoot>
             <tr>
               <th>Total</th>
@@ -81,6 +84,8 @@
               <!-- Display total Plus in green -->
             </tr>
           </tfoot>
+
+          <!-- Table Footer for Totals -->
         </table>
       </div>
     </div>

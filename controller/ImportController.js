@@ -59,7 +59,6 @@ exports.store = asyncHandler(async (req, res, next) => {
 
             for (i = 0; i < sub_accounts.length; i++) {
                 let single_sub_account = sub_accounts[i];
-
                 // Fetch the associated User for the sub-account
                 let sub_account_user = await User.findOne({
                     where: { id: single_sub_account.user_id },
@@ -68,7 +67,7 @@ exports.store = asyncHandler(async (req, res, next) => {
                     }],
                 });
 
-                if (sub_account_user.company_id == req.params.company_id) {
+                if (sub_account_user.company_id == req.params.id) {
                     // Current Sub Account is in given company
                     if (account_username == single_sub_account.account_username) {
                         // Now we have our concerned sub account in given company
@@ -89,14 +88,11 @@ exports.store = asyncHandler(async (req, res, next) => {
                         }
 
                         let total_user_balance = 0;
-
-
-                        for (j = 0; j < sub_account_user.sub_accounts.length; j++) {
+                        for (j = 0; j < sub_account_user.subAccounts.length; j++) {
                             total_user_balance += parseFloat(
-                                sub_account_user.sub_accounts[j].balance
+                                sub_account_user.subAccounts[j].balance
                             );
                         }
-
                         sub_account_user.balance = total_user_balance;
                         await sub_account_user.save();
 

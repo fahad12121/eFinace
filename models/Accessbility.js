@@ -4,11 +4,11 @@ const User = require('./UserModel');
 
 const Accessibility = sequelize.define('Accessibility', {
   viewable_accounts: {
-    type: DataTypes.JSONB,  // Use JSONB to store an array of accounts (or handle this with a many-to-many relationship)
+    type: Sequelize.JSON,  // Use JSON to store an array of accounts (or handle this with a many-to-many relationship)
     defaultValue: [],
   },
   accounts: {
-    type: Sequelize.JSONB,  // Storing mixed data as a JSONB field
+    type: Sequelize.JSON,  // Storing mixed data as a JSON field
     defaultValue: {
       view_only: false,
       edit: false,
@@ -16,7 +16,7 @@ const Accessibility = sequelize.define('Accessibility', {
     }
   },
   transactions: {
-    type: Sequelize.JSONB,  // Storing mixed data as a JSONB field
+    type: Sequelize.JSON,  // Storing mixed data as a JSON field
     defaultValue: {
       view_only: false,
       edit: false,
@@ -24,20 +24,20 @@ const Accessibility = sequelize.define('Accessibility', {
     }
   },
   account_types: {
-    type: Sequelize.JSONB,  // Storing mixed data as a JSONB field
+    type: Sequelize.JSON,  // Storing mixed data as a JSON field
     defaultValue: {
       view_only: false,
       add: false,
     }
   },
   balance_sheet: {
-    type: Sequelize.JSONB,  // Storing mixed data as a JSONB field
+    type: Sequelize.JSON,  // Storing mixed data as a JSON field
     defaultValue: {
       view_only: false,
     }
   },
   import: {
-    type: Sequelize.JSONB,  // Storing mixed data as a JSONB field
+    type: Sequelize.JSON,  // Storing mixed data as a JSON field
     defaultValue: {
       add: false,
     }
@@ -51,9 +51,8 @@ const Accessibility = sequelize.define('Accessibility', {
     allowNull: false
   }
 }, {
-  timestamps: true,  // Automatically adds createdAt and updatedAt
-  createdAt: 'created_at',
-  updatedAt: 'updated_at',
+  timestamps: true,  // Sequelize will automatically add createdAt and updatedAt
+  underscored: true,  // Tells Sequelize to use snake_case for column names
   tableName: 'accessibilities' // You can specify the table name explicitly if needed
 });
 

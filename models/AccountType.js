@@ -27,16 +27,9 @@ const AccountType = sequelize.define('AccountType', {
         defaultValue: 0, // Default value of 0 (active)
         comment: "0 active, 1 not active", // Comment to explain the field behavior
     },
-    createdAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
-    updatedAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
 }, {
-    timestamps: true, // Enable automatic timestamps for `createdAt` and `updatedAt`
+    timestamps: true,  // Sequelize will automatically add createdAt and updatedAt
+    underscored: true,  // Tells Sequelize to use snake_case for column names
     tableName: 'account_types', // Specify the table name
 });
 

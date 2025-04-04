@@ -198,17 +198,13 @@
               <div class="mb-3">
                 <label class="form-label">Parent Account</label>
                 <select
-                  class="form-control select2"
+                  class="form-control select2 parentAccounts"
                   style="width: 100%"
                   id="user_id"
                   name="user_id"
                 >
                   <option value="" selected disabled>--Select--</option>
-                  <% parent_accounts.forEach(account => { %>
-                  <option value="<%= account.id %>">
-                    <%= account.username %>
-                  </option>
-                  <% }) %>
+           
                 </select>
               </div>
             </div>
@@ -338,6 +334,30 @@
       });
     }
 
+    function fetchParentAccount() {
+      const companyId = getCompanyIdFromUrl();
+      $.ajax({
+        type: "GET",
+        url: `/companies/${companyId}/users/ajax?user_type=User`,
+        success: function (response) {
+          const users = response.users;
+          $(".parentAccounts")
+            .empty()
+            .append('<option value="" selected disabled>--Select--</option>');
+
+            users.forEach(function (user) {
+            const option = `<option value="${user.id}">${user?.username}</option>`;
+            $(".parentAccounts").append(option);
+          });
+
+          $(".select2").select2(); // Re-initialize select2 after appending options
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+
     $(document).on("click", ".view-btn", function () {
       const userId = $(this).data("id");
       // Perform view action, for example, redirect to a view page
@@ -455,5 +475,6 @@
     // Fetch and display the users table and account types
     fetchUsersTable();
     fetchAccounttype();
+    fetchParentAccount();
   });
 </script>

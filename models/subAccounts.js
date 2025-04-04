@@ -67,16 +67,9 @@ const subAccount = sequelize.define('subAccount', {
         type: DataTypes.DATE,
         defaultValue: null, // Default to null when not deleted
     },
-    createdAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
-    updatedAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
 }, {
-    timestamps: true, // Enable automatic timestamps for `createdAt` and `updatedAt`
+    timestamps: true,  // Sequelize will automatically add createdAt and updatedAt
+    underscored: true,  // Tells Sequelize to use snake_case for column names
     tableName: 'sub_accounts', // Specify the table name
 });
 

@@ -1,7 +1,7 @@
 const User = require("../models/UserModel");
 const asyncHandler = require("../middleware/async");
 const ErrorResponse = require("../utils/errorResponse");
-
+const bcrypt = require('bcryptjs');
 exports.login = asyncHandler(async (req, res, next) => {
     console.log(req.body);
     const { username, password } = req.body;
@@ -11,25 +11,37 @@ exports.login = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse("Please provide an username an password"), 400);
     }
 
-    // check for user
-        // Check for user
-        const user = await User.findOne({
-            where: { username }, // Search by username
-            attributes: ['id', 'username', 'password', 'user_type'] // Explicitly select the required fields
-        });
+    // Check for user
+    const user = await User.findOne({
+        where: { username }, // Search by username
+    });
 
     if (!user) {
-        return next(new ErrorResponse("Invalid credentials"), 401);
+        return next(new ErrorResponse("Invalid Username"), 401);
     }
 
-    // check if password matches
-    const isMatch = await user.matchPassword(password);
+    bcrypt.compare(password, user.password, (err, isMatch) => {
+        if (err) {
+            // Log the error if there is any
+            console.error(err);
+            return res.status(500).json({
+                error: true,
+                message: 'Server error while comparing password'
+            });
+        } else {
+            if (isMatch) {
+                sendTokenResponse(user, 200, res);
 
-    if (!isMatch) {
-        return next(new ErrorResponse("Invalid credentials"), 401);
-    }
+            } else {
+                res.status(401).json({
+                    error: true,
+                    message: 'Password is Incorrect'
+                });
+            }
 
-    sendTokenResponse(user, 200, res);
+        }
+    });
+
 });
 
 // get token from model, create cokie and send response

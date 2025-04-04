@@ -147,12 +147,19 @@
           // If login is successful, the backend will handle the token (via cookie or response)
           if (response.success) {
             window.location.href = "/dashboard"; // Redirect to dashboard after login
-          } else {
-            console.log("Login failed");
           }
         },
         error: function (error) {
-          console.log(error);
+          // If the error response contains JSON, you can handle it as follows:
+          if (error.responseJSON) {
+            toastr.error(
+              error.responseJSON.message ||
+                "An error occurred, please try again.",
+              "Error"
+            );
+          } else {
+            toastr.error("An error occurred, please try again.", "Error");
+          }
         },
       });
     });
