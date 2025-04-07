@@ -15,8 +15,8 @@
     },
     "production": {
       "username": "root",
-      "password": null,
-      "database": "your_production_database",
+      "password": "Precious@96",
+      "database": "eFinance",
       "host": "127.0.0.1",
       "dialect": "mysql"
     }
