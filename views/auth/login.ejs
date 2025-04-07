@@ -127,6 +127,10 @@
 <!-- end account-pages -->
 <%- contentFor('FooterJs') %>
 <script>
+  const setToken = (value) => {
+    localStorage.setItem("accessToken", value);
+  };
+
   $(document).ready(function () {
     // Handle form submission inside the modal
     $("#loginForm").submit(function (event) {
@@ -144,6 +148,7 @@
           password: password,
         },
         success: function (response) {
+          setToken(response.user.token);
           // If login is successful, the backend will handle the token (via cookie or response)
           if (response.success) {
             window.location.href = "/dashboard"; // Redirect to dashboard after login

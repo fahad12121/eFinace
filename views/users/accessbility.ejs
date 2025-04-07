@@ -1,0 +1,147 @@
+<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
+{"title":"Accessbility"}) %>
+<!-- DataTables -->
+<link
+  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+
+<!-- Responsive datatable examples -->
+<link
+  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+
+<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
+"Accessbility" , "title" : "Accessbility" }) %>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="row card-title mt-3">
+        <div class="col-md-11">
+          <h4 class="card-title">Accessbilities</h4>
+        </div>
+      </div>
+      <div class="card-body">
+        <table
+          id="datatable"
+          class="table table-bordered dt-responsive nowrap w-100"
+        >
+          <thead>
+            <tr>
+              <th>Module</th>
+              <th>View</th>
+              <th>Edit</th>
+              <th>Add</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% const modules = [
+                { name: 'accounts', label: 'Accounts' },
+                { name: 'transactions', label: 'Transactions' },
+                { name: 'account_types', label: 'Account Types' },
+                { name: 'balance_sheet', label: 'Balance Sheet' },
+                { name: 'import', label: 'Import' }  <!-- Import has only the 'add' permission -->
+            ]; %>
+        
+        
+            <% modules.forEach(function(module) { %>
+                <% const moduleData = JSON.parse(accessibility[module.name] || '{}'); %> <!-- Parse JSON string -->
+        
+                <tr>
+                    <td><%= module.label %></td>
+        
+                    <!-- 'View' Permission: Only for non-import modules -->
+                    <td>
+                        <% if (module.name !== 'import') { %> 
+                            <input type="checkbox" 
+                                class="permission-checkbox"
+                                data-module="<%= module.name %>"
+                                data-permission="view_only" />
+                        <% } %> <!-- End of 'if' for view_only -->
+                    </td>
+        
+                    <!-- 'Edit' Permission: Only for non-import modules -->
+                    <td>
+                        <% if (module.name !== 'import') { %>
+                            <input type="checkbox" 
+                                class="permission-checkbox"
+                                data-module="<%= module.name %>"
+                                data-permission="edit" />
+                        <% } %> <!-- End of 'if' for edit -->
+                    </td>
+        
+                    <!-- 'Add' Permission: For all modules, including Import -->
+                    <td>
+                        <!-- Add permission for all modules, including Import -->
+                        <input type="checkbox" 
+                            class="permission-checkbox"
+                            data-module="<%= module.name %>"
+                            data-permission="add" />
+                    </td>
+                </tr>
+            <% }); %> <!-- Close the forEach loop -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+</div>
+<!-- end row -->
+
+<%- contentFor('FooterJs') %>
+<!-- Required datatable js -->
+<script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+<!-- Responsive examples -->
+<script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+
+<!-- Datatable init js -->
+<script src="/assets/js/pages/datatables.init.js"></script>
+<script>
+  $(document).ready(function () {
+    // Check if a company_id exists in localStorage on page load
+    var storedCompanyId = localStorage.getItem("company_id");
+
+    // If a company_id exists, display the relevant links in the sidebar
+    if (storedCompanyId) {
+      showSidebarLinks(storedCompanyId);
+    }
+    // Event listener for checkbox change
+    $(document).on("change", ".permission-checkbox", function () {
+      const module = $(this).data("module");
+      const permission = $(this).data("permission");
+      const isChecked = $(this).prop("checked"); // Get whether the checkbox is checked or not
+
+      // Create the payload to send to the server
+      const data = {
+        user_id: currentUser.id, // Assuming `currentUser.id` is available
+        module: module,
+        permission: permission,
+        value: isChecked, // Whether the checkbox is checked (true or false)
+      };
+
+      // Send the updated data to the server
+      $.ajax({
+        type: "PUT",
+        url: `/companies/${storedCompanyId}/user/:user_id`, // URL for handling permission updates on the server
+        data: JSON.stringify(data), // Send data as JSON
+        contentType: "application/json",
+        success: function (response) {
+          // Handle success (e.g., show a success message or update the UI)
+          console.log("Permission updated successfully");
+        },
+        error: function (error) {
+          // Handle error (e.g., show an error message)
+          console.error("Error updating permission:", error);
+        },
+      });
+    });
+  });
+</script>

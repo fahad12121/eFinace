@@ -87,8 +87,6 @@ exports.createUser = asyncHandler(async (req, res, next) => {
     }
 });
 
-
-
 exports.getUsers = asyncHandler(async (req, res, next) => {
     try {
 
@@ -124,8 +122,7 @@ exports.getUsersAjax = asyncHandler(async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-});
-
+}); 
 
 // Account function starts here
 exports.getAccountUsers = asyncHandler(async (req, res, next) => {

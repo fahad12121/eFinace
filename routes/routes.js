@@ -20,6 +20,7 @@ const UserController = require('../controller/UserController');
 const subAccountController = require('../controller/subAccountController');
 const TransactionController = require('../controller/TransactionController');
 const importController = require('../controller/ImportController');
+const AccessbilityController = require('../controller/AccessbilityController');
 const upload = multer({ dest: 'uploads/' }).single('import_data');
 
 // const route = express.Router();
@@ -54,6 +55,8 @@ module.exports = function (route) {
     route.get('/companies/:id/users', UserController.getUsers);
     route.post('/companies/:id/users', UserController.createUser);
     route.get('/companies/:company_id/users/ajax', UserController.getUsersAjax);
+    route.get('/companies/:company_id/user/:user_id', AccessbilityController.getAccessbility);
+    route.put('/companies/:company_id/user/:user_id', AccessbilityController.updateAccessbility);
 
     //Accounts Routes 
     route.get('/companies/:id/accounts', UserController.getAccountUsers);
@@ -76,6 +79,7 @@ module.exports = function (route) {
 
     //Transaction Route
     route.get('/companies/:id/transactions', TransactionController.getTransaction);
+    route.post('/companies/:id/transactions', TransactionController.createTransaction);
     //500
     route.get('/error', (req, res, next) => {
         res.render('auth/auth-500', { title: '500 Error', layout: 'layouts/layout-without-nav' });

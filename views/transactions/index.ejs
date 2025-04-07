@@ -14,6 +14,12 @@
   type="text/css"
 />
 
+<link
+  href="/assets/libs/select2/css/select2.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+
 <%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
 "Transactions Table" , "title" : "Transactions Table" }) %>
 
@@ -77,14 +83,23 @@
             <!-- Sender Select -->
             <div class="col-md-4">
               <div class="mb-3">
-                <label for="sender_id" class="col-form-label">Sender</label>
+                <label for="sender_sub_account_id" class="col-form-label"
+                  >Sender</label
+                >
                 <select
                   class="form-control select2 sender_id"
                   style="width: 100%"
-                  id="sender_id"
-                  name="sender_id"
+                  id="sender_sub_account_id"
+                  name="sender_sub_account_id"
                 >
+                  <option value="" selected disabled>--Select--</option>
                   <!-- Options will be populated dynamically -->
+                  <% sender_accounts.subAccounts.forEach(function(subAccount) {
+                  %>
+                  <option value="<%= subAccount.id %>">
+                    <%= subAccount.account_username %>
+                  </option>
+                  <% }) %>
                 </select>
               </div>
             </div>
@@ -104,28 +119,46 @@
             <!-- Receiver Select Select -->
             <div class="col-md-4">
               <div class="mb-3">
-                <label for="receiver_id" class="col-form-label">Receiver</label>
+                <label for="receiver_sub_account_id" class="col-form-label"
+                  >Receiver</label
+                >
                 <select
-                  class="form-control select2 receiver_id"
+                  class="form-control select2 receiver_sub_account_id"
                   style="width: 100%"
-                  id="receiver_id"
-                  name="receiver_id"
+                  id="receiver_sub_account_id"
+                  name="receiver_sub_account_id"
                 >
                   <option value="" selected disabled>--Select--</option>
                   <!-- Options will be populated dynamically -->
+                  <% receiver_accounts.subAccounts.forEach(function(subAccount)
+                  { %>
+                  <option value="<%= subAccount.id %>">
+                    <%= subAccount.account_username %>
+                  </option>
+                  <% }) %>
                 </select>
               </div>
             </div>
             <div class="col-md-4">
               <div class="mb-3">
                 <label for="narration" class="col-form-label">Narration</label>
-                <input type="text" name="narration" class="form-control" id="narration" />
+                <input
+                  type="text"
+                  name="narration"
+                  class="form-control"
+                  id="narration"
+                />
               </div>
             </div>
             <div class="col-md-4">
               <div class="mb-3">
                 <label for="notes" class="col-form-label">Notes</label>
-                <input type="text" class="form-control" name="notes" id="notes" />
+                <input
+                  type="text"
+                  class="form-control"
+                  name="notes"
+                  id="notes"
+                />
               </div>
             </div>
           </div>
@@ -161,6 +194,8 @@
 
 <!-- Datatable init js -->
 <script src="/assets/js/pages/datatables.init.js"></script>
+<!-- Select 2 -->
+<script src="/assets/libs/select2/js/select2.min.js"></script>
 <script>
   $(document).ready(function () {
     // Check if a company_id exists in localStorage on page load
@@ -168,7 +203,7 @@
     // Initialize DataTable
     const dataTable = $("#datatable").DataTable();
     // Function to fetch all companies and update the DataTable
- 
+
     // Get the modal and the open modal button
     var modal = new bootstrap.Modal(
       document.getElementById("AccountTypeModal"),
@@ -182,6 +217,10 @@
     // Open the modal when the "Add+" button is clicked
     $("#openModal").click(function () {
       modal.show(); // Show the modal using Bootstrap's modal API
+      $(".select2").select2({
+        minimumResultsForSearch: 0,
+        dropdownParent: $("#AccountTypeModal"),
+      });
     });
 
     // Close the modal when the "close" button (X) is clicked
@@ -201,14 +240,28 @@
       event.preventDefault(); // Prevent the default form submission behavior
 
       // Get the value from the form input (company name)
-      var name = $("#name").val();
+      var sender_sub_account_id = $("#sender_sub_account_id").val();
+      var amount = $("#amount").val();
+      var receiver_sub_account_id = $("#receiver_sub_account_id").val();
+      var narration = $("#narration").val();
+      var notes = $("#notes").val();
+      var transaction_date = new Date();
+      var formattedDate = transaction_date.toISOString().split("T")[0];
       var companyId = window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
 
       // Example of submitting the form data to the backend (using AJAX)
       $.ajax({
         type: "POST",
-        url: `/companies/${companyId}/account_types`, // Adjust this to your API endpoint
-        data: { name: name, company_id: companyId },
+        url: `/companies/${companyId}/transactions`, // Adjust this to your API endpoint
+        data: {
+          sender_sub_account_id: sender_sub_account_id,
+          amount: amount,
+          receiver_sub_account_id: receiver_sub_account_id,
+          narration: narration,
+          notes: notes,
+          transaction_date: formattedDate,
+          company_id: companyId,
+        },
         success: function (response) {
           // Call the GET method to fetch and update the table
           //   alert("Company submitted successfully!");

@@ -137,6 +137,8 @@
 <!-- Datatable init js -->
 <script src="/assets/js/pages/datatables.init.js"></script>
 <script>
+  const storedUserToken = localStorage.getItem("accessToken");
+
   $(document).ready(function () {
     // Initialize DataTable
     const dataTable = $("#datatable").DataTable();
@@ -145,7 +147,11 @@
     function fetchUsersTable() {
       $.ajax({
         type: "GET",
-        url: `/companies/${companyId}/users/ajax`, // Adjust the endpoint to fetch all companies
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${storedUserToken}`,
+        },
+        url: `/companies/${companyId}/users/ajax?user_type=Company`, // Adjust the endpoint to fetch all companies
         success: function (response) {
           // Clear the current table data
           dataTable.clear();
@@ -155,7 +161,7 @@
             dataTable.row.add([
               user.username, // Company ID
               user.name, // Company Name
-              user.created_at,
+              user.createdAt,
               user.last_login,
               user.last_ip,
               // Add a new column with a lock icon
@@ -187,6 +193,13 @@
     }
     // Check if a company_id exists in localStorage on page load
     var storedCompanyId = localStorage.getItem("company_id");
+
+    $(document).on("click", ".lock-btn", function () {
+      const userId = $(this).data("id");
+      // Perform view action, for example, redirect to a view page
+      window.location.href = `/companies/${storedCompanyId}/user/${userId}`;
+    });
+
     // Get the modal and the open modal button
     var modal = new bootstrap.Modal(document.getElementById("userModal"), {
       keyboard: false,
