@@ -1,6 +1,14 @@
 const dotenv = require('dotenv');
 dotenv.config();  // Load environment variables from .env file
 
+const config = require('./config/config.json');  // Load the config file
+const environment = process.env.NODE_ENV || 'development';  // Use NODE_ENV or default to development
+
+const currentConfig = config[environment];  // Get the configuration based on the current environment
+
+console.log(`Using ${environment} configuration:`);  // Log which configuration is being used
+console.log(currentConfig);
+
 var app = require('express')();
 var express = require('express');
 var path = require('path');
