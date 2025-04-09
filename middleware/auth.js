@@ -9,7 +9,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
 
     // Make sure token exists
     if (!token) {
-        return res.redirect('/');
+        return next(new ErrorResponse('Not authorized to access this route', 401));
     }
 
     try {
@@ -33,6 +33,6 @@ exports.protect = asyncHandler(async (req, res, next) => {
             return res.redirect('/'); // Redirect to the root (login) page
         }
 
-        return res.redirect('/');
+        return next(new ErrorResponse('Not authorized to access this route', 401));
     }
 });
