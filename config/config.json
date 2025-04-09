@@ -1,8 +1,8 @@
 {
     "development": {
       "username": "root",
-      "password": null,
-      "database": "eFinance",
+      "password": "Precious@96",
+      "database": "efinance_db",
       "host": "localhost",
       "dialect": "mysql"
     },
@@ -16,8 +16,8 @@
     "production": {
       "username": "root",
       "password": "Precious@96",
-      "database": "eFinance",
-      "host": "127.0.0.1",
+      "database": "efinance_db",
+      "host": "localhost",
       "dialect": "mysql"
     }
   }
