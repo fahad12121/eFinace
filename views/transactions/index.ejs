@@ -94,7 +94,7 @@
                 >
                   <option value="" selected disabled>--Select--</option>
                   <!-- Options will be populated dynamically -->
-                  <% sender_accounts.subAccounts.forEach(function(subAccount) {
+                  <% sender_accounts?.subAccounts?.forEach(function(subAccount) {
                   %>
                   <option value="<%= subAccount.id %>">
                     <%= subAccount.account_username %>
@@ -130,7 +130,7 @@
                 >
                   <option value="" selected disabled>--Select--</option>
                   <!-- Options will be populated dynamically -->
-                  <% receiver_accounts.subAccounts.forEach(function(subAccount)
+                  <% receiver_accounts?.subAccounts?.forEach(function(subAccount)
                   { %>
                   <option value="<%= subAccount.id %>">
                     <%= subAccount.account_username %>
