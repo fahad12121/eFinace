@@ -4,7 +4,7 @@ PORT = 4100
 const { Sequelize } = require('sequelize');
 
 // Create a new Sequelize instance and connect to the MySQL database
-const sequelize = new Sequelize('efinance_db', 'root', 'Precious@96', {
+const sequelize = new Sequelize('eFinance', 'root', '', {
     host: 'localhost',
     dialect: 'mysql',
     logging: false, // Disable logging for queries
