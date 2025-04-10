@@ -82,20 +82,11 @@
                 <button
                   class="btn btn-sm btn-warning edit-btn"
                   data-id="<%= account.id %>"
+                  data-username="<%= account.account_username %>"
                   title="Edit"
                 >
                   <i class="fas fa-pencil-alt"></i>
                 </button>
-                <% if (account.AccountType && account.AccountType.name !==
-                'DASTI') { %>
-                <button
-                  class="btn btn-sm btn-danger del-btn"
-                  data-id="<%= account.id %>"
-                  title="Delete"
-                >
-                  <i class="fa fa-trash"></i>
-                </button>
-                <% } %>
               </td>
             </tr>
             <% }) %>
@@ -134,9 +125,22 @@
       <div class="modal-body">
         <form id="subAccountmodalForm">
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
               <div class="mb-3">
-                <input type="hidden" name="id" id="id" />
+                <input type="hidden" id="id" name="id" />
+                <label for="account_username" class="col-form-label"
+                  >Title:</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="account_username"
+                  name="account_username"
+                />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
                 <label for="notes" class="col-form-label">Notes:</label>
                 <input
                   type="text"
@@ -201,21 +205,25 @@
 
     $(document).on("click", ".edit-btn", function () {
       const userId = $(this).data("id");
-      console.log(userId);
+      account_username;
+      const username = $(this).data("username");
+      $("#id").val(userId);
+      let usernameInput = $("#account_username").val(username);
+      $("#subAccountModal .modal-dialog .modal-content strong").text(
+        "Edit Sub Account"
+      );
+      if (username === "DASTI") {
+        usernameInput = $("#account_username");
+        usernameInput.closest(".col-md-6").hide();
+      }
       // Perform view action, for example, redirect to a view page
       subAccountModal.show();
     });
 
-    // Close modal when "close" button (X) is clicked
-    $("#closeModalButton").click(function () {
-      subAccountModal.hide();
-    });
-
-    // Close modal if clicked outside
-    $(window).click(function (event) {
-      if ($(event.target).is(subAccountModal._element)) {
-        subAccountModal.hide();
-      }
+    $("#subAccountModal").on("hidden.bs.modal", function () {
+      $("#subAccountmodalForm")[0].reset(); // Reset form
+      $("#id").val(""); // Clear hidden ID
+      $("#account_username").closest(".col-md-6").show(); // Show username field
     });
 
     // Handle sub-account form submission
@@ -224,16 +232,18 @@
 
       const id = $("#id").val();
       const notes = $("#sub_notes").val();
+      const account_username = $("#account_username").val();
 
       $.ajax({
         type: "POST",
-        url: `/companies/${companyId}/sub_accounts`, // Correct endpoint for subaccounts
+        url: `/companies/${getCompanyIdFromUrl()}/sub_accounts`, // Correct endpoint for subaccounts
         data: {
           id: id,
           notes: notes,
+          account_username: account_username,
         },
         success: function (response) {
-          fetchUsersTable(); // Update the users table after adding a new sub-account
+          location.reload();
           subAccountModal.hide();
           $("#subAccountmodalForm")[0].reset(); // Reset the sub-account form
         },
@@ -248,6 +258,5 @@
     if (storedCompanyId) {
       showSidebarLinks(storedCompanyId);
     }
-
   });
 </script>

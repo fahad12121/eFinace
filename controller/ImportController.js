@@ -20,7 +20,6 @@ exports.getImport = asyncHandler(async (req, res, next) => {
 
 exports.store = asyncHandler(async (req, res, next) => {
     try {
-
         const account_type_param = req.body.account_type;
         const workBook = XLSX.readFile(req.file.path);
 
@@ -36,6 +35,7 @@ exports.store = asyncHandler(async (req, res, next) => {
         let take_index = 0;
         let give_index = 0;
 
+        // Identifying column indices
         for (let index = 0; index < headers.length; index++) {
             if (headers[index] === 'Login Name') {
                 login_index = index;
@@ -46,19 +46,22 @@ exports.store = asyncHandler(async (req, res, next) => {
             }
         }
 
+        // Iterate through each row of the data (skipping the header)
         for (let index = 1; index < sheetData.length; index++) {
-            // We are not fetching 0 index because it contains only headers
             let account_username = sheetData[index][login_index];
 
+            // Find all sub-accounts for the given account_username and account_type_id
             let sub_accounts = await SubAccount.findAll({
                 where: {
                     account_username: account_username,
                     account_type_id: account_type_param,
-                }
+                },
             });
 
+            // Iterate through each sub-account
             for (i = 0; i < sub_accounts.length; i++) {
                 let single_sub_account = sub_accounts[i];
+
                 // Fetch the associated User for the sub-account
                 let sub_account_user = await User.findOne({
                     where: { id: single_sub_account.user_id },
@@ -68,42 +71,53 @@ exports.store = asyncHandler(async (req, res, next) => {
                 });
 
                 if (sub_account_user.company_id == req.params.id) {
-                    // Current Sub Account is in given company
+                    // Check if the sub-account belongs to the correct company
                     if (account_username == single_sub_account.account_username) {
-                        // Now we have our concerned sub account in given company
+                        // Process the take and give values
                         let take_val = sheetData[index][take_index];
                         let give_val = sheetData[index][give_index];
 
+                        // Update the sub-account balance based on the "Take" or "Give" value
                         if (parseFloat(take_val) >= 0) {
-                            // Take Val is not null, so update Take Val
-                            single_sub_account.balance = -take_val;
+                            single_sub_account.balance = -take_val;  // Set Take balance
                             await single_sub_account.save();
                         } else if (parseFloat(give_val) >= 0) {
-                            // Give Val is not Null, so update Give Val
-                            single_sub_account.balance = give_val;
+                            single_sub_account.balance = give_val;  // Set Give balance
                             await single_sub_account.save();
                         } else if (take_val === '' && give_val === '') {
-                            single_sub_account.balance = 0;
+                            single_sub_account.balance = 0;  // Set balance to 0 if both Take and Give are empty
                             await single_sub_account.save();
                         }
-
-                        let total_user_balance = 0;
-                        for (j = 0; j < sub_account_user.subAccounts.length; j++) {
-                            total_user_balance += parseFloat(
-                                sub_account_user.subAccounts[j].balance
-                            );
-                        }
-                        sub_account_user.balance = total_user_balance;
-                        await sub_account_user.save();
-
-                        // Update Account Type at the end also
-                        // Update the AccountType
-                        await AccountType.update(
-                            { updated_at: new Date() },
-                            { where: { id: single_sub_account.account_type_id } }
-                        );
                     }
                 }
+
+                // Now update the parent balance immediately after updating the sub-account balance
+                let total_user_balance = 0;
+                sub_account_user = await User.findOne({
+                    where: { id: single_sub_account.user_id },
+                    include: [{
+                        model: SubAccount,
+                    }],
+                });
+                
+                for (j = 0; j < sub_account_user.subAccounts.length; j++) {
+                    total_user_balance += parseFloat(sub_account_user.subAccounts[j].balance);
+                }
+
+                // Update parent user's balance immediately
+                sub_account_user.balance = total_user_balance;
+                await sub_account_user.save();
+            }
+
+            // After processing all sub-accounts for this login, update the Account Type for each sub-account's account type
+            for (i = 0; i < sub_accounts.length; i++) {
+                let single_sub_account = sub_accounts[i];
+
+                // Update Account Type at the end for each sub-account's account type
+                await AccountType.update(
+                    { updated_at: new Date() },
+                    { where: { id: single_sub_account.account_type_id } }
+                );
             }
         }
 
@@ -112,6 +126,8 @@ exports.store = asyncHandler(async (req, res, next) => {
     } catch (error) {
         next(error);
     }
+
+
 });
 
 exports.readCsv = asyncHandler(async (req, res, next) => {

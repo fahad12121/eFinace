@@ -41,39 +41,41 @@
 
           <tbody>
             <!-- Display Minus Accounts -->
-            <!-- Display Minus Accounts -->
             <% minusAccounts.forEach(function(data) { %>
             <tr>
-              <td>
-                <a
-                  href="/companies/<%= company_id %>/ledger/<%= data.user_id %>"
-                >
-                  <%= data.account %>
-                </a>
-              </td>
-              <td style="color: red"><%= data.minus %></td>
-              <!-- Display Minus balance in red -->
-              <td></td>
-              <!-- Empty cell for Plus -->
-              <td></td>
-              <!-- Empty cell for Plus -->
+                <td>
+                    <a href="/companies/<%= company_id %>/ledger/<%= data.user_id %>">
+                        <%= data.account %>
+                    </a>
+                </td>
+                <td style="color: red"><%= data.minus %></td>
+                <!-- Display Minus balance in red -->
+                <td></td>
+                <!-- Empty cell for Plus -->
+                <td></td>
+                <!-- Empty cell for Plus -->
             </tr>
             <% }) %>
-
+        
             <!-- Display Plus Accounts -->
             <% plusAccounts.forEach(function(data) { %>
             <tr>
-              <td></td>
-              <!-- Empty cell for Minus -->
-              <td></td>
-              <!-- Empty cell for Minus -->
-              <td><%= data.account %></td>
-              <!-- Display Plus Account -->
-              <td style="color: green"><%= data.plus %></td>
-              <!-- Display Plus in green -->
+                <td></td>
+                <!-- Empty cell for Minus -->
+                <td></td>
+                <!-- Empty cell for Minus -->
+                <td>
+                    <a href="/companies/<%= company_id %>/ledger/<%= data.user_id %>">
+                        <%= data.account %>
+                    </a>
+                </td>
+                <!-- Display Plus Account with link -->
+                <td style="color: green"><%= data.plus %></td>
+                <!-- Display Plus in green -->
             </tr>
             <% }) %>
-          </tbody>
+        </tbody>
+        
           <tfoot>
             <tr>
               <th>Total</th>

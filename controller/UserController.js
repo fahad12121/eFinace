@@ -9,10 +9,32 @@ const { Op } = require('sequelize');
 // User Crud Starts here
 
 exports.createUser = asyncHandler(async (req, res, next) => {
-    const { name, password, user_type, username, company_id, notes } = req.body;
-
+    const { name, password, user_type, username, company_id, notes, userId } = req.body;
     try {
-        // Initialize user data
+        // ✅ If userId is provided → update the user's notes only
+        if (userId) {
+            const user = await User.findByPk(userId);
+
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: "User not found"
+                });
+            }
+
+            user.notes = notes;
+            await user.save();
+
+            return res.status(200).json({
+                success: true,
+                message: "User notes updated successfully!",
+                user
+            });
+        }
+
+        // ✅ Else → Create new user
+
+        // Prepare user data
         let userData = {
             user_type,
             username,
@@ -20,7 +42,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
             notes
         };
 
-        // Include name and password if user_type is 'Company'
+        // Add name/password if user_type is 'Company'
         if (user_type === 'Company') {
             if (!name) {
                 return res.status(400).json({
@@ -28,22 +50,19 @@ exports.createUser = asyncHandler(async (req, res, next) => {
                     message: 'Name is required for Company user type!'
                 });
             }
-            // Add the name field
+
             userData.name = name;
 
             if (password) {
-                // Hash the password before saving it
                 const hashedPassword = bcrypt.hashSync(password, 10);
-                userData.password = hashedPassword; // Add the hashed password to the user data
+                userData.password = hashedPassword;
             }
         }
 
-        // Generate account_pk based on the last user (if any)
+        // Generate account_pk
         const all_users = await User.findAll({
             where: {
-                user_type: {
-                    [Op.ne]: 'Admin'  // Filter out users with user_type 'Admin'
-                }
+                user_type: { [Op.ne]: 'Admin' }
             }
         });
 
@@ -53,25 +72,20 @@ exports.createUser = asyncHandler(async (req, res, next) => {
             let last_user_account = parseFloat(last_user.account_pk.split('A')[1]);
             account_pk = 'A' + (last_user_account + 1);
         } else {
-            // First ever account in the system
             account_pk = 'A1';
         }
 
-        // Add the account_pk to userData
         userData.account_pk = account_pk;
 
-        // Create the new user in the database
         const newUser = await User.create(userData);
 
-        // Create a record in CompanyUser to associate the user with the company
         if (user_type === 'Company') {
             await CompanyUser.create({
                 company_id: company_id,
-                user_id: newUser.id // Assuming the CompanyUser model uses `user_id` and `company_id`
+                user_id: newUser.id
             });
         }
 
-        // Return the response with the newly created user
         return res.status(201).json({
             success: true,
             message: 'User created successfully!',
@@ -86,6 +100,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
         });
     }
 });
+
 
 exports.getUsers = asyncHandler(async (req, res, next) => {
     try {
@@ -122,7 +137,7 @@ exports.getUsersAjax = asyncHandler(async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-}); 
+});
 
 // Account function starts here
 exports.getAccountUsers = asyncHandler(async (req, res, next) => {
@@ -221,8 +236,6 @@ exports.getUsersBalanceSheet = asyncHandler(async (req, res, next) => {
             },
         });
 
-        let totalMinus = '';
-        let totalPlus = '';
 
         const minusAccounts = [];
         const plusAccounts = [];
@@ -235,26 +248,28 @@ exports.getUsersBalanceSheet = asyncHandler(async (req, res, next) => {
                     account: user.username,
                     minus: user.balance.toLocaleString(),  // Format negative balance with commas
                 });
-                totalMinus += user.balance;
             } else if (user.balance > 0) {
                 plusAccounts.push({
                     user_id: user.id,
                     account: user.username,
                     plus: user.balance.toLocaleString(),  // Format positive balance with commas
                 });
-                totalPlus += user.balance;
             }
         });
+        // Assuming you already have the minusAccounts array populated
+        const sumOfMinus = minusAccounts.reduce((accumulator, currentValue) => {
+            return accumulator + parseFloat(currentValue.minus.replace(/,/g, '')); // Convert the string to a number and sum
+        }, 0);
 
-        // Format totals
-        const formattedTotalMinus = totalMinus.toLocaleString();
-        const formattedTotalPlus = totalPlus.toLocaleString();
+        const sumOfPlus = plusAccounts.reduce((accumulator, currentValue) => {
+            return accumulator + parseFloat(currentValue.plus.replace(/,/g, '')); // Convert the string to a number and sum
+        }, 0);
 
         res.render('balancesheet/index', {
             minusAccounts,
             plusAccounts,
-            totalMinus: formattedTotalMinus,  // Pass the formatted total minus
-            totalPlus: formattedTotalPlus,    // Pass the formatted total plus
+            totalMinus: sumOfMinus,  // Pass the formatted total minus
+            totalPlus: sumOfPlus,    // Pass the formatted total plus
             company_id
         });
 
@@ -262,7 +277,6 @@ exports.getUsersBalanceSheet = asyncHandler(async (req, res, next) => {
         next(error);
     }
 });
-
 
 //Ledger function start here
 exports.getUsersLedger = asyncHandler(async (req, res, next) => {
@@ -287,73 +301,66 @@ exports.getUsersLedger = asyncHandler(async (req, res, next) => {
             return res.status(404).json({ message: "User not found under this company." });
         }
 
-        let totalMinus = 0;
-        let totalPlus = 0;
 
-        const minusAccounts = [];
-        const plusAccounts = [];
+        const leftAccounts = []; // Will hold negative balances (left side)
+        const rightAccounts = []; // Will hold sum values (right side)
 
-        // Process the sub-accounts and segregate them into Minus and Plus based on balance
+        // Process the sub-accounts and segregate them into Left and Right based on balance
         user.subAccounts.forEach(subAccount => {
             let userBalance = subAccount.balance;
 
             if (userBalance < 0) {
-                // If balance is negative, show it in Plus (without the negative sign)
-                plusAccounts.push({
+                // Negative balance goes to the Left side
+                leftAccounts.push({
                     account: subAccount.account_username,
-                    plus: Math.abs(userBalance).toLocaleString(),  // Convert negative to positive for Plus
-                    balance: userBalance.toLocaleString(),  // Balance for Minus
+                    negative: `-${Math.abs(userBalance).toLocaleString()}`,  // Negative value shown on the left side
+                    balance: userBalance.toLocaleString(),  // Original balance
                 });
-                totalPlus += Math.abs(userBalance);
             } else if (userBalance > 0) {
-                // If balance is positive, show it in Minus (with the negative sign)
-                minusAccounts.push({
+                // Positive balance goes to the Right side
+                rightAccounts.push({
                     account: subAccount.account_username,
-                    minus: `-${userBalance.toLocaleString()}`,  // Show negative value on Minus side
-                    balance: `-${userBalance.toLocaleString()}`,  // Balance for Minus
+                    positive: `${Math.abs(userBalance).toLocaleString()}`,  // Positive balance shown on the right side
+                    balance: userBalance.toLocaleString(),
                 });
-                totalMinus += userBalance;
             }
         });
 
         // Handle the parent user's balance and add them to the correct side
-        if (user) {
-            let parentBalance = user.balance;
+        const parentBalance = user.balance;
+          // Assuming you already have the minusAccounts array populated
+        let sumOfMinus = leftAccounts.reduce((accumulator, currentValue) => {
+            return accumulator + parseFloat(currentValue.balance.replace(/,/g, '')); // Convert the string to a number and sum
+        }, 0);
 
-            if (parentBalance < 0) {
-                // If parent user's balance is negative, show it on the Plus side as positive
-                plusAccounts.push({
-                    account: `${user.username} (Parent)`,
-                    plus: Math.abs(parentBalance).toLocaleString(),  // Convert negative to positive for Plus
-                    balance: parentBalance.toLocaleString(),  // Parent balance
-                });
-                totalPlus += Math.abs(parentBalance);
-            } else if (parentBalance > 0) {
-                // If parent user's balance is positive, show it on the Minus side as negative
-                minusAccounts.push({
-                    account: `${user.username} (Parent)`,
-                    minus: `-${parentBalance.toLocaleString()}`,  // Negative value on Minus side
-                    balance: `-${parentBalance.toLocaleString()}`,  // Parent balance
-                });
-                totalMinus += parentBalance;
-            }
+        let sumOfPlus = rightAccounts.reduce((accumulator, currentValue) => {
+            return accumulator + parseFloat(currentValue.balance.replace(/,/g, '')); // Convert the string to a number and sum
+        }, 0);
+
+        if (parentBalance > 0) {
+            sumOfMinus += -parentBalance
         }
+
+        if (parentBalance < 0) {
+            sumOfPlus = sumOfPlus - parentBalance;
+        }
+        
+        console.log(user);
 
         // Render the ledger page with the data and totals
         res.render('ledger/index', {
-            minusAccounts: minusAccounts,
-            plusAccounts: plusAccounts,
-            totalMinus: totalMinus.toLocaleString(),
-            totalPlus: totalPlus.toLocaleString(),
-            balanceKey: 'Balance',  // Key for the balance row
+            leftAccounts: leftAccounts,  // Accounts with negative balances (Left side)
+            rightAccounts: rightAccounts,  // Accounts with positive balances and balance key (Right side)
+            totalLeft: sumOfMinus,
+            totalRight: sumOfPlus,
+            balanceKey: parentBalance,
+            user: user// The balance key label
         });
 
     } catch (error) {
         next(error);  // Handle any errors
     }
 });
-
-
 
 
 

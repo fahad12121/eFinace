@@ -14,15 +14,15 @@
   type="text/css"
 />
 
-<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
-"Ledger" , "title" : "Ledger" }) %>
+<%- contentFor('body') %> <%- include('../partials/page-title', { "pagetitle":
+user.username + ' Ledger', "title": user.username + ' Ledger' }) %>
 
 <div class="row">
   <div class="col-12">
     <div class="card">
       <div class="row card-title mt-3">
         <div class="col-md-11">
-          <h4 class="card-title">Ledger</h4>
+          <h4 class="card-title"><%= user.username %> Ledger</h4>
         </div>
       </div>
       <div class="card-body">
@@ -38,47 +38,64 @@
               <th>Plus</th>
             </tr>
           </thead>
-
           <tbody>
-            <!-- Display Minus Accounts -->
-            <% minusAccounts.forEach(function(data) { %>
+            <!-- Display Minus Accounts (Negative Balances) -->
+            <% leftAccounts.forEach(function(data) { %>
             <tr>
+              <!-- Account Name for Minus (Negative) Balances -->
               <td><%= data.account %></td>
-              <td style="color: red"><%= data.minus %></td>
-              <!-- Display Minus in red -->
+              <!-- Minus Balance in Red -->
+              <td style="color: red"><%= data.negative %></td>
+              <!-- Empty cells for Plus -->
               <td></td>
-              <!-- Empty cell for Plus -->
               <td></td>
-              <!-- Empty cell for Plus -->
             </tr>
             <% }) %>
 
-            <!-- Display Plus Accounts -->
-            <% plusAccounts.forEach(function(data) { %>
+            <!-- Display Balance Key if Balance is Greater than 0 (on Left Side) -->
+            <% if (balanceKey > 0) { %>
             <tr>
+              <td>Balance</td>
+              <td style="color: red"><%= balanceKey %></td>
               <td></td>
-              <!-- Empty cell for Minus -->
               <td></td>
-              <!-- Empty cell for Minus -->
+            </tr>
+            <% } %>
+
+            <!-- Display Plus Accounts (Positive Balances) -->
+            <% rightAccounts.forEach(function(data) { %>
+            <tr>
+              <!-- Empty cells for Minus -->
+              <td></td>
+              <td></td>
+              <!-- Account Name for Plus (Positive) Balances -->
               <td><%= data.account %></td>
-              <!-- Display Plus Account -->
-              <td style="color: green"><%= data.plus %></td>
-              <!-- Display Plus in green -->
+              <!-- Plus Balance in Green -->
+              <td style="color: green"><%= data.positive %></td>
             </tr>
             <% }) %>
+
+            <!-- Display Balance Key if Balance is Less than 0 (on Right Side) -->
+            <% if (balanceKey < 0) { %>
+            <tr>
+              <td></td>
+              <td></td>
+              <td>Balance</td>
+              <td style="color: green"><%= Math.abs(balanceKey) %></td>
+            </tr>
+            <% } %>
           </tbody>
 
           <!-- Table Footer for Totals -->
           <tfoot>
             <tr>
-              <th><%= balanceKey %></th>
-              <!-- Display the 'Balance' key -->
-              <th style="color: red"><%= totalMinus %></th>
-              <!-- Display total Minus in red -->
-              <th><%= balanceKey %></th>
-              <!-- Display the 'Balance' key -->
-              <th style="color: green"><%= totalPlus %></th>
-              <!-- Display total Plus in green -->
+              <th style="color: red">Total</th>
+              <!-- Display total Minus (Left side) in Red -->
+              <th style="color: red"><%= totalLeft %></th>
+              <!-- Balance Key for Right Side -->
+              <th style="color: green">Total</th>
+              <!-- Display total Plus (Right side) in Green -->
+              <th style="color: green"><%= totalRight %></th>
             </tr>
           </tfoot>
         </table>

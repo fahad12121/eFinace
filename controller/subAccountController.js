@@ -5,9 +5,32 @@ const { Op } = require('sequelize');
 
 // Function to create a new sub account
 exports.createSubaccount = asyncHandler(async (req, res, next) => {
-    const { account_username, account_type_id, user_id, notes, company_id } = req.body;
+    const { account_username, account_type_id, user_id, notes, company_id, id } = req.body;
 
     try {
+        // ✅ If userId is provided → update the user's notes only
+        if (id) { 
+            const sub_Account = await subAccount.findByPk(id);
+
+            if (!sub_Account) {
+                return res.status(404).json({
+                    success: false,
+                    message: "User not found"
+                });
+            }
+
+            sub_Account.notes = notes;
+            sub_Account.account_username = account_username;
+            await sub_Account.save();
+
+            return res.status(200).json({
+                success: true,
+                message: "Sub Account updated successfully!",
+                sub_Account
+            });
+        }
+
+        // ✅ Else → Create new user
         // Create a new instance of subAccount with the provided data
         let newSubAccount = {
             account_username,

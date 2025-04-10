@@ -1,5 +1,5 @@
 {
-  "name": "Skote-NodeJS",
+  "name": "eFinance",
   "version": "4.2.0",
   "description": "",
   "main": "server.js",
@@ -7,7 +7,7 @@
     "clean": "rimraf public/assets",
     "build": "npm run clean && webpack --mode production",
     "dev": "webpack --mode development --watch",
-    "start": "nodemon app.js"
+    "start": "nodemon --watch views --watch routes --watch controller --ext js,ejs,json app.js"
   },
   "author": "",
   "license": "ISC",

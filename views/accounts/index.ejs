@@ -100,6 +100,7 @@
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
+                <input type="hidden" id="userId" name="userId" />
                 <label for="username" class="col-form-label">Title:</label>
                 <input
                   type="text"
@@ -204,7 +205,6 @@
                   name="user_id"
                 >
                   <option value="" selected disabled>--Select--</option>
-           
                 </select>
               </div>
             </div>
@@ -294,13 +294,6 @@
           });
 
           dataTable.draw();
-
-          // Add event listener to the "show" links
-          $(".show-company").click(function () {
-            const companyId = $(this).data("id");
-            localStorage.setItem("company_id", companyId);
-            showSidebarLinks(companyId);
-          });
         },
         error: function (error) {
           console.log(error);
@@ -344,7 +337,7 @@
             .empty()
             .append('<option value="" selected disabled>--Select--</option>');
 
-            users.forEach(function (user) {
+          users.forEach(function (user) {
             const option = `<option value="${user.id}">${user?.username}</option>`;
             $(".parentAccounts").append(option);
           });
@@ -363,17 +356,26 @@
       window.location.href = `/companies/${getCompanyIdFromUrl()}/accounts/${userId}`;
     });
 
-    $(document).on("click", ".edit-btn", function () {
-      const userId = $(this).data("id");
-
-      // Perform edit action, for example, open an edit modal
-      window.location.href = `/companies/${getCompanyIdFromUrl()}/accounts/userId`;
-    });
-
     // Modal logic
     const modal = new bootstrap.Modal(document.getElementById("userModal"), {
       keyboard: false,
     });
+
+    $(document).on("click", ".edit-btn", function () {
+      const userId = $(this).data("id");
+      // Set hidden input value
+      $("#userId").val(userId);
+      modal.show();
+      // Change modal title to "Edit Account"
+      $("#userModal .modal-dialog .modal-content h3").text("Edit Account");
+
+      // Hide the title field
+      // Hide the title field and remove required attribute
+      const usernameInput = $("#username");
+      usernameInput.closest(".col-md-6").hide();
+      usernameInput.removeAttr("required");
+    });
+
     const subAccountModal = new bootstrap.Modal(
       document.getElementById("subAccountModal"),
       { keyboard: false }
@@ -413,11 +415,13 @@
       const notes = $("#notes").val();
       const user_type = "User";
       const companyId = getCompanyIdFromUrl();
+      const userId = $("#userId").val(); // Get hidden value
 
       $.ajax({
         type: "POST",
         url: `/companies/${companyId}/users`,
         data: {
+          userId: userId, // Get hidden value
           company_id: companyId,
           username: username,
           user_type: user_type,
@@ -427,6 +431,15 @@
           fetchUsersTable(); // Update the users table after adding a new user
           modal.hide();
           $("#modalForm")[0].reset(); // Reset the form
+          $("#userId").val(""); // Clear hidden userId
+
+          // ✅ Show the username field again
+          const usernameField = $("#username").closest(".col-md-6");
+          usernameField.show();
+          $("#username").attr("required", true);
+
+          // ✅ Reset the modal title
+          $("#userModal .modal-dialog .modal-content h3").text("ADD Account");
         },
         error: function (error) {
           alert("Error submitting the user. Please try again.");
