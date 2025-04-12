@@ -3,23 +3,27 @@ const User = require("../models/UserModel");
 const SubAccount = require("../models/subAccounts");
 const AccountStatement = require("../models/AccountStatement");
 const Transaction = require("../models/Transaction");
+const sequelize = require('../db'); // Import the Sequelize instance
 exports.getTransaction = asyncHandler(async (req, res, next) => {
     try {
         // Extract company_id (user_id) and account_id from the URL
         const company_id = req.params.id;
 
         // Fetch the user and include related subAccounts and AccountType
-        const sender_accounts = await User.findOne({
+        const sender_accounts = await User.findAll({
             where: {
-                company_id: company_id  // company_id to filter the account under the specific company
+                company_id: company_id,
+                user_type: 'User',  // Only fetch users of type 'User'
             },
             include: [{
-                model: SubAccount,  // Include the associated subAccounts for the user
+                model: SubAccount,  // Include SubAccount association
+                required: false,     // Include users without subaccounts too
             }]
         });
-        const receiver_accounts = await User.findOne({
+        const receiver_accounts = await User.findAll({
             where: {
-                company_id: company_id  // company_id to filter the account under the specific company
+                company_id: company_id,
+                user_type: 'User', // company_id to filter the account under the specific company
             },
             include: [{
                 model: SubAccount,  // Include the associated subAccounts for the user
@@ -37,18 +41,16 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
     const t = await sequelize.transaction(); // Start a transaction
 
     try {
-        const { sender_sub_account_id, receiver_sub_account_id, amount, narration, transaction_date } = req.body.transaction;
+        const { sender_sub_account_id, receiver_sub_account_id, amount, narration, transaction_date } = req.body;
 
         // Fetch sender sub-account and user
         let sender_sub_account = await SubAccount.findByPk(sender_sub_account_id, { transaction: t });
-        if (!sender_sub_account) throw new Error('Sender SubAccount not found');
 
         let sender_user = await User.findByPk(sender_sub_account.user_id, { transaction: t });
-        if (!sender_user) throw new Error('Sender User not found');
+
 
         // Fetch receiver sub-account and user
         let receiver_sub_account = await SubAccount.findByPk(receiver_sub_account_id, { transaction: t });
-        if (!receiver_sub_account) throw new Error('Receiver SubAccount not found');
 
         let receiver_user = await User.findByPk(receiver_sub_account.user_id, { transaction: t });
         if (!receiver_user) throw new Error('Receiver User not found');
@@ -77,12 +79,13 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
                 other_user_id: receiver_sub_account.user_id,
                 transaction_id: transaction.id,
                 amount,
-                balance: sender_balance + parseFloat(amount),
+                balance: parseFloat(sender_balance) + parseFloat(amount),
                 narration,
                 transaction_date,
             },
             { transaction: t }
         );
+
 
         // Create receiver account statement
         const receiver_balance = await getAccountStatementBalance(receiver_sub_account.id);
@@ -94,25 +97,19 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
                 other_user_id: sender_sub_account.user_id,
                 transaction_id: transaction.id,
                 amount: -amount,
-                balance: receiver_balance + parseFloat(-amount),
+                balance: parseFloat(receiver_balance) - parseFloat(amount),
                 narration,
                 transaction_date,
             },
             { transaction: t }
         );
-
         // Update the sub-account balances and associate account statements
-        sender_sub_account.balance += parseFloat(amount);
-        receiver_sub_account.balance += parseFloat(-amount);
-        sender_sub_account.account_statements.push(sender_account_statement.id);
-        receiver_sub_account.account_statements.push(receiver_account_statement.id);
+        sender_sub_account.balance = parseFloat(sender_sub_account.balance) + parseFloat(amount);
+        receiver_sub_account.balance = parseFloat(receiver_sub_account.balance) - parseFloat(amount);
+        console.log('receiver', receiver_sub_account.balance);
 
         await sender_sub_account.save({ transaction: t });
         await receiver_sub_account.save({ transaction: t });
-
-        // Add the account statement references to the transaction
-        transaction.account_statements = [sender_account_statement.id, receiver_account_statement.id];
-        await transaction.save({ transaction: t });
 
         // Update sender and receiver user balances
         await updateUserBalance(sender_user, t);
@@ -148,7 +145,7 @@ const updateUserBalance = async (user, transaction) => {
 
     let total_balance = 0;
     for (let sub_account of user_sub_accounts) {
-        total_balance += sub_account.balance;
+        total_balance = parseFloat(sub_account.balance);
     }
 
     user.balance = total_balance;

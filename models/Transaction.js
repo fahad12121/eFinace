@@ -86,5 +86,12 @@ const Transaction = sequelize.define('Transaction', {
     tableName: 'transactions', // Specify the table name
 });
 
+// Associations
+Transaction.associate = (models) => {
+    Transaction.belongsTo(models.SubAccount, { foreignKey: 'sender_sub_account_id' }); // Transaction has one sender SubAccount
+    Transaction.belongsTo(models.SubAccount, { foreignKey: 'receiver_sub_account_id' }); // Transaction has one receiver SubAccount
+    Transaction.hasMany(models.AccountStatement, { foreignKey: 'transaction_id' }); // Transaction has many AccountStatements
+};
+
 
 module.exports = Transaction;

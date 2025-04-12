@@ -36,14 +36,14 @@ exports.login = asyncHandler(async (req, res, next) => {
                 const token = jwt.sign(
                     { id: user.id, username: user.username }, // Payload with user details
                     'secret', // Your secret key
-                    { expiresIn: '30d' } // Expiration time for the token
+                    { expiresIn: '90d' } // Expiration time for the token
                 );
 
                 // Store the token in a cookie
                 res.cookie('token', token, {
                     httpOnly: true, // Ensure cookie can't be accessed from client-side JavaScript
                     secure: process.env.NODE_ENV === 'production', // Set to true if using https
-                    maxAge: 3600000 // Token expiration time (in ms), matches the JWT expiration
+                    maxAge: 90 * 24 * 60 * 60 * 1000 // 90 days in milliseconds 
                 });
 
                 // Return response with success

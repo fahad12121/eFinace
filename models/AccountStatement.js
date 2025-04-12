@@ -100,5 +100,11 @@ const accountStatment = sequelize.define('accountStatment', {
     tableName: 'account_statements', // Specify the table name
 });
 
+  // Associations
+  accountStatment.associate = (models) => {
+    accountStatment.belongsTo(models.SubAccount, { foreignKey: 'sub_account_id' });
+    accountStatment.belongsTo(models.Transaction, { foreignKey: 'transaction_id' });
+  };
+
 
 module.exports = accountStatment;

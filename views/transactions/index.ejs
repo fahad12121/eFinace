@@ -91,15 +91,20 @@
                   style="width: 100%"
                   id="sender_sub_account_id"
                   name="sender_sub_account_id"
+                  onchange="updateReceiverOptions(); showParentBalance();"
                 >
                   <option value="" selected disabled>--Select--</option>
                   <!-- Options will be populated dynamically -->
-                  <% sender_accounts?.subAccounts?.forEach(function(subAccount) {
-                  %>
-                  <option value="<%= subAccount.id %>">
+                  <% sender_accounts.forEach(function(user) {
+                  user.subAccounts.forEach(function(subAccount) { %>
+                  <option
+                    value="<%= subAccount.id %>"
+                    data-parent_balance="<%= user.balance %>"
+                    data-parent_name="<%= user.username %>"
+                  >
                     <%= subAccount.account_username %>
                   </option>
-                  <% }) %>
+                  <% }) }) %>
                 </select>
               </div>
             </div>
@@ -112,6 +117,9 @@
                   class="form-control"
                   id="amount"
                   name="amount"
+                  min="0"
+                  oninput="updateBalances()"
+                  disabled
                 />
               </div>
             </div>
@@ -127,18 +135,36 @@
                   style="width: 100%"
                   id="receiver_sub_account_id"
                   name="receiver_sub_account_id"
+                  onchange="showReceiverParentBalance(); enableAmountInput();"
                 >
                   <option value="" selected disabled>--Select--</option>
                   <!-- Options will be populated dynamically -->
-                  <% receiver_accounts?.subAccounts?.forEach(function(subAccount)
-                  { %>
-                  <option value="<%= subAccount.id %>">
+                  <% receiver_accounts.forEach(function(user) {
+                  user.subAccounts.forEach(function(subAccount) { %>
+                  <option
+                    value="<%= subAccount.id %>"
+                    data-parent_balance="<%= user.balance %>"
+                    data-parent_name="<%= user.username %>"
+                  >
                     <%= subAccount.account_username %>
                   </option>
-                  <% }) %>
+                  <% }) }) %>
                 </select>
               </div>
             </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4" id="parent_sender" style="display: none">
+              <span class="ml-3" id="sender_parent_name"></span><br />
+              <span class="ml-3" id="sender_parent_balance"></span>
+            </div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4" id="parent_receiver" style="display: none">
+              <span class="ml-3" id="receiver_parent_name"></span><br />
+              <span class="ml-3" id="receiver_parent_balance"></span>
+            </div>
+          </div>
+          <div class="row">
             <div class="col-md-4">
               <div class="mb-3">
                 <label for="narration" class="col-form-label">Narration</label>
@@ -197,6 +223,158 @@
 <!-- Select 2 -->
 <script src="/assets/libs/select2/js/select2.min.js"></script>
 <script>
+  // Store original balances for sender and receiver
+  let originalSenderBalance = 0;
+  let originalReceiverBalance = 0;
+  let oldAmount = 0;
+
+  // Function to update the sender's and receiver's balance when the amount is entered
+  function updateBalances() {
+    const amountInput = document.getElementById("amount");
+    let amount = parseFloat(amountInput.value);
+
+    if (isNaN(amount) || amount <= 0) {
+      amount = 0;
+    }
+
+    const senderSelect = document.getElementById("sender_sub_account_id");
+    const receiverSelect = document.getElementById("receiver_sub_account_id");
+
+    const senderOption = senderSelect.options[senderSelect.selectedIndex];
+    const receiverOption = receiverSelect.options[receiverSelect.selectedIndex];
+
+    const senderBalance = parseFloat(
+      senderOption.getAttribute("data-parent_balance")
+    );
+    const receiverBalance = parseFloat(
+      receiverOption.getAttribute("data-parent_balance")
+    );
+
+    if (senderBalance < amount) {
+      alert("Insufficient balance in sender account");
+      return;
+    }
+
+    const newSenderBalance = (senderBalance - oldAmount) + amount;
+    const newReceiverBalance = (receiverBalance + oldAmount) - amount;
+    oldAmount = amount;
+
+    // Update balance attributes
+    senderOption.setAttribute(
+      "data-parent_balance",
+      newSenderBalance.toFixed(2)
+    );
+    receiverOption.setAttribute(
+      "data-parent_balance",
+      newReceiverBalance.toFixed(2)
+    );
+
+    // Update visible balances
+    document.getElementById("sender_parent_balance").innerText =
+      "Current Balance: " + newSenderBalance.toFixed(2);
+    document.getElementById("receiver_parent_balance").innerText =
+      "Current Balance: " + newReceiverBalance.toFixed(2);
+  }
+
+  // Function to show the sender's parent balance
+  function showParentBalance() {
+    const selectElement = document.getElementById("sender_sub_account_id");
+    const parentSender = document.getElementById("parent_sender");
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const parentBalance = selectedOption.getAttribute("data-parent_balance");
+    const parentName = selectedOption.getAttribute("data-parent_name");
+
+    parentSender.style.display = "block";
+
+    // Store the original balance to reset later
+    originalSenderBalance = parseFloat(parentBalance);
+
+    // Display the sender's parent balance in the span
+    document.getElementById("sender_parent_balance").innerText =
+      "Current Balance: " + parentBalance;
+    document.getElementById("sender_parent_name").innerText =
+      "Parent Account: " + parentName;
+
+    // Enable the receiver options once sender is selected
+    updateReceiverOptions();
+  }
+
+  // Function to show the receiver's parent balance
+  function showReceiverParentBalance() {
+    const selectElement = document.getElementById("receiver_sub_account_id");
+    const parentReceiver = document.getElementById("parent_receiver");
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const parentBalance = selectedOption.getAttribute("data-parent_balance");
+    const parentName = selectedOption.getAttribute("data-parent_name");
+
+    parentReceiver.style.display = "block";
+
+    // Store the original balance to reset later
+    originalReceiverBalance = parseFloat(parentBalance);
+
+    // Display the receiver's parent balance in the span
+    document.getElementById("receiver_parent_balance").innerText =
+      "Current Balance: " + parentBalance;
+    document.getElementById("receiver_parent_name").innerText =
+      "Parent Account: " + parentName;
+  }
+
+  // Function to update the receiver dropdown options based on selected sender
+  function updateReceiverOptions() {
+    const senderSelect = document.getElementById("sender_sub_account_id");
+    const receiverSelect = document.getElementById("receiver_sub_account_id");
+    const senderValue = senderSelect.value;
+
+    // Get all receiver options
+    const receiverOptions = receiverSelect.querySelectorAll("option");
+
+    // Enable all options by default
+    receiverOptions.forEach((option) => {
+      option.disabled = false;
+    });
+
+    // Disable the selected sender's subaccount in the receiver dropdown
+    receiverOptions.forEach((option) => {
+      if (option.value === senderValue) {
+        option.disabled = true;
+      }
+    });
+  }
+
+  // Function to enable the amount input field when both sender and receiver are selected
+  function enableAmountInput() {
+    const senderSelect = document.getElementById("sender_sub_account_id");
+    const receiverSelect = document.getElementById("receiver_sub_account_id");
+    const amountInput = document.getElementById("amount");
+
+    // Enable the amount input if both sender and receiver are selected
+    if (senderSelect.value && receiverSelect.value) {
+      amountInput.disabled = false;
+    } else {
+      amountInput.disabled = true;
+    }
+
+    // Reset the parent balance if the amount is cleared
+    if (!amountInput.value) {
+      resetParentBalances();
+    }
+  }
+
+  // Function to reset parent balances if amount input is cleared
+  function resetParentBalances() {
+    const senderSelect = document.getElementById("sender_sub_account_id");
+    const receiverSelect = document.getElementById("receiver_sub_account_id");
+
+    const senderOption = senderSelect.options[senderSelect.selectedIndex];
+    const receiverOption = receiverSelect.options[receiverSelect.selectedIndex];
+
+    // Reset the displayed balance in the parent balance sections to their original values
+    document.getElementById("sender_parent_balance").innerText =
+      "Current Balance: " + originalSenderBalance;
+    document.getElementById("receiver_parent_balance").innerText =
+      "Current Balance: " + originalReceiverBalance;
+  }
+
   $(document).ready(function () {
     // Check if a company_id exists in localStorage on page load
     var storedCompanyId = localStorage.getItem("company_id");
