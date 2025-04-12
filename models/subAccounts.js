@@ -77,4 +77,13 @@ const subAccount = sequelize.define('subAccount', {
 // subAccount.belongsTo(User, { foreignKey: 'user_id' });
 subAccount.belongsTo(AccountType, { foreignKey: 'account_type_id' });
 
+// Associations
+subAccount.associate = (models) => {
+    subAccount.belongsTo(models.User, { foreignKey: 'user_id' }); // subAccount belongs to User
+    subAccount.hasMany(models.AccountStatement, { foreignKey: 'sub_account_id' }); // One subAccount has many AccountStatements
+    subAccount.hasMany(models.Transaction, { foreignKey: 'sender_sub_account_id' }); // One subAccount can be a sender in many transactions
+    subAccount.hasMany(models.Transaction, { foreignKey: 'receiver_sub_account_id' }); // One subAccount can be a receiver in many transactions
+};
+
+
 module.exports = subAccount;

@@ -1,10 +1,12 @@
 PORT = 4100
-
+const config = require('./config/config.json');
 // db.js
 const { Sequelize } = require('sequelize'); 
 
+const dbConfig = config['production'];
+
 // Create a new Sequelize instance and connect to the MySQL database
-const sequelize = new Sequelize('eFinance', 'root', '', {
+const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
     host: 'localhost',
     dialect: 'mysql',
     logging: false, // Disable logging for queries
