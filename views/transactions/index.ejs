@@ -261,18 +261,18 @@
     // Update balance attributes
     senderOption.setAttribute(
       "data-parent_balance",
-      newSenderBalance.toFixed(2)
+      newSenderBalance
     );
     receiverOption.setAttribute(
       "data-parent_balance",
-      newReceiverBalance.toFixed(2)
+      newReceiverBalance
     );
 
     // Update visible balances
     document.getElementById("sender_parent_balance").innerText =
-      "Current Balance: " + newSenderBalance.toFixed(2);
+      "Current Balance: " + newSenderBalance;
     document.getElementById("receiver_parent_balance").innerText =
-      "Current Balance: " + newReceiverBalance.toFixed(2);
+      "Current Balance: " + newReceiverBalance;
   }
 
   // Function to show the sender's parent balance

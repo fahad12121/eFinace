@@ -145,17 +145,23 @@ const getAccountStatementBalance = async (sub_account_id) => {
 
 // Helper function to update user balance
 const updateUserBalance = async (user, transaction) => {
+    // Fetch all sub-accounts associated with the user
     const user_sub_accounts = await SubAccount.findAll({
         where: { user_id: user.id },
         transaction,
     });
 
-    let total_balance = 0;
+    let total_balance = 0;  // Initialize total_balance to 0
+
+    // Iterate through all sub-accounts to accumulate their balances
     for (let sub_account of user_sub_accounts) {
-        total_balance = parseFloat(sub_account.balance);
+        total_balance += parseFloat(sub_account.balance);  // Add each sub-account's balance to total_balance
     }
 
+    // Update the user's balance with the accumulated total_balance
     user.balance = total_balance;
+
+    // Save the user with the updated balance within the transaction
     await user.save({ transaction });
 };
 
