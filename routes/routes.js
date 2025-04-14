@@ -79,8 +79,12 @@ module.exports = function (route) {
 
     //Transaction Route
     route.get('/companies/:id/transactions', TransactionController.getTransaction);
-    route.post('/companies/:id/transactions', TransactionController.createTransaction);
+    route.post('/companies/:id/transactißons', TransactionController.createTransaction);
     route.get('/companies/:id/transactions/ajax', TransactionController.getTransactionAjax);
+
+    //statement routes
+    route.get('/companies/:id/accounts/:account_id/account_statements', TransactionController.getSubAccountStatement);
+    route.get('/companies/:id/accounts/:account_id/account_statements/ajax', TransactionController.getSubAccountStatementAJax);
     //500
     route.get('/error', (req, res, next) => {
         res.render('auth/auth-500', { title: '500 Error', layout: 'layouts/layout-without-nav' });

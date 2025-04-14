@@ -36,7 +36,7 @@ const User = sequelize.define('User', {
         defaultValue: 'User',
     },
     balance: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.DECIMAL(20,2),
         default: 0,
     },
     company_id: {

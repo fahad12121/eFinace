@@ -1,0 +1,353 @@
+<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
+{"title":"Account Detail"}) %>
+
+<!-- DataTables -->
+<link
+  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+<!-- Responsive datatable examples -->
+<link
+  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
+/>
+
+<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
+"Account Statement", "title" : "Account Statement" }) %>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="row card-title mt-3">
+        <div class="col-md-8">
+          <h4 class="card-title">Account Statement</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="row card-title mt-3">
+        <div class="col-md-7">
+          <h4 class="card-title">Account Statements</h4>
+        </div>
+        <div class="col-md-3">
+          <input
+            type="text"
+            name="datefilter"
+            class="form-control"
+            value=""
+            autocomplete="off"
+          />
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <table
+          id="transaction"
+          class="table table-bordered dt-responsive nowrap w-100"
+        >
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Account</th>
+              <th>Sub-Account</th>
+              <th>Narration</th>
+              <th>Minus</th>
+              <th>Plus</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+          <tfoot>
+            <tr>
+              <th colspan="4">Total</th>
+              <th id="total_minus">0</th>
+              <th id="total_plus">0</th>
+              <th id="total_balance">0</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+</div>
+<%- contentFor('FooterJs') %>
+<!-- FooterJs -->
+<script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+<script src="/assets/js/pages/datatables.init.js"></script>
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
+></script>
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
+></script>
+<script>
+  $(function () {
+    $('input[name="datefilter"]').daterangepicker({
+      autoUpdateInput: false,
+      locale: {
+        cancelLabel: "Clear",
+      },
+    });
+
+    $('input[name="datefilter"]').on(
+      "apply.daterangepicker",
+      function (ev, picker) {
+        $(this).val(
+          picker.startDate.format("MM/DD/YYYY") +
+            " - " +
+            picker.endDate.format("MM/DD/YYYY")
+        );
+      }
+    );
+
+    $('input[name="datefilter"]').on(
+      "cancel.daterangepicker",
+      function (ev, picker) {
+        $(this).val("");
+      }
+    );
+  });
+</script>
+<script>
+  $(document).ready(function () {
+    // Initialize DataTable
+    var dataTable = $("#transaction").DataTable({
+      pageLength: 30,
+      lengthMenu: [
+        [30, 50, 100, -1],
+        [30, 50, 100, "All"],
+      ],
+      paging: true,
+      searching: true,
+      ordering: true,
+      autoWidth: false,
+      rowCallback: function (row, data, index, start, end, display) {
+        // Change color of the 'Balance' column based on value
+        var balance = parseFloat(data[6]); // Assuming 'Balance' is the 7th column (index 6)
+
+        if (balance > 0) {
+          // Green color for positive balance
+          $(row).find("td:eq(6)").css("color", "#008001");
+          $(row).find("td:eq(5)").css("color", "#008001");
+        } else if (balance < 0) {
+          // Red color for negative balance
+          $(row).find("td:eq(6)").css("color", "red");
+          $(row).find("td:eq(4)").css("color", "red");
+
+        }
+
+
+      },
+      footerCallback: function (row, data, start, end, display) {
+        var api = this.api();
+
+        // Calculate sum for "Minus", "Plus", and "Balance" columns
+        var totalMinus = api
+          .column(4, { page: "current" }) // Column index for "Minus"
+          .data()
+          .reduce(function (a, b) {
+            return parseFloat(a) + parseFloat(b);
+          }, 0);
+
+        var totalPlus = api
+          .column(5, { page: "current" }) // Column index for "Plus"
+          .data()
+          .reduce(function (a, b) {
+            return parseFloat(a) + parseFloat(b);
+          }, 0);
+
+        var totalBalance = api
+          .column(6, { page: "current" }) // Column index for "Balance"
+          .data()
+          .reduce(function (a, b) {
+            return parseFloat(a) + parseFloat(b);
+          }, 0);
+
+        // Update footer with calculated totals
+        $(api.column(4).footer()).html(totalMinus.toFixed(2)); // Minus total
+        $(api.column(5).footer()).html(totalPlus.toFixed(2)); // Plus total
+        $(api.column(6).footer()).html(totalBalance.toFixed(2)); // Balance total
+
+        // Change footer color based on the total value
+        // Change the color of the footer cell for 'Minus' column
+        if (totalMinus < 0) {
+          $(api.column(4).footer()).css("color", "red");
+        } else {
+          $(api.column(4).footer()).css("color", "red"); // Green for positive total
+        }
+
+        // Change the color of the footer cell for 'Plus' column
+        if (totalPlus >= 0) {
+          $(api.column(5).footer()).css("color", "#008001");
+        } else {
+          $(api.column(5).footer()).css("color", "red"); // Red for negative total
+        }
+
+        // Change the color of the footer cell for 'Balance' column
+        if (totalBalance > 0) {
+          $(api.column(6).footer()).css("color", "#008001");
+        } else {
+          $(api.column(6).footer()).css("color", "red");
+        }
+      },
+    });
+    let subAccountsArray = [];
+    const get_opening_balance = (subAccountsArray) => {
+      let opening_balance_date = "";
+      const dateRange = $('input[name="datefilter"]').val(); // Get the date range value from the input
+      const dates = dateRange.split(" - "); // Split the date range into start and end dates
+      const startDate = dates[0];
+      const endDate = dates[1];
+
+      if (!startDate || !endDate) {
+        opening_balance_date = new Date().toISOString().split("T")[0];
+      } else {
+        opening_balance_date = startDate.split("T")[0];
+      }
+
+      let opening_balance = 0; // Default balance
+      if (subAccountsArray?.length > 0) {
+        let opening_bal_row = subAccountsArray[0];
+        // Assuming balance and amount are stored directly as numbers or strings that can be converted to numbers
+        opening_balance =
+          parseFloat(opening_bal_row.account_statement_balance) -
+          parseFloat(opening_bal_row.account_statement_amount);
+      }
+
+      return [opening_balance, opening_balance_date];
+    };
+
+    const get_col_total = (col_name) => {
+      let col_total = 0;
+      let open_bal = parseFloat(get_opening_balance()[0]);
+
+      // Assuming sub_account.account_statements is available and contains amounts
+      sub_account?.account_statements?.forEach((single_val) => {
+        if (col_name === "take" && parseFloat(single_val.amount) < 0) {
+          col_total += parseFloat(single_val.amount);
+        } else if (col_name === "give" && parseFloat(single_val.amount) > 0) {
+          col_total += parseFloat(single_val.amount);
+        }
+      });
+
+      if (col_name === "take" && open_bal < 0) {
+        col_total += open_bal;
+      } else if (col_name === "give" && open_bal > 0) {
+        col_total += open_bal;
+      }
+
+      return col_total;
+    };
+
+    // Add opening balance row to DataTable
+    function updateOpeningBalanceRow() {
+      dataTable.row.add([
+        get_opening_balance(subAccountsArray)[1],
+        "O/B",
+        "",
+        "Opening Balance",
+        parseFloat(get_opening_balance(subAccountsArray)[0]) < 0
+          ? get_opening_balance(subAccountsArray)[0]
+          : 0,
+        parseFloat(get_opening_balance(subAccountsArray)[0]) > 0
+          ? get_opening_balance(subAccountsArray)[0]
+          : 0,
+        get_opening_balance(subAccountsArray)[0],
+      ]);
+
+      dataTable.draw(); // Refresh the DataTable to reflect new rows
+    }
+    const storedCompanyId = localStorage.getItem("company_id");
+
+    function getAccountIdFromUrl() {
+      return window.location.pathname.split("/")[4]; // Assuming URL format is /companies/:id
+    }
+    // Function to fetch the account statements from the API
+    function fetchAccountStatement(startDate, endDate) {
+      $.ajax({
+        type: "GET",
+        url: `/companies/${storedCompanyId}/accounts/${getAccountIdFromUrl()}/account_statements/ajax`,
+        data: {
+          startDate: startDate, // Pass start date from the input
+          endDate: endDate, // Pass end date from the input
+          account_id: getAccountIdFromUrl(),
+        },
+        success: function (response) {
+          console.log(response);
+          subAccountsArray = response.sub_account;
+          // Clear DataTable before adding new data
+          dataTable.clear();
+
+          // Add each account statement to the DataTable
+          response.sub_account.forEach(function (account) {
+            // Add rows with the appropriate data
+            dataTable.row.add([
+              account.account_statement_date, // Example date from the statement
+              account.receiver_user, // Example sub-account username
+              account.receiver_sub_account_username, // Example narration
+              account.account_statement_narration, // Example narration
+              account.account_statement_amount < 0
+                ? account.account_statement_amount
+                : 0, // Minus
+              account.account_statement_amount > 0
+                ? account.account_statement_amount
+                : 0, // Plus
+              account.account_statement_balance, // Balance
+            ]);
+          });
+
+          // After the data is populated, update the opening balance row
+          updateOpeningBalanceRow();
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+
+    // Search Statement handler
+    function SearchStatement() {
+      const dateRange = $('input[name="datefilter"]').val(); // Get the date range value from the input
+      if (dateRange) {
+        const dates = dateRange.split(" - "); // Split the date range into start and end dates
+        const startDate = dates[0];
+        const endDate = dates[1];
+
+        fetchAccountStatement(startDate, endDate); // Fetch account statement for the date range
+      } else {
+        // If no date range selected, fetch the current day's account statement
+        fetchAccountStatement("", ""); // Or you can define a default date range
+      }
+    }
+
+    // Bind the SearchStatement function to the button click event
+    $("button[type='submit']").on("click", function () {
+      SearchStatement(); // Trigger search when the user clicks the button
+    });
+
+    if (storedCompanyId) {
+      showSidebarLinks(storedCompanyId);
+    }
+  });
+</script>

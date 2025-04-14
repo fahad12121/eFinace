@@ -52,7 +52,7 @@ module.exports = {
         allowNull: true,  // Allow account_username to be nullable
       },
       balance: {
-        type: Sequelize.DECIMAL,
+        type: Sequelize.DECIMAL(20,2),
         defaultValue: 0,  // Default balance to 0
       },
       notes: {

@@ -87,6 +87,13 @@
                 >
                   <i class="fas fa-pencil-alt"></i>
                 </button>
+                <button
+                  class="btn btn-sm btn-primary st-btn"
+                  data-id="<%= account.id %>"
+                  title="Account Statement"
+                >
+                  Acc. St.
+                </button>
               </td>
             </tr>
             <% }) %>
@@ -218,6 +225,11 @@
       }
       // Perform view action, for example, redirect to a view page
       subAccountModal.show();
+    });
+
+    $(document).on("click", ".st-btn", function () {
+      const userId = $(this).data("id");
+      window.location.href = `/companies/${getCompanyIdFromUrl()}/accounts/${userId}/account_statements`;
     });
 
     $("#subAccountModal").on("hidden.bs.modal", function () {

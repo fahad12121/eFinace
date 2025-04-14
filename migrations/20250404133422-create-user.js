@@ -38,7 +38,7 @@ module.exports = {
         defaultValue: 'User',
       },
       balance: {
-        type: Sequelize.DECIMAL,
+        type: Sequelize.DECIMAL(20,2),
         defaultValue: 0,
       },
       company_id: {

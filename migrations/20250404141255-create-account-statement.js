@@ -69,7 +69,7 @@ module.exports = {
         allowNull: true,  // Allow null if not provided
       },
       balance: {
-        type: Sequelize.DECIMAL,
+        type: Sequelize.DECIMAL(20,2),
         defaultValue: 0,  // Default to 0
       },
       narration: {

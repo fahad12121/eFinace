@@ -264,6 +264,73 @@ exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
     }
 });
 
+exports.getSubAccountStatement = asyncHandler(async (req, res, next) => {
+    try {
+    
+
+        res.render('accounts/account_statement');
+
+    } catch (error) {
+        next(error); // Handle errors
+    }
+});
+
+exports.getSubAccountStatementAJax = asyncHandler(async (req, res, next) => {
+    try {
+        console.log(req.query);
+        const { start_date, end_date, account_id } = req.query;
+        const subAccountId = account_id; // Get sub_account_id from request parameters
+        let whereClause = `sa.id = ${subAccountId}`; // Condition to find sub_account by ID
+
+        // If start_date and end_date are provided, filter account statements by those dates
+        if (start_date && end_date) {
+            const startDate = new Date(start_date);
+            startDate.setHours(0, 0, 0, 0); // Set start date to the beginning of the day
+            const endDate = new Date(end_date);
+            endDate.setHours(23, 59, 59, 999); // Set end date to the end of the day
+
+            whereClause += ` AND asn.transaction_date >= '${startDate.toISOString().split('T')[0]}' 
+                             AND asn.transaction_date <= '${endDate.toISOString().split('T')[0]}'`;
+        }
+
+        // SQL query to fetch sub_account and account_statements with user information
+        const sqlQuery = `
+            SELECT 
+                sa.account_username AS sub_account_username, 
+                sa.company_id AS sub_account_company_id,
+                asn.id AS account_statement_id,
+                asn.transaction_date AS account_statement_date,
+                asn.amount AS account_statement_amount,
+                asn.balance AS account_statement_balance,
+                asn.narration AS account_statement_narration,
+                su.username AS sender_user,
+                ru.username AS receiver_user,
+                rsa.account_username AS receiver_sub_account_username
+            FROM sub_accounts AS sa
+            LEFT JOIN account_statements AS asn ON asn.sub_account_id = sa.id
+            LEFT JOIN users AS su ON su.id = sa.user_id  -- Sender user details
+            LEFT JOIN sub_accounts AS rsa ON rsa.id = asn.other_sub_account_id  -- Receiver sub-account
+            LEFT JOIN users AS ru ON ru.id = rsa.user_id  -- Receiver user details
+            WHERE ${whereClause}
+        `;
+
+        // Execute the raw SQL query
+        const subAccountDetails = await sequelize.query(sqlQuery, {
+            type: sequelize.QueryTypes.SELECT, // SELECT query type
+        });
+
+        // Return the formatted sub account details
+        res.status(200).json({
+            success: true,
+            sub_account: subAccountDetails
+        });
+
+    } catch (error) {
+        next(error); // Handle errors
+    }
+});
+
+
 
 
 
