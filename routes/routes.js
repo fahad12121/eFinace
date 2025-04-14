@@ -80,6 +80,7 @@ module.exports = function (route) {
     //Transaction Route
     route.get('/companies/:id/transactions', TransactionController.getTransaction);
     route.post('/companies/:id/transactions', TransactionController.createTransaction);
+    route.get('/companies/:id/transactions/ajax', TransactionController.getTransactionAjax);
     //500
     route.get('/error', (req, res, next) => {
         res.render('auth/auth-500', { title: '500 Error', layout: 'layouts/layout-without-nav' });
