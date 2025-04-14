@@ -3,6 +3,8 @@ const config = require('./config/config.json');
 // db.js
 const { Sequelize } = require('sequelize'); 
 
+//development
+//production
 const dbConfig = config['production'];
 
 // Create a new Sequelize instance and connect to the MySQL database

@@ -73,6 +73,8 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
             { transaction: t }
         );
 
+        console.log('transaction', transaction);
+
         // Create sender account statement
         const sender_balance = await getAccountStatementBalance(sender_sub_account.id);
         const sender_account_statement = await AccountStatement.create(
@@ -91,6 +93,8 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
             },
             { transaction: t }
         );
+
+        console.log('sender_account_statement', sender_account_statement);
 
 
         // Create receiver account statement
@@ -111,6 +115,7 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
             },
             { transaction: t }
         );
+        console.log('receiver_account_statement', receiver_account_statement);
         // Update the sub-account balances and associate account statements
         sender_sub_account.balance = parseFloat(sender_sub_account.balance) + parseFloat(amount);
         receiver_sub_account.balance = parseFloat(receiver_sub_account.balance) - parseFloat(amount);
@@ -157,6 +162,8 @@ const updateUserBalance = async (user, transaction) => {
     for (let sub_account of user_sub_accounts) {
         total_balance += parseFloat(sub_account.balance);  // Add each sub-account's balance to total_balance
     }
+
+    console.log('total_balance', total_balance);
 
     // Update the user's balance with the accumulated total_balance
     user.balance = total_balance;
