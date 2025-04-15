@@ -79,7 +79,7 @@ module.exports = function (route) {
 
     //Transaction Route
     route.get('/companies/:id/transactions', TransactionController.getTransaction);
-    route.post('/companies/:id/transactißons', TransactionController.createTransaction);
+    route.post('/companies/:id/transactions', TransactionController.createTransaction);
     route.get('/companies/:id/transactions/ajax', TransactionController.getTransactionAjax);
 
     //statement routes
