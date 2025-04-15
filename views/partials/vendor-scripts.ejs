@@ -52,3 +52,43 @@
     $("#usersLink").addClass("d-none");
   }
 </script>
+<script>
+  // Ensure the script runs after the DOM is fully loaded
+  document.addEventListener("DOMContentLoaded", function () {
+    const logoutLink = document.getElementById("logoutLink");
+
+    // Check if the logoutLink element exists
+    if (logoutLink) {
+      logoutLink.addEventListener("click", async function (event) {
+        event.preventDefault(); // Prevent the default action (navigation)
+
+        try {
+          // Send a logout request to the server
+          const response = await fetch("/logout", {
+            method: "POST",
+            credentials: "same-origin", // Ensure the cookie is sent along with the request
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            // Handle successful logout, such as redirecting the user to the home page or login page
+            window.location.href = "/"; // Redirect to login page or home page
+          } else {
+            // Handle errors, for example show a message if something went wrong
+            alert(data.message || "Logout failed!");
+          }
+        } catch (error) {
+          // Handle network or other errors
+          console.error("Error logging out:", error);
+          alert("Something went wrong while logging out.");
+        }
+      });
+    } else {
+      // console.error("Logout link not found in the DOM");
+    }
+  });
+</script>

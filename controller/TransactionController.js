@@ -266,7 +266,7 @@ exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
 
 exports.getSubAccountStatement = asyncHandler(async (req, res, next) => {
     try {
-    
+
 
         res.render('accounts/account_statement');
 
@@ -277,7 +277,6 @@ exports.getSubAccountStatement = asyncHandler(async (req, res, next) => {
 
 exports.getSubAccountStatementAJax = asyncHandler(async (req, res, next) => {
     try {
-        console.log(req.query);
         const { start_date, end_date, account_id } = req.query;
         const subAccountId = account_id; // Get sub_account_id from request parameters
         let whereClause = `sa.id = ${subAccountId}`; // Condition to find sub_account by ID
@@ -291,6 +290,20 @@ exports.getSubAccountStatementAJax = asyncHandler(async (req, res, next) => {
 
             whereClause += ` AND asn.transaction_date >= '${startDate.toISOString().split('T')[0]}' 
                              AND asn.transaction_date <= '${endDate.toISOString().split('T')[0]}'`;
+        } else {
+            // If no start_date or end_date is provided, use the current date
+            const currentDate = new Date();
+            
+            // Adjust the date for the local timezone
+            const timezoneOffset = currentDate.getTimezoneOffset(); // Get timezone offset in minutes
+            currentDate.setMinutes(currentDate.getMinutes() - timezoneOffset); // Adjust the time to the local timezone
+            // currentDate.setHours(0, 0, 0, 0); // Set current date to the beginning of the day (local midnight)
+        
+            const currentDateString = currentDate.toISOString().split('T')[0]; // Get the current date string (YYYY-MM-DD)
+        
+            console.log(currentDateString); // This should print today's date in your local timezone
+        
+            whereClause += ` AND asn.transaction_date = '${currentDateString}'`;
         }
 
         // SQL query to fetch sub_account and account_statements with user information
@@ -318,6 +331,8 @@ exports.getSubAccountStatementAJax = asyncHandler(async (req, res, next) => {
         const subAccountDetails = await sequelize.query(sqlQuery, {
             type: sequelize.QueryTypes.SELECT, // SELECT query type
         });
+
+        console.log(subAccountDetails);
 
         // Return the formatted sub account details
         res.status(200).json({

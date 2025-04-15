@@ -259,14 +259,8 @@
     oldAmount = amount;
 
     // Update balance attributes
-    senderOption.setAttribute(
-      "data-parent_balance",
-      newSenderBalance
-    );
-    receiverOption.setAttribute(
-      "data-parent_balance",
-      newReceiverBalance
-    );
+    senderOption.setAttribute("data-parent_balance", newSenderBalance);
+    receiverOption.setAttribute("data-parent_balance", newReceiverBalance);
 
     // Update visible balances
     document.getElementById("sender_parent_balance").innerText =
@@ -472,6 +466,8 @@
           //   alert("Company submitted successfully!");
           modal.hide(); // Hide the modal after successful submission
           $("#modalForm")[0].reset(); // Reset the form
+          document.getElementById("parent_sender").style.display = "none";
+          document.getElementById("parent_receiver").style.display = "none";
           fetchTransactionTable();
         },
         error: function (error) {

@@ -65,6 +65,21 @@ exports.login = asyncHandler(async (req, res, next) => {
     });
 });
 
+exports.logout = asyncHandler(async (req, res, next) => {
+    // Clear the token cookie by setting its expiration to a past date
+    res.cookie('token', '', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Make sure it's set to true if in production (HTTPS)
+        expires: new Date(0), // Set the expiration date to a past date to invalidate the cookie
+    });
+
+    // Send the response back to the client
+    res.status(200).json({
+        success: true,
+        message: 'Logged out successfully',
+    });
+});
+
 // get token from model, create cokie and send response
 const sendTokenResponse = (user, statusCode, res) => {
     // create token

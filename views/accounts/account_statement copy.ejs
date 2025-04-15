@@ -13,6 +13,11 @@
   rel="stylesheet"
   type="text/css"
 />
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
+/>
 
 <%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
 "Account Statement", "title" : "Account Statement" }) %>
@@ -97,14 +102,47 @@
 <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
 <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 <script src="/assets/js/pages/datatables.init.js"></script>
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
+></script>
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
+></script>
+<script>
+  $(function () {
+    $('input[name="datefilter"]').daterangepicker({
+      autoUpdateInput: false,
+      locale: {
+        cancelLabel: "Clear",
+      },
+    });
+
+    $('input[name="datefilter"]').on(
+      "apply.daterangepicker",
+      function (ev, picker) {
+        $(this).val(
+          picker.startDate.format("MM/DD/YYYY") +
+            " - " +
+            picker.endDate.format("MM/DD/YYYY")
+        );
+      }
+    );
+
+    $('input[name="datefilter"]').on(
+      "cancel.daterangepicker",
+      function (ev, picker) {
+        $(this).val("");
+      }
+    );
+  });
+</script>
 <script>
   $(document).ready(function () {
     // Initialize DataTable
     var dataTable = $("#transaction").DataTable({
-      order: [
-        [3, "desc"],
-        [0, "asc"],
-      ],
+      order:[[3, 'desc'], [0, 'asc']],
       pageLength: 30,
       lengthMenu: [
         [30, 50, 100, -1],
@@ -184,8 +222,10 @@
     let subAccountsArray = [];
     const get_opening_balance = (subAccountsArray) => {
       let opening_balance_date = "";
-      const startDate = $('input[name="start_date"]').val(); // Get the date range value from the input
-      const endDate = $('input[name="end_date"]').val(); // Get the date range value from the input
+      const dateRange = $('input[name="datefilter"]').val(); // Get the date range value from the input
+      const dates = dateRange.split(" - "); // Split the date range into start and end dates
+      const startDate = dates[0];
+      const endDate = dates[1];
 
       if (!startDate || !endDate) {
         opening_balance_date = new Date().toISOString().split("T")[0];
@@ -273,9 +313,12 @@
 
     // Search Statement handler
     function SearchStatement() {
-      const startDate = $('input[name="start_date"]').val(); // Get the date range value from the input
-      const endDate = $('input[name="end_date"]').val(); // Get the date range value from the input
-      if (startDate && endDate) {
+      const dateRange = $('input[name="datefilter"]').val(); // Get the date range value from the input
+      if (dateRange) {
+        const dates = dateRange.split(" - "); // Split the date range into start and end dates
+        const startDate = dates[0];
+        const endDate = dates[1];
+
         fetchAccountStatement(startDate, endDate); // Fetch account statement for the date range
       } else {
         // If no date range selected, fetch the current day's account statement
