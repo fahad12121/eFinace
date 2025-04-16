@@ -27,9 +27,28 @@
   <div class="col-12">
     <div class="card">
       <div class="row card-title mt-3">
-        <div class="col-md-10">
-          <h4 class="card-title">Transactions</h4>
+        <div class="col-md-2">
+          <input
+            type="date"
+            name="start_date"
+            class="form-control"
+            value=""
+            autocomplete="off"
+          />
         </div>
+        <div class="col-md-2">
+          <input
+            type="date"
+            name="end_date"
+            class="form-control"
+            value=""
+            autocomplete="off"
+          />
+        </div>
+        <div class="col-md-1">
+          <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+        <div class="col-md-5"></div>
         <div class="col-md-2">
           <button class="btn btn-primary" id="openModal">
             Add Transaction+
@@ -376,10 +395,14 @@
     // Function to fetch all companies and update the DataTable
 
     // Function to fetch users and update the DataTable
-    function fetchTransactionTable() {
+    function fetchTransactionTable(startDate, endDate) {
       $.ajax({
         type: "GET",
         url: `/companies/${storedCompanyId}/transactions/ajax`,
+        data: {
+          startDate: startDate, // Pass start date from the input
+          endDate: endDate, // Pass end date from the input
+        },
         success: function (response) {
           dataTable.clear();
           response.transactions.forEach(function (transaction) {
@@ -474,6 +497,23 @@
           alert("Error submitting the company. Please try again.");
         },
       });
+    });
+
+    // Search Statement handler
+    function SearchTransaction() {
+      const startDate = $('input[name="start_date"]').val(); // Get the date range value from the input
+      const endDate = $('input[name="end_date"]').val(); // Get the date range value from the input
+      if (startDate && endDate) {
+        fetchTransactionTable(startDate, endDate); // Fetch account statement for the date range
+      } else {
+        // If no date range selected, fetch the current day's account statement
+        fetchTransactionTable("", ""); // Or you can define a default date range
+      }
+    }
+
+    // Bind the SearchStatement function to the button click event
+    $("button[type='submit']").on("click", function () {
+      SearchTransaction(); // Trigger search when the user clicks the button
     });
 
     // If a company_id exists, display the relevant links in the sidebar

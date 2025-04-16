@@ -222,9 +222,30 @@ const updateUserBalance = async (user, transaction) => {
 exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
     try {
         const companyId = req.params.id; // Get company_id from request parameters
+        let whereClause = `t.company_id = ${companyId} AND (sa.company_id = ${companyId} OR rsa.company_id = ${companyId})`;
 
+        if (req.query.startDate && req.query.endDate) {
+            const startDate = new Date(req.query.startDate);
+            startDate.setHours(0, 0, 0, 0); // Set start date to the beginning of the day
+            const endDate = new Date(req.query.endDate);
+            endDate.setHours(23, 59, 59, 999); // Set end date to the end of the day
+            whereClause += ` AND t.transaction_date >= '${startDate.toISOString().split('T')[0]}' 
+                             AND t.transaction_date <= '${endDate.toISOString().split('T')[0]}'`;
+        }
+        else {
+            // If no start_date or end_date is provided, use the current date
+            const currentDate = new Date();
+            // Adjust the date for the local timezone
+            const timezoneOffset = currentDate.getTimezoneOffset(); // Get timezone offset in minutes
+            currentDate.setMinutes(currentDate.getMinutes() - timezoneOffset); // Adjust the time to the local timezone
+            // currentDate.setHours(0, 0, 0, 0); // Set current date to the beginning of the day (local midnight)
+
+            const currentDateString = currentDate.toISOString().split('T')[0]; // Get the current date string (YYYY-MM-DD)
+
+            whereClause += ` AND t.transaction_date = '${currentDateString}'`;
+
+        }
         // Get current date in 'YYYY-MM-DD' format
-        const currentDate = new Date().toISOString().split('T')[0]; // '2025-04-12'
 
         // SQL query to fetch transactions along with both sender and receiver sub-account information for the given company_id
         const sqlQuery = `
@@ -240,14 +261,11 @@ exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
             LEFT JOIN sub_accounts AS rsa ON rsa.id = t.receiver_sub_account_id
             LEFT JOIN users AS su ON su.id = t.sender_id  -- JOIN with the 'users' table for sender's details
             LEFT JOIN users AS ru ON ru.id = t.receiver_id  -- JOIN with the 'users' table for receiver's details
-            WHERE t.company_id = :companyId 
-                AND (sa.company_id = :companyId OR rsa.company_id = :companyId)
-                AND DATE(t.transaction_date) = :currentDate;
+           WHERE ${whereClause}
         `;
 
         // Execute the raw SQL query with the current date
         const transactions = await sequelize.query(sqlQuery, {
-            replacements: { companyId, currentDate }, // Replace :companyId and :currentDate
             type: sequelize.QueryTypes.SELECT // SELECT query type
         });
 
@@ -277,32 +295,26 @@ exports.getSubAccountStatement = asyncHandler(async (req, res, next) => {
 
 exports.getSubAccountStatementAJax = asyncHandler(async (req, res, next) => {
     try {
-        const { start_date, end_date, account_id } = req.query;
-        const subAccountId = account_id; // Get sub_account_id from request parameters
+        const subAccountId = req.query.account_id; // Get sub_account_id from request parameters
         let whereClause = `sa.id = ${subAccountId}`; // Condition to find sub_account by ID
-
         // If start_date and end_date are provided, filter account statements by those dates
-        if (start_date && end_date) {
-            const startDate = new Date(start_date);
+        if (req.query.startDate && req.query.endDate) {
+            const startDate = new Date(req.query.startDate);
             startDate.setHours(0, 0, 0, 0); // Set start date to the beginning of the day
-            const endDate = new Date(end_date);
+            const endDate = new Date(req.query.endDate);
             endDate.setHours(23, 59, 59, 999); // Set end date to the end of the day
-
             whereClause += ` AND asn.transaction_date >= '${startDate.toISOString().split('T')[0]}' 
                              AND asn.transaction_date <= '${endDate.toISOString().split('T')[0]}'`;
         } else {
             // If no start_date or end_date is provided, use the current date
             const currentDate = new Date();
-            
             // Adjust the date for the local timezone
             const timezoneOffset = currentDate.getTimezoneOffset(); // Get timezone offset in minutes
             currentDate.setMinutes(currentDate.getMinutes() - timezoneOffset); // Adjust the time to the local timezone
             // currentDate.setHours(0, 0, 0, 0); // Set current date to the beginning of the day (local midnight)
-        
+
             const currentDateString = currentDate.toISOString().split('T')[0]; // Get the current date string (YYYY-MM-DD)
-        
-            console.log(currentDateString); // This should print today's date in your local timezone
-        
+
             whereClause += ` AND asn.transaction_date = '${currentDateString}'`;
         }
 
