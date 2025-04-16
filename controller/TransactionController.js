@@ -4,7 +4,6 @@ const SubAccount = require("../models/subAccounts");
 const AccountStatement = require("../models/AccountStatement");
 const Transaction = require("../models/Transaction");
 const sequelize = require('../db'); // Import the Sequelize instance
-const { Op } = require('sequelize'); // Sequelize operators for date comparison
 
 exports.getTransaction = asyncHandler(async (req, res, next) => {
     try {

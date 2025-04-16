@@ -15,6 +15,7 @@ const { protect } = require('../middleware/auth');
 // Contorller
 const AuthController = require("../controller/AuthController");
 const companyController = require('../controller/CompanyController');
+const DashboardController = require('../controller/DashboardController');
 const AccountTypeController = require('../controller/AccountTypeController');
 const UserController = require('../controller/UserController');
 const subAccountController = require('../controller/subAccountController');
@@ -28,7 +29,7 @@ module.exports = function (route) {
 
     route.get("/", function (req, res) {
         if (req.user) {
-            return res.redirect("/dashboard"); // Redirect to dashboard if user is authenticated
+            return res.redirect("/companies"); // Redirect to dashboard if user is authenticated
         }
         res.render("auth/login", { layout: 'layouts/layout-without-nav' });
     });
@@ -36,9 +37,7 @@ module.exports = function (route) {
 
     route.use(protect);
 
-    route.get("/dashboard", function (req, res) {
-        res.render("index");
-    });
+    route.get('/companies/:id/dashboard', DashboardController.index);
 
     //Company Route
     route.get('/companies', companyController.getCompanies);
@@ -88,7 +87,7 @@ module.exports = function (route) {
 
     // Route to log out
     route.post('/logout', AuthController.logout);
-    
+
     //500
     route.get('/error', (req, res, next) => {
         res.render('auth/auth-500', { title: '500 Error', layout: 'layouts/layout-without-nav' });

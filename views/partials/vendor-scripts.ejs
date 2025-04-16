@@ -10,6 +10,7 @@
   // Function to show the sidebar links based on company_id in localStorage
   function showSidebarLinks(companyId) {
     // Show the sidebar links for the selected company
+    $("#dashboardLink").removeClass("d-none");
     $("#accountsLink").removeClass("d-none");
     $("#transactionsLink").removeClass("d-none");
     $("#accountstypeLink").removeClass("d-none");
@@ -18,6 +19,8 @@
     $("#usersLink").removeClass("d-none");
 
     // Set the correct href for each link
+    $("#dashboardLink a").attr("href", "/companies/" + companyId + "/dashboard");
+
     $("#accountsLink a").attr("href", "/companies/" + companyId + "/accounts");
 
     $("#transactionsLink a").attr(
@@ -44,6 +47,7 @@
     localStorage.removeItem("company_id");
 
     // Optionally hide the sidebar links if no company_id is present
+    $("#dashboardLink").addClass("d-none");
     $("#accountsLink").addClass("d-none");
     $("#transactionsLink").addClass("d-none");
     $("#accountstypeLink").addClass("d-none");

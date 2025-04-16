@@ -7,38 +7,19 @@
       <ul class="metismenu list-unstyled" id="side-menu">
 
         <li>
-          <a href="javascript: void(0);" class="has-arrow waves-effect">
-            <i class="bx bx-home-circle"></i>
-            <span key="t-dashboards"><%=translation.t_dashboards %></span>
-          </a>
-          <ul class="sub-menu" aria-expanded="false">
-            <li>
-              <a href="/index" key="t-default"><%=translation.t_default %></a>
-            </li>
-            <li>
-              <a href="dashboard-saas" key="t-saas"><%=translation.t_saas %></a>
-            </li>
-            <li>
-              <a href="dashboard-crypto" key="t-crypto"
-                ><%=translation.t_crypto %></a
-              >
-            </li>
-            <li>
-              <a href="dashboard-blog" key="t-blog"><%=translation.t_blog %></a>
-            </li>
-            <li>
-              <a href="dashboard-job" key="t-jobs"><%=translation.t_jobs %></a>
-            </li>
-          </ul>
-        </li>
-
-        <li>
           <a href="/companies" class="waves-effect">
             <i class="fas fa-users"></i>
             <span key="t-chat">Companies</span>
           </a>
         </li>
         <!-- Only render the Account Type link if company_id exists in localStorage -->
+        <li id="dashboardLink" class="d-none">
+          <a href="/companies/:id/dashboard" class="waves-effect">
+            <i class="bx bx-home-circle"></i>
+            <span key="t-chat">Dashboard</span>
+          </a>
+        </li>
+
         <li id="accountsLink" class="d-none">
           <a href="/companies/:id/accounts" class="waves-effect">
             <i class="fas fa-book"></i>

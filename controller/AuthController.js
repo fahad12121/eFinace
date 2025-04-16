@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 exports.login = asyncHandler(async (req, res, next) => {
-    console.log(req.body);
     const { username, password } = req.body;
 
     // validate email & password
