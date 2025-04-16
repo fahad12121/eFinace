@@ -151,7 +151,7 @@
           setToken(response.user.token);
           // If login is successful, the backend will handle the token (via cookie or response)
           if (response.success) {
-            window.location.href = "/dashboard"; // Redirect to dashboard after login
+            window.location.href = "/companies"; // Redirect to dashboard after login
           }
         },
         error: function (error) {
