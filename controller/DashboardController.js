@@ -15,6 +15,10 @@ exports.index = asyncHandler(async (req, res, next) => {
             where: { company_id: companyId },
         });
 
+        const favtUsersCount = await User.count({
+            where: { is_favt: true },
+        });
+
         let sumOfMinus = 0, sumOfPlus = 0;
 
         users.forEach(user => {
@@ -62,7 +66,26 @@ exports.index = asyncHandler(async (req, res, next) => {
         });
         // Log the result of the query for debugging
 
-        res.render('dashboard/index', { transactions, user, sumOfMinus, sumOfPlus, companyId });  // Render the companies.ejs view with companies data
+        res.render('dashboard/index', { transactions, user, sumOfMinus, sumOfPlus, companyId, favtUsersCount });  // Render the companies.ejs view with companies data
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+exports.favtList = asyncHandler(async (req, res, next) => {
+    try {
+        const companyId = req.params.id; // Get company_id from request parameters
+
+        const favtUsers = await User.findAll({
+            where: { is_favt: true, company_id: companyId },
+        });
+
+        const totalBalance = favtUsers.reduce((sum, account) => sum + parseFloat(account.balance || 0), 0);
+
+        // Log the result of the query for debugging
+
+        res.render('dashboard/favt_list', { companyId, favtUsers, totalBalance });  // Render the companies.ejs view with companies data
     } catch (error) {
         next(error);
     }

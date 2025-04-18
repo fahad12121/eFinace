@@ -36,7 +36,7 @@ const User = sequelize.define('User', {
         defaultValue: 'User',
     },
     balance: {
-        type: DataTypes.DECIMAL(20,2),
+        type: DataTypes.DECIMAL(20, 2),
         default: 0,
     },
     company_id: {
@@ -59,6 +59,12 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: true,
         defaultValue: 'User',
+    },
+    is_favt: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+        comment: 'is_favt = false, is_favt = true',
     }
 }, {
     timestamps: true,  // Sequelize will automatically add createdAt and updatedAt

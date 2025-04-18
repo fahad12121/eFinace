@@ -5,6 +5,7 @@ const subAccount = require("../models/subAccounts");
 const AccountType = require("../models/AccountType");
 const asyncHandler = require("../middleware/async");
 const { Op } = require('sequelize');
+const { forEach } = require('jszip');
 
 // User Crud Starts here
 
@@ -225,6 +226,45 @@ exports.getSingleAccountUser = asyncHandler(async (req, res, next) => {
     }
 });
 
+//favt user function
+exports.createFavt = asyncHandler(async (req, res, next) => {
+    const { accounts } = req.body;
+
+    if (accounts.length > 0) {
+        try {
+            // Loop through each account ID
+            for (let accountId of accounts) {
+                // Find the user by account ID
+                const user = await User.findOne({ where: { id: accountId } });
+                if (user) {
+                    // Update the 'is_favt' column to true
+                    user.is_favt = true;
+                    await user.save();  // Save the changes to the database
+                } else {
+                    console.log(`User with ID ${accountId} not found.`);
+                }
+            }
+
+            return res.status(201).json({
+                success: true,
+                message: 'Users Added to favt!',
+            });
+
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({
+                success: false,
+                message: 'An error occurred while updating users.',
+            });
+        }
+    } else {
+        return res.status(400).json({
+            success: false,
+            message: 'No accounts provided.',
+        });
+    }
+});
+
 //balance sheet function start here
 exports.getUsersBalanceSheet = asyncHandler(async (req, res, next) => {
     try {
@@ -328,7 +368,7 @@ exports.getUsersLedger = asyncHandler(async (req, res, next) => {
 
         // Handle the parent user's balance and add them to the correct side
         const parentBalance = user.balance;
-          // Assuming you already have the minusAccounts array populated
+        // Assuming you already have the minusAccounts array populated
         let sumOfMinus = leftAccounts.reduce((accumulator, currentValue) => {
             return accumulator + parseFloat(currentValue.balance.replace(/,/g, '')); // Convert the string to a number and sum
         }, 0);
@@ -344,7 +384,7 @@ exports.getUsersLedger = asyncHandler(async (req, res, next) => {
         if (parentBalance < 0) {
             sumOfPlus = sumOfPlus - parentBalance;
         }
-        
+
         console.log(user);
 
         // Render the ledger page with the data and totals
