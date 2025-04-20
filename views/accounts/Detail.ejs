@@ -75,7 +75,15 @@
             <tr>
               <td><%= account.sub_account_pk %></td>
               <td><%= account.account_username %></td>
-              <td><%= account.balance %></td>
+              <td>
+                <% 
+                  let balance = account.balance === null ? 0 : account.balance;  // Check if balance is null
+                  const balanceClass = balance === 0 ? '' : (balance < 0 ? 'danger' : 'success');  // Determine class based on balance
+                %>
+                <span class="badge bg-<%= balanceClass %> fs-6">
+                  <%= balance %>
+                </span>
+              </td>
               <td><%= account?.AccountType?.name || 'N/A' %></td>
               <td><%= account.notes %></td>
               <td>

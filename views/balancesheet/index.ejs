@@ -48,8 +48,12 @@
                   <% } %>
                 </td>
                 <!-- Display Minus Balance -->
-                <td style="color: red">
-                  <% if (minusAccounts[i]) { %>
+                <td>
+                  <% if (minusAccounts[i] && minusAccounts[i].minus < 0) { %>
+                    <span class="badge bg-danger fs-6">
+                      <%= minusAccounts[i].minus %>
+                    </span>
+                  <% } else if (minusAccounts[i]) { %>
                     <%= minusAccounts[i].minus %>
                   <% } %>
                 </td>
@@ -63,8 +67,12 @@
                   <% } %>
                 </td>
                 <!-- Display Plus Balance -->
-                <td style="color: green">
-                  <% if (plusAccounts[i]) { %>
+                <td>
+                  <% if (plusAccounts[i] && plusAccounts[i].plus > 0) { %>
+                    <span class="badge bg-success fs-6">
+                      <%= plusAccounts[i].plus %>
+                    </span>
+                  <% } else if (plusAccounts[i]) { %>
                     <%= plusAccounts[i].plus %>
                   <% } %>
                 </td>
@@ -75,9 +83,9 @@
           <tfoot>
             <tr>
               <th>Total</th>
-              <th style="color: red"><%= totalMinus %></th>
+              <th><span class="badge bg-danger fs-6"><%= totalMinus %></span></th>
               <th>Total</th>
-              <th style="color: green"><%= totalPlus %></th>
+              <th><span class="badge bg-success fs-6"><%= totalPlus %></span></th>
             </tr>
           </tfoot>
         </table>

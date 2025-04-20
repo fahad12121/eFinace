@@ -26,7 +26,10 @@ user.username + ' Ledger', "title": user.username + ' Ledger' }) %>
         </div>
       </div>
       <div class="card-body">
-        <table id="ledgerdatatable" class="table table-bordered dt-responsive nowrap w-100">
+        <table
+          id="ledgerdatatable"
+          class="table table-bordered dt-responsive nowrap w-100"
+        >
           <thead>
             <tr>
               <th>Account</th>
@@ -37,52 +40,71 @@ user.username + ' Ledger', "title": user.username + ' Ledger' }) %>
           </thead>
           <tbody>
             <!-- Loop through both left (Minus) and right (Plus) accounts together -->
-            <% for (let i = 0; i < Math.max(leftAccounts.length, rightAccounts.length); i++) { %>
-              <tr>
-                <!-- Display Minus Account and Balance -->
-                <td><%= leftAccounts[i] ? leftAccounts[i].account : '' %></td>
-                <td style="color: red"><%= leftAccounts[i] ? leftAccounts[i].negative : '' %></td>
-        
-                <!-- Display Plus Account and Balance -->
-                <td><%= rightAccounts[i] ? rightAccounts[i].account : '' %></td>
-                <td style="color: green"><%= rightAccounts[i] ? rightAccounts[i].positive : '' %></td>
-              </tr>
+            <% for (let i = 0; i < Math.max(leftAccounts.length,
+            rightAccounts.length); i++) { %>
+            <tr>
+              <!-- Display Minus Account and Balance -->
+              <td><%= leftAccounts[i] ? leftAccounts[i].account : '' %></td>
+              <td>
+                <span class="badge bg-danger fs-6"
+                  ><%= leftAccounts[i] ? leftAccounts[i].negative : '' %></span
+                >
+              </td>
+
+              <!-- Display Plus Account and Balance -->
+              <td><%= rightAccounts[i] ? rightAccounts[i].account : '' %></td>
+              <td>
+                <span class="badge bg-success fs-6"
+                  ><%= rightAccounts[i] ? rightAccounts[i].positive : ''
+                  %></span
+                >
+              </td>
+            </tr>
             <% } %>
-        
+
             <!-- Display Balance Key if Balance is Greater than 0 (on Left Side) -->
             <% if (balanceKey > 0) { %>
-              <tr>
-                <td>Balance</td>
-                <td style="color: red"><%= balanceKey %></td>
-                <td></td>
-                <td></td>
-              </tr>
+            <tr>
+              <td>Balance</td>
+              <td>
+                <span class="badge bg-danger fs-6"><%= balanceKey %></span>
+              </td>
+              <td></td>
+              <td></td>
+            </tr>
             <% } %>
-        
+
             <!-- Display Balance Key if Balance is Less than 0 (on Right Side) -->
             <% if (balanceKey < 0) { %>
-              <tr>
-                <td></td>
-                <td></td>
-                <td>Balance</td>
-                <td style="color: green"><%= Math.abs(balanceKey) %></td>
-              </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td>Balance</td>
+              <td>
+                <span class="badge bg-success fs-6"
+                  ><%= Math.abs(balanceKey) %></span
+                >
+              </td>
+            </tr>
             <% } %>
           </tbody>
-        
+
           <tfoot>
             <tr>
-              <th style="color: red">Total</th>
+              <th>Total</th>
               <!-- Display total Minus (Left side) in Red -->
-              <th style="color: red"><%= totalLeft %></th>
+              <th>
+                <span class="badge bg-danger fs-6"><%= totalLeft %></span>
+              </th>
               <!-- Balance Key for Right Side -->
-              <th style="color: green">Total</th>
+              <th>Total</th>
               <!-- Display total Plus (Right side) in Green -->
-              <th style="color: green"><%= totalRight %></th>
+              <th>
+                <span class="badge bg-danger fs-6"><%= totalRight %></span>
+              </th>
             </tr>
           </tfoot>
         </table>
-        
       </div>
     </div>
   </div>
@@ -102,12 +124,10 @@ user.username + ' Ledger', "title": user.username + ' Ledger' }) %>
 <!-- Datatable init js -->
 <script src="/assets/js/pages/datatables.init.js"></script>
 <script>
- $(document).ready(function () {
+  $(document).ready(function () {
     // Initialize DataTable
     const dataTable = $("#ledgerdatatable").DataTable({
-      order: [
-        [0, "desc"],
-      ],
+      order: [[0, "desc"]],
       pageLength: 200,
       lengthMenu: [
         [200, 50, 100, -1],

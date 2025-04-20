@@ -291,10 +291,10 @@
   $(document).ready(function () {
     // Initialize DataTable
     const dataTable = $("#accountsTable").DataTable({
-      pageLength: 120,
+      pageLength: 500,
       lengthMenu: [
-        [30, 50, 100, -1],
-        [30, 50, 100, "All"],
+        [500, 200, 100, -1],
+        [500, 200, 100, "All"],
       ],
       paging: true,
       searching: true,
@@ -316,13 +316,16 @@
         success: function (response) {
           dataTable.clear();
           response.users.forEach(function (user) {
-            const balance = user.balance === null ? 0 : user.balance;
-
+            let balance = user.balance === null ? 0 : user.balance;  // Handle null balance
+            const balanceClass = balance === 0 ? '' : (balance < 0 ? 'danger' : 'success');  // No class for 0 balance
+            console.log(balanceClass);
             dataTable.row.add([
               `<input type="checkbox" class="fav-checkbox" data-id="${user.id}" />`,
               user.account_pk,
               user.username,
-              balance,
+              `<span class="badge bg-${balanceClass} fs-6">
+               ${balance}
+               </span>`,
               user.notes,
               // Actions column with eye and pencil icons
               `<button class="btn btn-sm btn-info view-btn" data-id="${user.id}" title="View">
