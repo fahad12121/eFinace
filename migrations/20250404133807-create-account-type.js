@@ -15,6 +15,10 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true,
       },
+      uid: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       company_id: {
         type: Sequelize.INTEGER,
         references: {

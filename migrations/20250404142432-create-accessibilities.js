@@ -15,6 +15,10 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true,
       },
+      uid: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       viewable_accounts: {
         type: Sequelize.JSON,  // Use JSON for MySQL
         defaultValue: [],

@@ -7,6 +7,10 @@ const Accessibility = sequelize.define('Accessibility', {
     type: Sequelize.JSON,  // Use JSON to store an array of accounts (or handle this with a many-to-many relationship)
     defaultValue: [],
   },
+  uid: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   accounts: {
     type: Sequelize.JSON,  // Storing mixed data as a JSON field
     defaultValue: {

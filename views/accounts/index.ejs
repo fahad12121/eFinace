@@ -65,7 +65,7 @@
       </div>
       <div class="card-body">
         <table
-          id="datatable"
+          id="accountsTable"
           class="table table-bordered dt-responsive nowrap w-100"
         >
           <thead>
@@ -290,7 +290,17 @@
 <script>
   $(document).ready(function () {
     // Initialize DataTable
-    const dataTable = $("#datatable").DataTable();
+    const dataTable = $("#accountsTable").DataTable({
+      pageLength: 120,
+      lengthMenu: [
+        [30, 50, 100, -1],
+        [30, 50, 100, "All"],
+      ],
+      paging: true,
+      searching: true,
+      // ordering: true,
+      autoWidth: false,
+    });
 
     // Function to extract companyId from URL
     function getCompanyIdFromUrl() {

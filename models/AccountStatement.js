@@ -12,6 +12,10 @@ const accountStatment = sequelize.define('accountStatment', {
         primaryKey: true,
         autoIncrement: true,
     },
+    uid: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     user_id: {
         type: DataTypes.INTEGER,
         references: {

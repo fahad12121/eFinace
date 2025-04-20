@@ -10,6 +10,10 @@ const CompanyUser = sequelize.define('CompanyUser', {
         primaryKey: true,
         autoIncrement: true,
     },
+    uid: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     company_id: {
         type: DataTypes.INTEGER,
         references: {

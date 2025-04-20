@@ -26,10 +26,7 @@
         </div>
       </div>
       <div class="card-body">
-        <table
-          id="datatable"
-          class="table table-bordered dt-responsive nowrap w-100"
-        >
+        <table id="balancedatatable" class="table table-bordered dt-responsive nowrap w-100">
           <thead>
             <tr>
               <th>Account</th>
@@ -38,56 +35,51 @@
               <th>Plus</th>
             </tr>
           </thead>
-
           <tbody>
-            <!-- Display Minus Accounts -->
-            <% minusAccounts.forEach(function(data) { %>
-            <tr>
+            <!-- Loop through both minus and plus accounts together -->
+            <% for(let i = 0; i < Math.max(minusAccounts.length, plusAccounts.length); i++) { %>
+              <tr>
+                <!-- Display Minus Account -->
                 <td>
-                    <a href="/companies/<%= company_id %>/ledger/<%= data.user_id %>">
-                        <%= data.account %>
+                  <% if (minusAccounts[i]) { %>
+                    <a href="/companies/<%= company_id %>/ledger/<%= minusAccounts[i].user_id %>">
+                      <%= minusAccounts[i].account %>
                     </a>
+                  <% } %>
                 </td>
-                <td style="color: red"><%= data.minus %></td>
-                <!-- Display Minus balance in red -->
-                <td></td>
-                <!-- Empty cell for Plus -->
-                <td></td>
-                <!-- Empty cell for Plus -->
-            </tr>
-            <% }) %>
+                <!-- Display Minus Balance -->
+                <td style="color: red">
+                  <% if (minusAccounts[i]) { %>
+                    <%= minusAccounts[i].minus %>
+                  <% } %>
+                </td>
         
-            <!-- Display Plus Accounts -->
-            <% plusAccounts.forEach(function(data) { %>
-            <tr>
-                <td></td>
-                <!-- Empty cell for Minus -->
-                <td></td>
-                <!-- Empty cell for Minus -->
+                <!-- Display Plus Account -->
                 <td>
-                    <a href="/companies/<%= company_id %>/ledger/<%= data.user_id %>">
-                        <%= data.account %>
+                  <% if (plusAccounts[i]) { %>
+                    <a href="/companies/<%= company_id %>/ledger/<%= plusAccounts[i].user_id %>">
+                      <%= plusAccounts[i].account %>
                     </a>
+                  <% } %>
                 </td>
-                <!-- Display Plus Account with link -->
-                <td style="color: green"><%= data.plus %></td>
-                <!-- Display Plus in green -->
-            </tr>
-            <% }) %>
-        </tbody>
+                <!-- Display Plus Balance -->
+                <td style="color: green">
+                  <% if (plusAccounts[i]) { %>
+                    <%= plusAccounts[i].plus %>
+                  <% } %>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
         
           <tfoot>
             <tr>
               <th>Total</th>
               <th style="color: red"><%= totalMinus %></th>
-              <!-- Display total Minus in red -->
               <th>Total</th>
               <th style="color: green"><%= totalPlus %></th>
-              <!-- Display total Plus in green -->
             </tr>
           </tfoot>
-
-          <!-- Table Footer for Totals -->
         </table>
       </div>
     </div>
@@ -108,9 +100,27 @@
 <!-- Datatable init js -->
 <script src="/assets/js/pages/datatables.init.js"></script>
 <script>
-  // If company_id exists in localStorage, display the relevant links in the sidebar
-  const storedCompanyId = localStorage.getItem("company_id");
-  if (storedCompanyId) {
-    showSidebarLinks(storedCompanyId);
-  }
+  $(document).ready(function () {
+    // Initialize DataTable
+    const dataTable = $("#balancedatatable").DataTable({
+      order: [
+        [3, "desc"],
+        [0, "asc"],
+      ],
+      pageLength: 300,
+      lengthMenu: [
+        [120, 50, 100, -1],
+        [120, 50, 100, "All"],
+      ],
+      paging: true,
+      searching: true,
+      // ordering: true,
+      autoWidth: false,
+    });
+    // If company_id exists in localStorage, display the relevant links in the sidebar
+    const storedCompanyId = localStorage.getItem("company_id");
+    if (storedCompanyId) {
+      showSidebarLinks(storedCompanyId);
+    }
+  });
 </script>

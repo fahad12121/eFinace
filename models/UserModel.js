@@ -13,6 +13,10 @@ const User = sequelize.define('User', {
         primaryKey: true,
         autoIncrement: true,
     },
+    uid: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     account_pk: {
         type: DataTypes.STRING,
         unique: true,
@@ -49,10 +53,10 @@ const User = sequelize.define('User', {
     },
     last_login: {
         type: DataTypes.DATE,
-        defaultValue: null,
+        allowNull: true,
     },
     last_ip: {
-        type: DataTypes.DATE,
+        type: DataTypes.STRING,
         defaultValue: null,
     },
     notes: {

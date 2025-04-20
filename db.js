@@ -1,7 +1,7 @@
 PORT = 4100
 const config = require('./config/config.json');
 // db.js
-const { Sequelize } = require('sequelize'); 
+const { Sequelize } = require('sequelize');
 
 //development
 //production

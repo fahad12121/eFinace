@@ -15,6 +15,10 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true,
       },
+      uid: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       name: {
         type: Sequelize.STRING,
         allowNull: true,  // or false, depending on whether you want to allow nulls for the company name

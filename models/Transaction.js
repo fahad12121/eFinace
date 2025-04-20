@@ -11,6 +11,10 @@ const Transaction = sequelize.define('Transaction', {
         primaryKey: true,
         autoIncrement: true,
     },
+    uid: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     sender_sub_account_id: {
         type: DataTypes.INTEGER,
         references: {

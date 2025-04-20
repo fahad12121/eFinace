@@ -9,6 +9,10 @@ const Company = sequelize.define('Company', {
     primaryKey: true,
     autoIncrement: true,
   },
+  uid: {
+    type: DataTypes.STRING,
+    allowNull: true,
+},
   name: {
     type: DataTypes.STRING,
     allowNull: true,

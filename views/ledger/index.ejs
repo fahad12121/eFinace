@@ -26,10 +26,7 @@ user.username + ' Ledger', "title": user.username + ' Ledger' }) %>
         </div>
       </div>
       <div class="card-body">
-        <table
-          id="datatable"
-          class="table table-bordered dt-responsive nowrap w-100"
-        >
+        <table id="ledgerdatatable" class="table table-bordered dt-responsive nowrap w-100">
           <thead>
             <tr>
               <th>Account</th>
@@ -39,54 +36,40 @@ user.username + ' Ledger', "title": user.username + ' Ledger' }) %>
             </tr>
           </thead>
           <tbody>
-            <!-- Display Minus Accounts (Negative Balances) -->
-            <% leftAccounts.forEach(function(data) { %>
-            <tr>
-              <!-- Account Name for Minus (Negative) Balances -->
-              <td><%= data.account %></td>
-              <!-- Minus Balance in Red -->
-              <td style="color: red"><%= data.negative %></td>
-              <!-- Empty cells for Plus -->
-              <td></td>
-              <td></td>
-            </tr>
-            <% }) %>
-
+            <!-- Loop through both left (Minus) and right (Plus) accounts together -->
+            <% for (let i = 0; i < Math.max(leftAccounts.length, rightAccounts.length); i++) { %>
+              <tr>
+                <!-- Display Minus Account and Balance -->
+                <td><%= leftAccounts[i] ? leftAccounts[i].account : '' %></td>
+                <td style="color: red"><%= leftAccounts[i] ? leftAccounts[i].negative : '' %></td>
+        
+                <!-- Display Plus Account and Balance -->
+                <td><%= rightAccounts[i] ? rightAccounts[i].account : '' %></td>
+                <td style="color: green"><%= rightAccounts[i] ? rightAccounts[i].positive : '' %></td>
+              </tr>
+            <% } %>
+        
             <!-- Display Balance Key if Balance is Greater than 0 (on Left Side) -->
             <% if (balanceKey > 0) { %>
-            <tr>
-              <td>Balance</td>
-              <td style="color: red"><%= balanceKey %></td>
-              <td></td>
-              <td></td>
-            </tr>
+              <tr>
+                <td>Balance</td>
+                <td style="color: red"><%= balanceKey %></td>
+                <td></td>
+                <td></td>
+              </tr>
             <% } %>
-
-            <!-- Display Plus Accounts (Positive Balances) -->
-            <% rightAccounts.forEach(function(data) { %>
-            <tr>
-              <!-- Empty cells for Minus -->
-              <td></td>
-              <td></td>
-              <!-- Account Name for Plus (Positive) Balances -->
-              <td><%= data.account %></td>
-              <!-- Plus Balance in Green -->
-              <td style="color: green"><%= data.positive %></td>
-            </tr>
-            <% }) %>
-
+        
             <!-- Display Balance Key if Balance is Less than 0 (on Right Side) -->
             <% if (balanceKey < 0) { %>
-            <tr>
-              <td></td>
-              <td></td>
-              <td>Balance</td>
-              <td style="color: green"><%= Math.abs(balanceKey) %></td>
-            </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td>Balance</td>
+                <td style="color: green"><%= Math.abs(balanceKey) %></td>
+              </tr>
             <% } %>
           </tbody>
-
-          <!-- Table Footer for Totals -->
+        
           <tfoot>
             <tr>
               <th style="color: red">Total</th>
@@ -99,6 +82,7 @@ user.username + ' Ledger', "title": user.username + ' Ledger' }) %>
             </tr>
           </tfoot>
         </table>
+        
       </div>
     </div>
   </div>
@@ -118,9 +102,26 @@ user.username + ' Ledger', "title": user.username + ' Ledger' }) %>
 <!-- Datatable init js -->
 <script src="/assets/js/pages/datatables.init.js"></script>
 <script>
-  // If company_id exists in localStorage, display the relevant links in the sidebar
-  const storedCompanyId = localStorage.getItem("company_id");
-  if (storedCompanyId) {
-    showSidebarLinks(storedCompanyId);
-  }
+ $(document).ready(function () {
+    // Initialize DataTable
+    const dataTable = $("#ledgerdatatable").DataTable({
+      order: [
+        [0, "desc"],
+      ],
+      pageLength: 200,
+      lengthMenu: [
+        [200, 50, 100, -1],
+        [200, 50, 100, "All"],
+      ],
+      paging: true,
+      searching: true,
+      // ordering: true,
+      autoWidth: false,
+    });
+    // If company_id exists in localStorage, display the relevant links in the sidebar
+    const storedCompanyId = localStorage.getItem("company_id");
+    if (storedCompanyId) {
+      showSidebarLinks(storedCompanyId);
+    }
+  });
 </script>

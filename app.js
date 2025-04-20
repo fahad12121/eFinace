@@ -33,7 +33,9 @@ app.use(flash());
 app.use(cookieParser());
 // Import DB connection (Sequelize)
 const db = require('./db'); // Import the Sequelize instance
-
+const connectDB = require("./config/db");
+// connect to database
+connectDB();
 // for i18n usage
 app.use(i18n({
     translationsPath: path.join(__dirname, 'i18n'), // Specify translations files path

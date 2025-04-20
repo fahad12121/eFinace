@@ -15,6 +15,10 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true,
       },
+      uid: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       account_pk: {
         type: Sequelize.STRING,
         unique: true,
@@ -54,8 +58,8 @@ module.exports = {
         defaultValue: null,
       },
       last_ip: {
-        type: Sequelize.DATE,
-        defaultValue: null,
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       notes: {
         type: Sequelize.STRING,

@@ -30,7 +30,7 @@
       </div>
       <div class="card-body">
         <table
-          id="datatable"
+          id="accounttypetable"
           class="table table-bordered dt-responsive nowrap w-100"
         >
           <thead>
@@ -111,7 +111,21 @@
     // Check if a company_id exists in localStorage on page load
     var storedCompanyId = localStorage.getItem("company_id");
     // Initialize DataTable
-    const dataTable = $("#datatable").DataTable();
+    const dataTable = $("#accounttypetable").DataTable({
+      order: [
+        [3, "desc"],
+        [0, "asc"],
+      ],
+      pageLength: 120,
+      lengthMenu: [
+        [120, 50, 100, -1],
+        [120, 50, 100, "All"],
+      ],
+      paging: true,
+      searching: true,
+      // ordering: true,
+      autoWidth: false,
+    });
     // Function to fetch all companies and update the DataTable
     function fetchAccounttype() {
       $.ajax({

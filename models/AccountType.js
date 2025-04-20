@@ -9,6 +9,10 @@ const AccountType = sequelize.define('AccountType', {
         primaryKey: true,
         autoIncrement: true,
     },
+    uid: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     company_id: {
         type: DataTypes.INTEGER,
         references: {

@@ -57,12 +57,12 @@
       </div>
       <div class="card-body">
         <table
-          id="datatable"
+          id="transdatatable"
           class="table table-bordered dt-responsive nowrap w-100"
         >
           <thead>
             <tr>
-              <th>ID</th>
+              <th>Date</th>
               <th>Plus</th>
               <th>Sub Account</th>
               <th>Amount</th>
@@ -391,7 +391,21 @@
     // Check if a company_id exists in localStorage on page load
     var storedCompanyId = localStorage.getItem("company_id");
     // Initialize DataTable
-    const dataTable = $("#datatable").DataTable();
+    const dataTable = $("#transdatatable").DataTable({
+      order: [
+        [3, "desc"],
+        [0, "desc"],
+      ],
+      pageLength: 200,
+      lengthMenu: [
+        [200, 50, 100, -1],
+        [200, 50, 100, "All"],
+      ],
+      paging: true,
+      searching: true,
+      // ordering: true,
+      autoWidth: false,
+    });
     // Function to fetch all companies and update the DataTable
 
     // Function to fetch users and update the DataTable
@@ -407,7 +421,7 @@
           dataTable.clear();
           response.transactions.forEach(function (transaction) {
             dataTable.row.add([
-              transaction.id,
+              transaction.transaction_date,
               transaction.sender_user,
               transaction.sender_sub_account,
               transaction.amount,

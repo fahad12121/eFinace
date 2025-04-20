@@ -11,6 +11,10 @@ const subAccount = sequelize.define('subAccount', {
         primaryKey: true,
         autoIncrement: true,
     },
+    uid: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     sub_account_pk: {
         type: DataTypes.STRING,
         unique: true,
