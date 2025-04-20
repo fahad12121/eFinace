@@ -1,7 +1,6 @@
 const dotenv = require('dotenv');
 dotenv.config();  // Load environment variables from .env file
 
-
 const config = require('./config/config.json');  // Load the config file
 const environment = process.env.NODE_ENV || 'development';  // Use NODE_ENV or default to development
 
@@ -33,9 +32,9 @@ app.use(flash());
 app.use(cookieParser());
 // Import DB connection (Sequelize)
 const db = require('./db'); // Import the Sequelize instance
-const connectDB = require("./config/db");
+// const connectDB = require("./config/db");
 // connect to database
-connectDB();
+// connectDB();
 // for i18n usage
 app.use(i18n({
     translationsPath: path.join(__dirname, 'i18n'), // Specify translations files path
