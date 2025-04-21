@@ -303,7 +303,8 @@
 
     // Display the sender's parent balance in the span
     document.getElementById("sender_parent_balance").innerText =
-      "Current Balance: " + parseFloat(parentBalance).toFixed(parentBalance % 1 === 0 ? 0 : 2);
+      "Current Balance: " +
+      parseFloat(parentBalance).toFixed(parentBalance % 1 === 0 ? 0 : 2);
     document.getElementById("sender_parent_name").innerText =
       "Parent Account: " + parentName;
 
@@ -406,13 +407,13 @@
 
     // Function to fetch users and update the DataTable
     function fetchTransactionTable(startDate, endDate) {
+      let url = `/companies/${storedCompanyId}/transactions/ajax`;
+      if(startDate !== undefined && endDate !== undefined){
+        url = `/companies/${storedCompanyId}/transactions/ajax?startDate=${startDate}&&endDate=${endDate}`;
+      }
       $.ajax({
         type: "GET",
-        url: `/companies/${storedCompanyId}/transactions/ajax`,
-        data: {
-          startDate: startDate, // Pass start date from the input
-          endDate: endDate, // Pass end date from the input
-        },
+        url: url,
         success: function (response) {
           dataTable.clear();
           response.transactions.forEach(function (transaction) {
