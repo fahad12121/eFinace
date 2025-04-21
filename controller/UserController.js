@@ -265,6 +265,34 @@ exports.createFavt = asyncHandler(async (req, res, next) => {
     }
 });
 
+// Controller to update the status of a user
+exports.updateUserStatus = asyncHandler(async (req, res, next) => {
+    const { id, user_id } = req.params;  // Extract companyId and userId from URL parameters
+    const { status } = req.body;  // Get the new status (0 or 1) from the request body
+    try {
+        // Find the user by companyId and userId
+        const user = await User.findOne({
+            where: {
+                id: user_id,
+                company_id: id,  // Ensure the user belongs to the company
+            }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        // Update the user status
+        user.status = status;  // Set the new status
+        await user.save();  // Save the updated user record
+
+        // Respond with success message
+        res.status(200).json({ message: 'User status updated successfully', user });
+    } catch (error) {
+        next(error);  // Pass error to the error-handling middleware
+    }
+});
+
 //balance sheet function start here
 exports.getUsersBalanceSheet = asyncHandler(async (req, res, next) => {
     try {

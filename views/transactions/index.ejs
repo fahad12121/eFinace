@@ -110,25 +110,25 @@
                   >Sender</label
                 >
                 <select
-                  class="form-control select2 sender_id"
-                  style="width: 100%"
-                  id="sender_sub_account_id"
-                  name="sender_sub_account_id"
-                  onchange="updateReceiverOptions(); showParentBalance();"
-                >
-                  <option value="" selected disabled>--Select--</option>
-                  <!-- Options will be populated dynamically -->
-                  <% sender_accounts.forEach(function(user) {
-                  user.subAccounts.forEach(function(subAccount) { %>
+                class="form-control select2 sender_id"
+                style="width: 100%"
+                id="sender_sub_account_id"
+                name="sender_sub_account_id"
+                onchange="updateReceiverOptions(); showParentBalance();"
+              >
+                <option value="" selected disabled>--Select--</option>
+                <!-- Options will be populated dynamically -->
+                <% sender_accounts.forEach(function(user) { 
+                %>
                   <option
-                    value="<%= subAccount.id %>"
-                    data-parent_balance="<%= subAccount.balance %>"
-                    data-parent_name="<%= user.username %>"
+                    value="<%= user.subaccount_id %>"
+                    data-parent_balance="<%= user.balance %>"
+                    data-parent_name="<%= user.parent_name %>"
                   >
-                    <%= subAccount.account_username %>
+                    <%= user.account_username %> <!-- Display account_username -->
                   </option>
-                  <% }) }) %>
-                </select>
+                <% }) %>
+              </select>
               </div>
             </div>
 
@@ -162,16 +162,15 @@
                 >
                   <option value="" selected disabled>--Select--</option>
                   <!-- Options will be populated dynamically -->
-                  <% receiver_accounts.forEach(function(user) {
-                  user.subAccounts.forEach(function(subAccount) { %>
+                  <% receiver_accounts.forEach(function(subAccount) { %>
                   <option
-                    value="<%= subAccount.id %>"
+                    value="<%= subAccount.subaccount_id %>"
                     data-parent_balance="<%= subAccount.balance %>"
-                    data-parent_name="<%= user.username %>"
+                    data-parent_name="<%= subAccount.parent_name %>"
                   >
                     <%= subAccount.account_username %>
                   </option>
-                  <% }) }) %>
+                  <% }) %>
                 </select>
               </div>
             </div>

@@ -38,7 +38,7 @@ async function main() {
                 name: item.name,
                 company_id: company.id,
                 is_active: item.is_active,
-                is_default: item.is_default,
+                status: item.is_default,
                 is_deleted: item.is_deleted,
                 deleted_at: item.deleted_at,
                 createdAt: item.created_at,

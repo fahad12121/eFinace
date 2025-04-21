@@ -69,7 +69,13 @@ const User = sequelize.define('User', {
         allowNull: false,
         defaultValue: false,
         comment: 'is_favt = false, is_favt = true',
-    }
+    },
+    status: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+        comment: '0 = active, 1 = suspended'
+    },
 }, {
     timestamps: true,  // Sequelize will automatically add createdAt and updatedAt
     underscored: true,  // Tells Sequelize to use snake_case for column names

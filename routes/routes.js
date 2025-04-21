@@ -57,6 +57,7 @@ module.exports = function (route) {
     route.get('/companies/:id/users', UserController.getUsers);
     route.post('/companies/:id/users', UserController.createUser);
     route.post('/companies/:id/add_to_favt', UserController.createFavt);
+    route.post('/companies/:id/user/:user_id/status', UserController.updateUserStatus);
     route.get('/companies/:company_id/users/ajax', UserController.getUsersAjax);
     route.get('/companies/:company_id/user/:user_id', AccessbilityController.getAccessbility);
     route.put('/companies/:company_id/user/:user_id', AccessbilityController.updateAccessbility);

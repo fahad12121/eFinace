@@ -37,6 +37,7 @@
             <tr>
               <th>Username</th>
               <th>Name</th>
+              <th>Status</th>
               <th>Created At</th>
               <th>Last Login</th>
               <th>Last IP</th>
@@ -162,9 +163,16 @@
             const formattedDate = createdAt.toLocaleString();
             const last_login = new Date(user.last_login);
             const loginDate = last_login.toLocaleString();
+            // Check the status: 0 = Active, 1 = Suspended
+            const isActive = user.status === false; // status 0 means active
+            const switchChecked = isActive ? "checked" : ""; // Set the switch to checked if active (0)
             dataTable.row.add([
               user.username, // Company ID
               user.name, // Company Name
+              `<div class="square-switch">
+                <input type="checkbox" class="status-switch" id="square-switch-${user.id}" data-id=${user.id} switch="bool" ${switchChecked} />
+                <label for="square-switch-${user.id}" data-on-label="Active" data-off-label="Suspended"></label>
+              </div>`,
               formattedDate,
               loginDate,
               user.last_ip,
@@ -192,6 +200,26 @@
       const userId = $(this).data("id");
       // Perform view action, for example, redirect to a view page
       window.location.href = `/companies/${storedCompanyId}/user/${userId}`;
+    });
+
+    $(document).on("click", ".status-switch", function () {
+      const userId = $(this).data("id");
+      const newStatus = $(this).prop("checked") ? 0 : 1;
+
+      // Call the API to update the user's status
+      $.ajax({
+        type: "post",
+        url: `/companies/${companyId}/user/${userId}/status`, // Adjust the URL as per your API
+        data: {status: newStatus}, // Send the new status (0 or 1)
+        success: function (updateResponse) {
+          // Optionally show a success message or handle the response
+          toastr.success(updateResponse.message, 'Success');
+          fetchUsersTable();
+        },
+        error: function (error) {
+          console.error("Error updating user status:", error);
+        },
+      });
     });
 
     // Get the modal and the open modal button

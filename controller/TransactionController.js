@@ -2,34 +2,75 @@ const asyncHandler = require("../middleware/async");
 const User = require("../models/UserModel");
 const SubAccount = require("../models/subAccounts");
 const AccountStatement = require("../models/AccountStatement");
+const AccountType = require("../models/AccountType");
 const Transaction = require("../models/Transaction");
 const sequelize = require('../db'); // Import the Sequelize instance
 
 exports.getTransaction = asyncHandler(async (req, res, next) => {
     try {
         // Extract company_id (user_id) and account_id from the URL
-        const company_id = req.params.id;
+        const companyId = req.params.id;
 
         // Fetch the user and include related subAccounts and AccountType
-        const sender_accounts = await User.findAll({
-            where: {
-                company_id: company_id,
-                user_type: 'User',  // Only fetch users of type 'User'
-            },
-            include: [{
-                model: SubAccount,  // Include SubAccount association
-                required: false,     // Include users without subaccounts too
-            }]
-        });
-        const receiver_accounts = await User.findAll({
-            where: {
-                company_id: company_id,
-                user_type: 'User', // company_id to filter the account under the specific company
-            },
-            include: [{
-                model: SubAccount,  // Include the associated subAccounts for the user
-            }]
-        });
+        // const sender_accounts = await User.findAll({
+        //     where: {
+        //         company_id: company_id,
+        //         user_type: 'User',  // Only fetch users of type 'User'
+        //     },
+        //     include: [{
+        //         model: SubAccount,  // Include SubAccount association
+        //         required: false,     // Include users without subaccounts too
+        //         include: [{
+        //             model: AccountType,  // Join the AccountType model (assuming AccountType is your model name)
+        //             required: true,      // Ensure that we only include SubAccounts that have a matching AccountType
+        //             where: { name: 'DASTI' },  // Filter AccountTypes by name = 'DASTI'
+        //             attributes: [],      // We don't need to select any attributes from AccountType itself
+        //         }],
+        //         attributes: ['account_type_id'],  // Include only the account_type_id field from SubAccount
+        //     }]
+        // });
+        // Log the subAccount data for each sender_account
+        const sender_accounts = await sequelize.query(
+            `SELECT 
+              subaccount.id AS subaccount_id, 
+              subaccount.account_type_id, 
+              subaccount.account_username, 
+              subaccount.balance,
+              user.username AS parent_name
+             FROM users AS user
+             JOIN sub_accounts AS subaccount
+               ON user.id = subaccount.user_id
+             JOIN account_types AS accounttype
+               ON subaccount.account_type_id = accounttype.id
+             WHERE user.company_id = :companyId
+               AND user.user_type = 'User'
+               AND accounttype.name = 'DASTI';`,
+            {
+                replacements: { companyId },  // Bind the companyId parameter
+                type: sequelize.QueryTypes.SELECT,  // Ensure it's a SELECT query
+            }
+        );
+
+        const receiver_accounts = await sequelize.query(
+            `SELECT 
+              subaccount.id AS subaccount_id, 
+              subaccount.account_type_id, 
+              subaccount.account_username, 
+              subaccount.balance,
+              user.username AS parent_name
+             FROM users AS user
+             JOIN sub_accounts AS subaccount
+               ON user.id = subaccount.user_id
+             JOIN account_types AS accounttype
+               ON subaccount.account_type_id = accounttype.id
+             WHERE user.company_id = :companyId
+               AND user.user_type = 'User'
+               AND accounttype.name = 'DASTI';`,
+            {
+                replacements: { companyId },  // Bind the companyId parameter
+                type: sequelize.QueryTypes.SELECT,  // Ensure it's a SELECT query
+            }
+        );
 
         res.render('transactions/index', { sender_accounts, receiver_accounts });  // Render the companies.ejs view with companies data
     } catch (error) {
@@ -222,9 +263,7 @@ exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
     try {
         const companyId = req.params.id; // Get company_id from request parameters
         let whereClause = `t.company_id = ${companyId} AND (sa.company_id = ${companyId} OR rsa.company_id = ${companyId})`;
-        console.log(req.query.startDate);
-        console.log(req.query.startDate, req.query.endDate);
-        if (req.query.startDate && req.query.endDate) {        
+        if (req.query.startDate && req.query.endDate) {
             // Compare the full datetime (with time part)
             whereClause += ` AND t.transaction_date >= '${req.query.startDate}' 
                              AND t.transaction_date <= '${req.query.endDate}'`;
@@ -242,7 +281,6 @@ exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
             whereClause += ` AND t.transaction_date = '${currentDateString}'`;
 
         }
-        console.log(whereClause);
         // Get current date in 'YYYY-MM-DD' format
 
         // SQL query to fetch transactions along with both sender and receiver sub-account information for the given company_id
@@ -267,7 +305,6 @@ exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
             type: sequelize.QueryTypes.SELECT // SELECT query type
         });
 
-        console.log(transactions);
         // Return the formatted transactions data as JSON (for AJAX response)
         res.status(200).json({
             success: true,

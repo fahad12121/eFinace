@@ -66,13 +66,13 @@
                                 class="permission-checkbox"
                                 data-module="<%= module.name %>"
                                 data-permission="view_only"
-                                <% if (moduleData.view_only === true) { %> checked <% } %> />
+                                <% if (moduleData.view === true) { %> checked <% } %> />
                         <% } %> <!-- End of 'if' for view_only -->
                     </td>
         
                     <!-- 'Edit' Permission: Only for non-import modules -->
                     <td>
-                        <% if (module.name !== 'import') { %>
+                        <% if (module.name !== 'import' && module.name !== 'balance_sheet') { %>
                             <input type="checkbox" 
                                 class="permission-checkbox"
                                 data-module="<%= module.name %>"
@@ -84,11 +84,13 @@
                     <!-- 'Add' Permission: For all modules, including Import -->
                     <td>
                         <!-- Add permission for all modules, including Import -->
-                        <input type="checkbox" 
-                            class="permission-checkbox"
-                            data-module="<%= module.name %>"
-                            data-permission="add"
-                            <% if (moduleData.add === true) { %> checked <% } %> />
+                        <% if (module.name !== 'balance_sheet') { %>
+                          <input type="checkbox" 
+                              class="permission-checkbox"
+                              data-module="<%= module.name %>"
+                              data-permission="add"
+                              <% if (moduleData.add === true) { %> checked <% } %> />
+                        <% } %> <!-- End of 'if' for edit -->
                     </td>
                 </tr>
             <% }); %> <!-- Close the forEach loop -->
