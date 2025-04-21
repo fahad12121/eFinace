@@ -12,7 +12,7 @@ exports.getAccessbility = asyncHandler(async (req, res, next) => {
             where: { id: currentUser.id }
         });
         let accessibility;
-        
+
         console.log(req.params.user_id);
         // Check if user_id is passed in query parameters
         if (req.params.user_id) {
