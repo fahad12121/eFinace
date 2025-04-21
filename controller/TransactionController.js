@@ -231,8 +231,8 @@ exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
             endDate.setHours(23, 59, 59, 999); // Set end date to the end of the day
         
             // Compare the full datetime (with time part)
-            whereClause += ` AND t.transaction_date >= '${startDate.toISOString()}' 
-                             AND t.transaction_date <= '${endDate.toISOString()}'`;
+            whereClause += ` AND t.transaction_date >= '${startDate}' 
+                             AND t.transaction_date <= '${endDate}'`;
         }
         else {
             // If no start_date or end_date is provided, use the current date
@@ -272,7 +272,7 @@ exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
             type: sequelize.QueryTypes.SELECT // SELECT query type
         });
 
-
+        console.log(transactions);
         // Return the formatted transactions data as JSON (for AJAX response)
         res.status(200).json({
             success: true,
