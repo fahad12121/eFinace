@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 const User = require("../models/UserModel");
 const Accessibility = require("../models/Accessbility");
 const url = 'mongodb://localhost:27017'; // MongoDB connection URL
-const dbName = 'finance';    // MongoDB database name
+const dbName = 'efinance_live';    // MongoDB database name
 const client = new MongoClient(url, { useUnifiedTopology: true });
 
 async function main() {

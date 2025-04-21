@@ -392,10 +392,6 @@
     var storedCompanyId = localStorage.getItem("company_id");
     // Initialize DataTable
     const dataTable = $("#transdatatable").DataTable({
-      order: [
-        [3, "desc"],
-        [0, "desc"],
-      ],
       pageLength: 200,
       lengthMenu: [
         [200, 50, 100, -1],
@@ -424,7 +420,9 @@
               transaction.transaction_date,
               transaction.sender_user,
               transaction.sender_sub_account,
-              transaction.amount,
+              `<span class="badge bg-success fs-6">
+               ${transaction.amount}
+               </span>`,
               transaction.receiver_user,
               transaction.receiver_sub_account,
               transaction.narration,

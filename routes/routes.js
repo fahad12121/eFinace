@@ -50,6 +50,8 @@ module.exports = function (route) {
     route.get('/companies/:id/account_types', AccountTypeController.getAccountTypes);
     route.post('/companies/:id/account_types', AccountTypeController.createAccountType);
     route.get('/companies/:company_id/account_types/ajax', AccountTypeController.getAccountTypesAjax);
+    route.get('/companies/:id/account_types/:type_id', AccountTypeController.show);
+
 
     //User Routes
     route.get('/companies/:id/users', UserController.getUsers);

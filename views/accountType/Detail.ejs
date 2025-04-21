@@ -1,0 +1,126 @@
+<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
+{"title":"Account Type Detail"}) %>
+<!-- DataTables -->
+<link
+  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+
+<!-- Responsive datatable examples -->
+<link
+  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
+"Account Type Detail" , "title" : "Account Type Detail" }) %>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="row card-title mt-3">
+        <div class="col-md-8">
+          <h4 class="card-title">Account Type Detail</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="row card-title mt-3">
+        <div class="col-md-8">
+          <h4 class="card-title">Account Type Detail</h4>
+        </div>
+      </div>
+      <div class="card-body">
+        <table
+          id="subdatatable"
+          class="table table-bordered dt-responsive nowrap w-100"
+        >
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Take</th>
+              <th>Give</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% sub_accounts.forEach(function(account) { %>
+            <tr>
+              <td><%= account.account_username %></td>
+              
+              <!-- Check if balance < 0 and display it in 'Take' -->
+              <td>
+                <% 
+                  let balance = account.balance === null ? 0 : account.balance;
+                  balance = parseFloat(balance).toFixed(balance % 1 === 0 ? 0 : 2); // Format the balance
+                  const balanceClass = balance === 0 ? '' : (balance < 0 ? 'danger' : 'success'); // Determine class based on balance
+                %>
+                <% if (balance < 0) { %>
+                  <span class="badge bg-<%= balanceClass %> fs-6">
+                    <%= balance %>
+                  </span>
+                <% } %>
+              </td>
+          
+              <!-- Check if balance > 0 and display it in 'Give' -->
+              <td>
+                <% if (balance >= 0) { %>
+                  <span class="badge bg-<%= balanceClass %> fs-6">
+                    <%= balance %>
+                  </span>
+                <% } %>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+</div>
+<!-- end row -->
+
+
+<%- contentFor('FooterJs') %>
+<!-- Required datatable js -->
+<script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+<!-- Responsive examples -->
+<script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+
+<!-- Datatable init js -->
+<script src="/assets/js/pages/datatables.init.js"></script>
+<!-- Select 2 -->
+<script>
+  $(document).ready(function () {
+    // Initialize DataTable
+    const dataTable = $("#subdatatable").DataTable({
+      order: [],
+      pageLength: 600,
+      lengthMenu: [
+        [600, 300, 100, -1],
+        [600, 300, 100, "All"],
+      ],
+      paging: true,
+      searching: true,
+      // ordering: true,
+      autoWidth: false,
+    });
+
+    // If company_id exists in localStorage, display the relevant links in the sidebar
+    const storedCompanyId = localStorage.getItem("company_id");
+    if (storedCompanyId) {
+      showSidebarLinks(storedCompanyId);
+    }
+  });
+</script>

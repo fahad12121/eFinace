@@ -1,9 +1,9 @@
 const { MongoClient } = require('mongodb');
 // const User = require("./models/UserModel");
-const Company = require("./models/Company");
-const accountType = require("./models/AccountType");
+const Company = require("../models/Company");
+const accountType = require("../models/AccountType");
 const url = 'mongodb://localhost:27017'; // MongoDB connection URL
-const dbName = 'finance';    // The name of your database
+const dbName = 'efinance_live';    // The name of your database
 
 // Create a new MongoClient
 const client = new MongoClient(url, { useUnifiedTopology: true });

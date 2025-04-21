@@ -1,4 +1,5 @@
 const AccountTypes = require("../models/AccountType");
+const subAccount = require("../models/subAccounts");
 const asyncHandler = require("../middleware/async");
 
 exports.createAccountType = asyncHandler(async (req, res, next) => {
@@ -61,5 +62,24 @@ exports.getAccountTypesAjax = asyncHandler(async (req, res, next) => {
         });
     } catch (error) {
         next(error);
+    }
+});
+
+exports.show = asyncHandler(async (req, res, next) => {
+    try {
+        const companyId = req.params.id; // Get company_id from request parameters
+        const type_id = req.params.type_id; // Get type_id from request parameters
+
+        // Fetch the sub_accounts from the database
+        const sub_accounts = await subAccount.findAll({
+            where: {
+                account_type_id: type_id,
+                company_id: companyId
+            }
+        });
+        res.render('accountType/Detail', { sub_accounts });
+        // Return the sub_accounts data as JSON (for AJAX response)
+    } catch (error) {
+        next(error); // Pass the error to the error handling middleware
     }
 });

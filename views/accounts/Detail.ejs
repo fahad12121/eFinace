@@ -78,10 +78,11 @@
               <td>
                 <% 
                   let balance = account.balance === null ? 0 : account.balance;  // Check if balance is null
+                  balance = parseFloat(balance).toFixed(balance % 1 === 0 ? 0 : 2);
                   const balanceClass = balance === 0 ? '' : (balance < 0 ? 'danger' : 'success');  // Determine class based on balance
                 %>
                 <span class="badge bg-<%= balanceClass %> fs-6">
-                  <%= balance %>
+                  <%= Math.round(balance).toLocaleString() %>
                 </span>
               </td>
               <td><%= account?.AccountType?.name || 'N/A' %></td>

@@ -92,6 +92,16 @@
           </thead>
 
           <tbody></tbody>
+          <tfoot>
+            <tr>
+              <th></th>
+              <th></th>
+              <th>Total Balance</th>
+              <th id="totalBalance">0</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
@@ -315,16 +325,18 @@
         url: `/companies/${companyId}/users/ajax?user_type=User`,
         success: function (response) {
           dataTable.clear();
+          let totalBalance = 0;
           response.users.forEach(function (user) {
-            let balance = user.balance === null ? 0 : user.balance;  // Handle null balance
-            const balanceClass = balance === 0 ? '' : (balance < 0 ? 'danger' : 'success');  // No class for 0 balance
-            console.log(balanceClass);
+            let balance = user.balance === null ? 0 : user.balance; // Handle null balance
+            balance = parseFloat(balance).toFixed(balance % 1 === 0 ? 0 : 2);
+            const balanceClass =
+              balance === 0 ? "" : balance < 0 ? "danger" : "success"; // No class for 0 balance
             dataTable.row.add([
               `<input type="checkbox" class="fav-checkbox" data-id="${user.id}" />`,
               user.account_pk,
               user.username,
               `<span class="badge bg-${balanceClass} fs-6">
-               ${balance}
+               ${Math.round(balance).toLocaleString()}
                </span>`,
               user.notes,
               // Actions column with eye and pencil icons
@@ -335,8 +347,12 @@
                  <i class="fas fa-pencil-alt"></i>
                 </button>`,
             ]);
+            // Add the balance to totalBalance
+            totalBalance += parseFloat(balance);
           });
-
+          // Update the total balance in the footer
+          // Update the total balance in the footer with rounded and formatted value
+          $("#totalBalance").text(Math.round(totalBalance).toLocaleString());
           dataTable.draw();
         },
         error: function (error) {
@@ -434,8 +450,6 @@
       $(".fav-checkbox:checked").each(function () {
         selectedAccounts.push($(this).data("id"));
       });
-
-      console.log(selectedAccounts);
 
       // If no account is selected, show an alert
       if (selectedAccounts.length === 0) {

@@ -141,7 +141,7 @@
             account.id, // Company ID
             account.name, // Company Name
             account.status, // Company Name
-              '<a href="javascript:void(0);" class="show-company" data-id="' +
+              '<a href="javascript:void(0);" class="btn btn-sm btn-info accountbtn" data-id="' +
               account.id +
                 '"><i class="fas fa-eye"></i></a>', // Eye icon for "show"
             ]);
@@ -156,6 +156,14 @@
         },
       });
     }
+
+
+    $(document).on("click", ".accountbtn", function () {
+      const userId = $(this).data("id");
+      // Perform view action, for example, redirect to a view page
+      window.location.href = `/companies/${storedCompanyId}/account_types/${userId}`;
+    });
+
     // Get the modal and the open modal button
     var modal = new bootstrap.Modal(
       document.getElementById("AccountTypeModal"),
