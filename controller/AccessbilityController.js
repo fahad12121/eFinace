@@ -6,13 +6,14 @@ const User = require('../models/UserModel');
 exports.getAccessbility = asyncHandler(async (req, res, next) => {
     try {
         const currentUser = jwt.verify(req.cookies.token, 'secret');
+        console.log(currentUser);
         // Fetch the user type from the User model based on the currentUser.id
         const user = await User.findOne({
             where: { id: currentUser.id }
         });
         let accessibility;
-
-
+        
+        console.log(req.params.user_id);
         // Check if user_id is passed in query parameters
         if (req.params.user_id) {
             // Admin is getting permissions for a specific user
@@ -26,6 +27,7 @@ exports.getAccessbility = asyncHandler(async (req, res, next) => {
                 where: { user_id: currentUser.id } // Use logged-in user's ID
             });
         }
+        console.log(accessibility);
         res.render('users/accessbility', { accessibility });
 
     } catch (error) {
