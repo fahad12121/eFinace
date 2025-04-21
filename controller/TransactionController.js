@@ -226,8 +226,8 @@ exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
         console.log(req.query.startDate, req.query.endDate);
         if (req.query.startDate && req.query.endDate) {        
             // Compare the full datetime (with time part)
-            whereClause += ` AND t.transaction_date >= '${startDate}' 
-                             AND t.transaction_date <= '${endDate}'`;
+            whereClause += ` AND t.transaction_date >= '${req.query.startDate}' 
+                             AND t.transaction_date <= '${req.query.endDate}'`;
         }
         else {
             // If no start_date or end_date is provided, use the current date
