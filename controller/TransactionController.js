@@ -222,6 +222,7 @@ exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
     try {
         const companyId = req.params.id; // Get company_id from request parameters
         let whereClause = `t.company_id = ${companyId} AND (sa.company_id = ${companyId} OR rsa.company_id = ${companyId})`;
+        console.log(req);
         console.log(req.query.startDate, req.query.endDate);
         if (req.query.startDate && req.query.endDate) {
             const startDate = new Date(req.query.startDate);

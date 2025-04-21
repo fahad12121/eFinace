@@ -122,7 +122,7 @@
                   user.subAccounts.forEach(function(subAccount) { %>
                   <option
                     value="<%= subAccount.id %>"
-                    data-parent_balance="<%= user.balance %>"
+                    data-parent_balance="<%= subAccount.balance %>"
                     data-parent_name="<%= user.username %>"
                   >
                     <%= subAccount.account_username %>
@@ -166,7 +166,7 @@
                   user.subAccounts.forEach(function(subAccount) { %>
                   <option
                     value="<%= subAccount.id %>"
-                    data-parent_balance="<%= user.balance %>"
+                    data-parent_balance="<%= subAccount.balance %>"
                     data-parent_name="<%= user.username %>"
                   >
                     <%= subAccount.account_username %>
@@ -303,7 +303,7 @@
 
     // Display the sender's parent balance in the span
     document.getElementById("sender_parent_balance").innerText =
-      "Current Balance: " + parentBalance;
+      "Current Balance: " + parseFloat(parentBalance).toFixed(parentBalance % 1 === 0 ? 0 : 2);
     document.getElementById("sender_parent_name").innerText =
       "Parent Account: " + parentName;
 
