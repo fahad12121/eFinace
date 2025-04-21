@@ -60,7 +60,8 @@
                             <input type="checkbox" 
                                 class="permission-checkbox"
                                 data-module="<%= module.name %>"
-                                data-permission="view_only" />
+                                data-permission="view_only"
+                                <% if (moduleData.view_only === true) { %> checked <% } %> />
                         <% } %> <!-- End of 'if' for view_only -->
                     </td>
         
@@ -70,7 +71,8 @@
                             <input type="checkbox" 
                                 class="permission-checkbox"
                                 data-module="<%= module.name %>"
-                                data-permission="edit" />
+                                data-permission="edit"
+                                <% if (moduleData.edit === true) { %> checked <% } %> />
                         <% } %> <!-- End of 'if' for edit -->
                     </td>
         
@@ -80,7 +82,8 @@
                         <input type="checkbox" 
                             class="permission-checkbox"
                             data-module="<%= module.name %>"
-                            data-permission="add" />
+                            data-permission="add"
+                            <% if (moduleData.add === true) { %> checked <% } %> />
                     </td>
                 </tr>
             <% }); %> <!-- Close the forEach loop -->

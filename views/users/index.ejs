@@ -158,11 +158,15 @@
 
           // Loop through all companies and append them to the table
           response.users.forEach(function (user) {
+            const createdAt = new Date(user.createdAt);
+            const formattedDate = createdAt.toLocaleString();
+            const last_login = new Date(user.last_login);
+            const loginDate = last_login.toLocaleString();
             dataTable.row.add([
               user.username, // Company ID
               user.name, // Company Name
-              user.createdAt,
-              user.last_login,
+              formattedDate,
+              loginDate,
               user.last_ip,
               // Add a new column with a lock icon
               `<button class="btn btn-sm btn-warning lock-btn" data-id="${user.id}" title="Lock Account">
@@ -174,16 +178,6 @@
           // Draw the table to display the updated data
           dataTable.draw();
           // Add event listener to the "show" links
-          $(".show-company").click(function () {
-            // Get the company ID from the clicked link's data-id attribute
-            var companyId = $(this).data("id");
-
-            // Store the company ID in localStorage
-            localStorage.setItem("company_id", companyId);
-
-            // Show the relevant sidebar links
-            showSidebarLinks(companyId);
-          });
         },
         error: function (error) {
           console.log(error);

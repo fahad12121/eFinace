@@ -1,5 +1,5 @@
 const { MongoClient } = require('mongodb');
-const User = require("./models/UserModel");
+const User = require("../models/UserModel");
 
 const url = 'mongodb://localhost:27017'; // MongoDB connection URL
 const dbName = 'finance';    // The name of your database
@@ -23,7 +23,6 @@ async function main() {
         const users = await collection.find({}).toArray(); // Use any query to filter data
         for (let user of users) {
             let userName = user?.first_name ? `${user?.first_name} ${user?.last_name}` : '';
-            console.log(user.last_ip, user.last_ip == "Invalid date")
             // Find the user by account ID
             await User.create({
                 uid: user._id.toString(),

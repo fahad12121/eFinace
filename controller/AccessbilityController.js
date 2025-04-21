@@ -12,8 +12,9 @@ exports.getAccessbility = asyncHandler(async (req, res, next) => {
         });
         let accessibility;
 
+
         // Check if user_id is passed in query parameters
-        if (req.query.user_id) {
+        if (req.params.user_id) {
             // Admin is getting permissions for a specific user
             accessibility = await Accessibility.findOne({
                 where: { user_id: req.params.user_id }
@@ -25,7 +26,6 @@ exports.getAccessbility = asyncHandler(async (req, res, next) => {
                 where: { user_id: currentUser.id } // Use logged-in user's ID
             });
         }
-        console.log(accessibility);
         res.render('users/accessbility', { accessibility });
 
     } catch (error) {
