@@ -224,12 +224,7 @@ exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
         let whereClause = `t.company_id = ${companyId} AND (sa.company_id = ${companyId} OR rsa.company_id = ${companyId})`;
         console.log(req.query.startDate);
         console.log(req.query.startDate, req.query.endDate);
-        if (req.query.startDate && req.query.endDate) {
-            const startDate = new Date(req.query.startDate);
-            startDate.setHours(0, 0, 0, 0); // Set start date to the beginning of the day
-            const endDate = new Date(req.query.endDate);
-            endDate.setHours(23, 59, 59, 999); // Set end date to the end of the day
-        
+        if (req.query.startDate && req.query.endDate) {        
             // Compare the full datetime (with time part)
             whereClause += ` AND t.transaction_date >= '${startDate}' 
                              AND t.transaction_date <= '${endDate}'`;
