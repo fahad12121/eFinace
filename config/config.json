@@ -1,8 +1,8 @@
 {
     "development": {
       "username": "root",
-      "password": "Precious@96",
-      "database": "efinance_db",
+      "password": "",
+      "database": "finance",
       "host": "localhost",
       "dialect": "mysql"
     },

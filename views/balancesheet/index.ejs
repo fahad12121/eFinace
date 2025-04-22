@@ -26,7 +26,10 @@
         </div>
       </div>
       <div class="card-body">
-        <table id="balancedatatable" class="table table-bordered dt-responsive nowrap w-100">
+        <table
+          id="balancedatatable"
+          class="table table-bordered dt-responsive nowrap w-100"
+        >
           <thead>
             <tr>
               <th>Account</th>
@@ -37,55 +40,81 @@
           </thead>
           <tbody>
             <!-- Loop through both minus and plus accounts together -->
-            <% for(let i = 0; i < Math.max(minusAccounts.length, plusAccounts.length); i++) { %>
-              <tr>
-                <!-- Display Minus Account -->
-                <td>
-                  <% if (minusAccounts[i]) { %>
-                    <a href="/companies/<%= company_id %>/ledger/<%= minusAccounts[i].user_id %>">
-                      <%= minusAccounts[i].account %>
-                    </a>
-                  <% } %>
-                </td>
-                <!-- Display Minus Balance -->
-                <td>
-                  <% if (minusAccounts[i] && minusAccounts[i].minus < 0) { %>
-                    <span class="badge bg-danger fs-6">
-                      <%= minusAccounts[i].minus %>
-                    </span>
-                  <% } else if (minusAccounts[i]) { %>
-                    <%= minusAccounts[i].minus %>
-                  <% } %>
-                </td>
-        
-                <!-- Display Plus Account -->
-                <td>
-                  <% if (plusAccounts[i]) { %>
-                    <a href="/companies/<%= company_id %>/ledger/<%= plusAccounts[i].user_id %>">
-                      <%= plusAccounts[i].account %>
-                    </a>
-                  <% } %>
-                </td>
-                <!-- Display Plus Balance -->
-                <td>
-                  <% if (plusAccounts[i] && plusAccounts[i].plus > 0) { %>
-                    <span class="badge bg-success fs-6">
-                      <%= plusAccounts[i].plus %>
-                    </span>
-                  <% } else if (plusAccounts[i]) { %>
-                    <%= plusAccounts[i].plus %>
-                  <% } %>
-                </td>
-              </tr>
+            <% for(let i = 0; i < Math.max(minusAccounts.length,
+            plusAccounts.length); i++) { %>
+            <tr>
+              <!-- Display Minus Account -->
+              <td>
+                <% if (minusAccounts[i]) { %>
+                <input
+                  type="checkbox"
+                  class="minus-checkbox"
+                  data-id="<%= minusAccounts[i].user_id %>"
+                />
+                <a
+                  href="/companies/<%= company_id %>/ledger/<%= minusAccounts[i].user_id %>"
+                >
+                  <%= minusAccounts[i].account %>
+                </a>
+                <% } %>
+              </td>
+              <!-- Display Minus Balance -->
+              <td>
+                <% let Minus = ""; if (minusAccounts[i] &&
+                minusAccounts[i].minus < 0) { Minus =
+                parseFloat(minusAccounts[i].minus).toFixed(minusAccounts[i].minus
+                % 1 === 0 ? 0 : 2); %>
+                <span class="badge bg-danger fs-6">
+                  <%= Math.round(Minus).toLocaleString() %>
+                </span>
+                <% } else if (minusAccounts[i]) { Minus =
+                parseFloat(minusAccounts[i].minus).toFixed(minusAccounts[i].minus
+                % 1 === 0 ? 0 : 2); %> <%= Math.round(Minus).toLocaleString() %>
+                <% } %>
+              </td>
+
+              <!-- Display Plus Account -->
+              <td>
+                <% if (plusAccounts[i]) { %>
+                <input
+                  type="checkbox"
+                  class="plus-checkbox"
+                  data-id="<%= plusAccounts[i].user_id %>"
+                />
+                <a
+                  href="/companies/<%= company_id %>/ledger/<%= plusAccounts[i].user_id %>"
+                >
+                  <%= plusAccounts[i].account %>
+                </a>
+                <% } %>
+              </td>
+              <!-- Display Plus Balance -->
+              <td>
+                <% if (plusAccounts[i] && plusAccounts[i].plus > 0) { %>
+                <span class="badge bg-success fs-6">
+                  <%= Math.round(plusAccounts[i].plus).toLocaleString() %>
+                </span>
+                <% } else if (plusAccounts[i]) { %> <%= plusAccounts[i].plus %>
+                <% } %>
+              </td>
+            </tr>
             <% } %>
           </tbody>
-        
+
           <tfoot>
             <tr>
               <th>Total</th>
-              <th><span class="badge bg-danger fs-6"><%= totalMinus %></span></th>
+              <th>
+                <span class="badge bg-danger fs-6"
+                  ><%= Math.round(totalMinus).toLocaleString() %></span
+                >
+              </th>
               <th>Total</th>
-              <th><span class="badge bg-success fs-6"><%= totalPlus %></span></th>
+              <th>
+                <span class="badge bg-success fs-6"
+                  ><%= Math.round(totalPlus).toLocaleString() %></span
+                >
+              </th>
             </tr>
           </tfoot>
         </table>
@@ -117,16 +146,49 @@
       ],
       pageLength: 300,
       lengthMenu: [
-        [120, 50, 100, -1],
-        [120, 50, 100, "All"],
+        [300, 50, 100, -1],
+        [300, 50, 100, "All"],
       ],
       paging: true,
       searching: true,
       // ordering: true,
       autoWidth: false,
     });
-    // If company_id exists in localStorage, display the relevant links in the sidebar
     const storedCompanyId = localStorage.getItem("company_id");
+
+    $(document).on("click", ".minus-checkbox, .plus-checkbox", function () {
+      const checkbox = $(this);
+      const isChecked = checkbox.prop("checked"); // Check if the checkbox is checked
+      const accountId = checkbox.data("id"); // Get the account ID from the data attribute
+
+      // Determine if it's a minus or plus account
+      const actionType = checkbox.hasClass("minus-checkbox") ? "minus" : "plus";
+      // Prepare the data to send in the API reques
+
+      // Send the data to the API when the checkbox is clicked
+      $.ajax({
+        type: "POST", // Assuming you want to use POST for updating status
+        url: `/companies/${storedCompanyId}/add_to_favt`, // Adjust the URL to your API endpoint
+        data: {
+          accountId: accountId,
+          actionType: actionType,
+          status: isChecked ? "selected" : "deselected",
+        }, // Send the data as JSON
+        success: function (response) {
+          toastr.success(response.message);
+          // Optionally, you can refresh the table or show a success message
+          // Reload the page after 3 seconds
+          setTimeout(function () {
+            location.reload();
+          }, 1000); // 3000 milliseconds = 3 seconds
+        },
+        error: function (error) {
+          console.error("Error updating account status:", error);
+        },
+      });
+    });
+
+    // If company_id exists in localStorage, display the relevant links in the sidebar
     if (storedCompanyId) {
       showSidebarLinks(storedCompanyId);
     }

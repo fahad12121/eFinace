@@ -45,7 +45,20 @@
             <tr>
               <td><%= account.account_pk %></td>
               <td><%= account.username %></td>
-              <td><%= account.balance %></td>
+              <td>
+                <% 
+                  let balanceClass = '';
+                  if (account.balance > 0) {
+                    balanceClass = 'success'; // For positive balance
+                  } else if (account.balance < 0) {
+                    balanceClass = 'danger'; // For negative balance
+                  }
+                %>
+                
+                <span class="badge bg-<%= balanceClass %> fs-6">
+                  <%= Math.round(account.balance).toLocaleString() %>
+                </span>
+              </td>
               <td><%= account.notes %></td>
               <td>
                 <a
@@ -63,7 +76,7 @@
           <tfoot>
             <tr>
               <th colspan="2">Total Balance</th>
-              <th><%= totalBalance.toLocaleString() %></th>
+              <th><%= Math.round(totalBalance).toLocaleString() %></th>
               <!-- Format with commas -->
               <th colspan="2"></th>
             </tr>

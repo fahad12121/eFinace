@@ -70,6 +70,7 @@
               <th>Sub Account</th>
               <th>Narration</th>
               <th>Notes</th>
+              <th>Actions</th>
             </tr>
           </thead>
 
@@ -110,25 +111,25 @@
                   >Sender</label
                 >
                 <select
-                class="form-control select2 sender_id"
-                style="width: 100%"
-                id="sender_sub_account_id"
-                name="sender_sub_account_id"
-                onchange="updateReceiverOptions(); showParentBalance();"
-              >
-                <option value="" selected disabled>--Select--</option>
-                <!-- Options will be populated dynamically -->
-                <% sender_accounts.forEach(function(user) { 
-                %>
+                  class="form-control select2 sender_id"
+                  style="width: 100%"
+                  id="sender_sub_account_id"
+                  name="sender_sub_account_id"
+                  onchange="updateReceiverOptions(); showParentBalance();"
+                >
+                  <option value="" selected disabled>--Select--</option>
+                  <!-- Options will be populated dynamically -->
+                  <% sender_accounts.forEach(function(user) { %>
                   <option
                     value="<%= user.subaccount_id %>"
                     data-parent_balance="<%= user.balance %>"
                     data-parent_name="<%= user.parent_name %>"
                   >
-                    <%= user.account_username %> <!-- Display account_username -->
+                    <%= user.account_username %>
+                    <!-- Display account_username -->
                   </option>
-                <% }) %>
-              </select>
+                  <% }) %>
+                </select>
               </div>
             </div>
 
@@ -223,6 +224,62 @@
           Close
         </button>
         <button type="submit" class="btn btn-primary" form="modalForm">
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Modal -->
+
+<!-- Start Model -->
+<div
+  class="modal fade"
+  id="editTransactionModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Notes</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="editmodalForm">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="mb-3">
+                <label for="notes" class="col-form-label">Notes</label>
+                <input type="hidden" name="id" id="trans_id" />
+                <input
+                  type="text"
+                  class="form-control"
+                  name="notes"
+                  id="trans_notes"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          id="closeModalButton"
+          data-bs-dismiss="modal"
+        >
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary" form="editmodalForm">
           Submit
         </button>
       </div>
@@ -407,7 +464,7 @@
     // Function to fetch users and update the DataTable
     function fetchTransactionTable(startDate, endDate) {
       let url = `/companies/${storedCompanyId}/transactions/ajax`;
-      if(startDate !== undefined && endDate !== undefined){
+      if (startDate !== undefined && endDate !== undefined) {
         url = `/companies/${storedCompanyId}/transactions/ajax?startDate=${startDate}&&endDate=${endDate}`;
       }
       $.ajax({
@@ -427,6 +484,9 @@
               transaction.receiver_sub_account,
               transaction.narration,
               transaction.notes,
+              `<button class="btn btn-sm btn-warning edit-btn" data-id="${transaction.id}" title="Edit">
+                 <i class="fas fa-pencil-alt"></i>
+              </button>`,
             ]);
           });
 
@@ -445,6 +505,14 @@
         keyboard: false,
       }
     );
+
+    $(document).on("click", ".edit-btn", function () {
+      const userId = $(this).data("id");
+      // Set hidden input value
+      $("#trans_id").val(userId);
+      $("#editTransactionModal").modal("show");
+      // Change modal title to "Edit Account"
+    });
 
     // Extract company ID from URL
 
@@ -508,6 +576,33 @@
           // document.getElementById("sender_parent_balance").innerText =
           //   "Current Balance: " + 0;
           // fetchTransactionTable();
+        },
+        error: function (error) {
+          alert("Error submitting the company. Please try again.");
+        },
+      });
+    });
+
+    $("#editmodalForm").submit(function (event) {
+      event.preventDefault(); // Prevent the default form submission behavior
+      var id = $("#trans_id").val();
+      var notes = $("#trans_notes").val();
+      // Get the value from the form input (company name)
+      var companyId = window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
+
+      // Example of submitting the form data to the backend (using AJAX)
+      $.ajax({
+        type: "POST",
+        url: `/companies/${companyId}/transactions/edit`, // Adjust this to your API endpoint
+        data: {
+          id: $("#trans_id").val(),
+          notes: $("#trans_notes").val(),
+          company_id: companyId,
+        },
+        success: function (response) {
+          // Call the GET method to fetch and update the table
+          toastr.success(response.message, "Success");
+          location.reload();
         },
         error: function (error) {
           alert("Error submitting the company. Please try again.");

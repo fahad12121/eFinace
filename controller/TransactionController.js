@@ -11,24 +11,6 @@ exports.getTransaction = asyncHandler(async (req, res, next) => {
         // Extract company_id (user_id) and account_id from the URL
         const companyId = req.params.id;
 
-        // Fetch the user and include related subAccounts and AccountType
-        // const sender_accounts = await User.findAll({
-        //     where: {
-        //         company_id: company_id,
-        //         user_type: 'User',  // Only fetch users of type 'User'
-        //     },
-        //     include: [{
-        //         model: SubAccount,  // Include SubAccount association
-        //         required: false,     // Include users without subaccounts too
-        //         include: [{
-        //             model: AccountType,  // Join the AccountType model (assuming AccountType is your model name)
-        //             required: true,      // Ensure that we only include SubAccounts that have a matching AccountType
-        //             where: { name: 'DASTI' },  // Filter AccountTypes by name = 'DASTI'
-        //             attributes: [],      // We don't need to select any attributes from AccountType itself
-        //         }],
-        //         attributes: ['account_type_id'],  // Include only the account_type_id field from SubAccount
-        //     }]
-        // });
         // Log the subAccount data for each sender_account
         const sender_accounts = await sequelize.query(
             `SELECT 
@@ -211,53 +193,38 @@ const updateUserBalance = async (user, transaction) => {
     // Save the user with the updated balance within the transaction
     await user.save({ transaction });
 };
+exports.edit = asyncHandler(async (req, res, next) => {
+    try {
+        const { id, notes, company_id } = req.body;
 
-// exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
-//     try {
-//         const companyId = req.params.id; // Get company_id from request parameters
+        if (id) {
+            // Fetch the transaction using the provided ID
+            const transaction = await Transaction.findOne({
+                where: { id: id },  // Corrected the query format
+            });
 
-//         // Get the date range from the request query (optional)
-//         const { startDate, endDate } = req.query; // Example: /transactions/1?startDate=2025-04-01&endDate=2025-04-14
+            if (transaction) {
+                // Update the transaction notes
+                transaction.notes = notes;
 
-//         // Get the current date and create a Date object for the start and end of today
-//         const currentDate = new Date();
+                // Save the updated transaction
+                await transaction.save();
 
-//         // Get the start of the day (00:00:00) in local time
-//         const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0)); // Set time to 00:00:00:000 (local time)
-
-//         // Get the end of the day (23:59:59) in local time
-//         const endOfDay = new Date(currentDate.setHours(23, 59, 59, 999)); // Set time to 23:59:59:999 (local time)
-
-//         // If date range is provided, use it, otherwise, use today's date
-//         const whereClause = {
-//             company_id: companyId,
-//             transaction_date: {
-//                 [Op.gte]: startDate ? new Date(startDate).setHours(0, 0, 0, 0) : startOfDay, // Apply start date
-//                 [Op.lte]: endDate ? new Date(endDate).setHours(23, 59, 59, 999) : endOfDay // Apply end date
-//             }
-//         };
-
-//         // Fetch transactions associated with the specific company_id and filtered by the date range
-//         const transactions = await Transaction.findAll({
-//             where: whereClause, // Apply the where clause
-//             include: [{
-//                 model: SubAccount,  // Include the associated subAccounts for the user
-//                 required: false,  // Make this optional if not all users have subAccounts
-//             }]
-//         });
-
-//         console.log(transactions);
-
-//         // Return the formatted transactions data as JSON (for AJAX response)
-//         res.status(200).json({
-//             success: true,
-//             transactions: formattedTransactions
-//         });
-//     } catch (error) {
-//         next(error);
-//     }
-// });
-
+                // Respond with success
+                res.status(200).json({ message: 'Transaction updated successfully' });
+            } else {
+                // If the transaction is not found
+                res.status(404).json({ message: 'Transaction not found' });
+            }
+        } else {
+            // If no id is provided in the request body
+            res.status(400).json({ message: 'Transaction ID is required' });
+        }
+    } catch (error) {
+        // Handle any errors that occur
+        next(error);  // Forward the error to the error handling middleware
+    }
+});
 
 exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
     try {

@@ -228,9 +228,8 @@ exports.getSingleAccountUser = asyncHandler(async (req, res, next) => {
 
 //favt user function
 exports.createFavt = asyncHandler(async (req, res, next) => {
-    const { accounts } = req.body;
-
-    if (accounts.length > 0) {
+    const { accounts, accountId } = req.body;
+    if (accounts && accounts.length > 0) {
         try {
             // Loop through each account ID
             for (let accountId of accounts) {
@@ -257,6 +256,20 @@ exports.createFavt = asyncHandler(async (req, res, next) => {
                 message: 'An error occurred while updating users.',
             });
         }
+    } else if (accountId) {
+        // Find the user by account ID
+        const user = await User.findOne({ where: { id: accountId } });
+        if (user) {
+            // Update the 'is_favt' column to true
+            user.is_favt = true;
+            await user.save();  // Save the changes to the database
+        } else {
+            console.log(`User with ID ${accountId} not found.`);
+        }
+        return res.status(201).json({
+            success: true,
+            message: 'Users Added to favt!',
+        });
     } else {
         return res.status(400).json({
             success: false,
