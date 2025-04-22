@@ -21,8 +21,15 @@
   <div class="col-12">
     <div class="card">
       <div class="row card-title mt-3">
-        <div class="col-md-11">
+        <div class="col-md-8">
           <h4 class="card-title">Balance Sheet</h4>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex flex-wrap justify-content-md-end header-actions">
+            <button class="btn btn-outline-info btn-action" id="addfavt">
+              <i class="bi bi-star"></i> Add to Favorites
+            </button>
+          </div>
         </div>
       </div>
       <div class="card-body">
@@ -48,7 +55,7 @@
                 <% if (minusAccounts[i]) { %>
                 <input
                   type="checkbox"
-                  class="minus-checkbox"
+                  class="fav-checkbox"
                   data-id="<%= minusAccounts[i].user_id %>"
                 />
                 <a
@@ -78,7 +85,7 @@
                 <% if (plusAccounts[i]) { %>
                 <input
                   type="checkbox"
-                  class="plus-checkbox"
+                  class="fav-checkbox"
                   data-id="<%= plusAccounts[i].user_id %>"
                 />
                 <a
@@ -156,34 +163,43 @@
     });
     const storedCompanyId = localStorage.getItem("company_id");
 
-    $(document).on("click", ".minus-checkbox, .plus-checkbox", function () {
-      const checkbox = $(this);
-      const isChecked = checkbox.prop("checked"); // Check if the checkbox is checked
-      const accountId = checkbox.data("id"); // Get the account ID from the data attribute
+    // Listen for the "Add to Favt" button click
+    $("#addfavt").click(function () {
+      const selectedAccounts = [];
 
-      // Determine if it's a minus or plus account
-      const actionType = checkbox.hasClass("minus-checkbox") ? "minus" : "plus";
-      // Prepare the data to send in the API reques
+      // Get all checked checkboxes
+      $(".fav-checkbox:checked").each(function () {
+        selectedAccounts.push($(this).data("id"));
+      });
 
-      // Send the data to the API when the checkbox is clicked
+      console.log(selectedAccounts);
+
+      // If no account is selected, show an alert
+      if (selectedAccounts.length === 0) {
+        toastr.error(
+          "Please select at least one account to add to favorites",
+          "Error"
+        );
+        return;
+      }
+
+      // Make the API call to add selected accounts to favorites
       $.ajax({
-        type: "POST", // Assuming you want to use POST for updating status
-        url: `/companies/${storedCompanyId}/add_to_favt`, // Adjust the URL to your API endpoint
+        type: "POST",
+        url: `/companies/${storedCompanyId}/add_to_favt`, // Update the URL as needed
         data: {
-          accountId: accountId,
-          actionType: actionType,
-          status: isChecked ? "selected" : "deselected",
-        }, // Send the data as JSON
+          accounts: selectedAccounts, // Send the array of selected account IDs
+        },
         success: function (response) {
-          toastr.success(response.message);
-          // Optionally, you can refresh the table or show a success message
-          // Reload the page after 3 seconds
+          toastr.success(response.message, "Success");
+          // Optionally, refresh the DataTable or update the UI accordingly
           setTimeout(function () {
             location.reload();
-          }, 1000); // 3000 milliseconds = 3 seconds
+          }, 1500); // 3000 milliseconds = 3 seconds
         },
         error: function (error) {
-          console.error("Error updating account status:", error);
+          console.log(error);
+          alert("Error adding accounts to favorites. Please try again.");
         },
       });
     });
