@@ -1,5 +1,5 @@
 <%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
-{"title":"Account Detail"}) %>
+{"title":"Account Statement"}) %>
 
 <!-- DataTables -->
 <link
@@ -79,8 +79,8 @@
           <tfoot>
             <tr>
               <th colspan="4">Total</th>
-              <th id="total_minus" class="fs-5"></th>
-              <th id="total_plus" class="fs-5"></th>
+              <th><span id="total_minus" class="badge bg-danger fs-5"></span></th>
+              <th><span id="total_plus" class="badge bg-success fs-5"></span></th>
               <th id="total_balance" class="fs-5"></th>
             </tr>
           </tfoot>

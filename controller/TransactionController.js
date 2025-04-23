@@ -299,7 +299,6 @@ exports.getSubAccountStatementAJax = asyncHandler(async (req, res, next) => {
         let whereClause = `sa.id = ${subAccountId}`; // Condition to find sub_account by ID
         // If start_date and end_date are provided, filter account statements by those dates
         if (req.query.startDate && req.query.endDate) {
-            console.log('fff');
             const startDate = new Date(req.query.startDate);
             startDate.setHours(0, 0, 0, 0); // Set start date to the beginning of the day
             const endDate = new Date(req.query.endDate);
@@ -307,7 +306,6 @@ exports.getSubAccountStatementAJax = asyncHandler(async (req, res, next) => {
             whereClause += ` AND asn.transaction_date >= '${startDate.toISOString().split('T')[0]}' 
                              AND asn.transaction_date <= '${endDate.toISOString().split('T')[0]}'`;
         } else {
-            console.log('aaa');
             // If no start_date or end_date is provided, use the current date
             const currentDate = new Date();
             // Adjust the date for the local timezone
@@ -346,7 +344,6 @@ exports.getSubAccountStatementAJax = asyncHandler(async (req, res, next) => {
             type: sequelize.QueryTypes.SELECT, // SELECT query type
         });
        
-        console.log(subAccountDetails);
         // Return the formatted sub account details
         res.status(200).json({
             success: true,

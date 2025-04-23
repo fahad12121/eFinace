@@ -46,7 +46,7 @@ user.username + ' Ledger', "title": user.username + ' Ledger' }) %>
               <!-- Display Minus Account and Balance -->
               <td><%= leftAccounts[i] ? leftAccounts[i].account : '' %></td>
               <td>
-                <span class="badge bg-danger fs-6"
+                <span class="badge bg-danger fs-5"
                   ><%= leftAccounts[i] ? leftAccounts[i].negative : '' %></span
                 >
               </td>
@@ -54,7 +54,7 @@ user.username + ' Ledger', "title": user.username + ' Ledger' }) %>
               <!-- Display Plus Account and Balance -->
               <td><%= rightAccounts[i] ? rightAccounts[i].account : '' %></td>
               <td>
-                <span class="badge bg-success fs-6"
+                <span class="badge bg-success fs-5"
                   ><%= rightAccounts[i] ? rightAccounts[i].positive : ''
                   %></span
                 >
@@ -67,7 +67,7 @@ user.username + ' Ledger', "title": user.username + ' Ledger' }) %>
             <tr>
               <td>Balance</td>
               <td>
-                <span class="badge bg-danger fs-6"><%= balanceKey %></span>
+                <span class="badge bg-danger fs-5"><%= balanceKey %></span>
               </td>
               <td></td>
               <td></td>
@@ -81,7 +81,7 @@ user.username + ' Ledger', "title": user.username + ' Ledger' }) %>
               <td></td>
               <td>Balance</td>
               <td>
-                <span class="badge bg-success fs-6"
+                <span class="badge bg-success fs-5"
                   ><%= Math.abs(balanceKey) %></span
                 >
               </td>
@@ -94,13 +94,13 @@ user.username + ' Ledger', "title": user.username + ' Ledger' }) %>
               <th>Total</th>
               <!-- Display total Minus (Left side) in Red -->
               <th>
-                <span class="badge bg-danger fs-6"><%= totalLeft %></span>
+                <span class="badge bg-danger fs-5"><%= totalLeft %></span>
               </th>
               <!-- Balance Key for Right Side -->
               <th>Total</th>
               <!-- Display total Plus (Right side) in Green -->
               <th>
-                <span class="badge bg-danger fs-6"><%= totalRight %></span>
+                <span class="badge bg-danger fs-5"><%= totalRight %></span>
               </th>
             </tr>
           </tfoot>
