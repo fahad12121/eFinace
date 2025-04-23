@@ -220,8 +220,11 @@
         processData: false,
         contentType: false,
         success: function (response) {
-          console.log("Data submitted successfully:", response);
           toastr.success(response.message, "Success");
+
+          setTimeout(function () {
+            location.reload();
+          }, 500); // 3000 milliseconds = 3 seconds
         },
         error: function (error) {
           console.log("Submission failed:", error);
