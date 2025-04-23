@@ -1,6 +1,5 @@
 const cron = require('node-cron');
 const User = require('../models/UserModel'); // Assuming you're using Sequelize or another ORM to interact with the database
-console.log(User);
 // Schedule the cron job to run every Friday at 12:00 AM
 cron.schedule('0 0 * * 5', async () => {
   try {
