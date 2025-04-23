@@ -79,9 +79,9 @@
           <tfoot>
             <tr>
               <th colspan="4">Total</th>
-              <th id="total_minus">0</th>
-              <th id="total_plus">0</th>
-              <th id="total_balance">0</th>
+              <th id="total_minus" class="fs-5"></th>
+              <th id="total_plus" class="fs-5"></th>
+              <th id="total_balance" class="fs-5"></th>
             </tr>
           </tfoot>
         </table>
@@ -124,7 +124,7 @@
         opening_balance_date = startDate.split("T")[0];
       }
 
-      let opening_balance = 0; // Default balance
+      let opening_balance = ""; // Default balance
       if (subAccountsArray?.length > 0) {
         let opening_bal_row = subAccountsArray[0];
         // Assuming balance and amount are stored directly as numbers or strings that can be converted to numbers
@@ -136,24 +136,6 @@
       return [opening_balance, opening_balance_date];
     };
 
-    // Add opening balance row to DataTable
-    function updateOpeningBalanceRow() {
-      dataTable.row.add([
-        get_opening_balance(subAccountsArray)[1],
-        "O/B",
-        "",
-        "Opening Balance",
-        parseFloat(get_opening_balance(subAccountsArray)[0]) < 0
-          ? get_opening_balance(subAccountsArray)[0]
-          : 0,
-        parseFloat(get_opening_balance(subAccountsArray)[0]) > 0
-          ? get_opening_balance(subAccountsArray)[0]
-          : 0,
-        get_opening_balance(subAccountsArray)[0],
-      ]);
-
-      dataTable.draw(); // Refresh the DataTable to reflect new rows
-    }
     const storedCompanyId = localStorage.getItem("company_id");
 
     function getAccountIdFromUrl() {
@@ -170,31 +152,83 @@
           account_id: getAccountIdFromUrl(),
         },
         success: function (response) {
-          console.log(response);
           subAccountsArray = response.sub_account;
           // Clear DataTable before adding new data
           dataTable.clear();
 
+          let totalMinus = 0;
+          let totalPlus = 0;
+          let totalBalance = 0;
+          // Get the opening balance
+          const openingBalance = get_opening_balance(subAccountsArray)[0];
+          const openingBalanceFormatted = parseFloat(openingBalance); // Ensure two decimal places
+
+          // Add the opening balance row (if it exists)
+          dataTable.row
+            .add([
+              get_opening_balance(subAccountsArray)[1], // Opening balance column
+              "O/B", // Label for opening balance
+              "", // Empty column
+              "Opening Balance", // Description for the row
+              `<span class="badge bg-danger fs-5">${
+                openingBalance < 0 ? openingBalanceFormatted : ""
+              }</span>`, // Negative balance
+              `<span class="badge bg-success fs-5">${
+                openingBalance > 0 ? openingBalanceFormatted : ""
+              }</span>`, // Positive balance
+              `<span class="badge bg-${
+                openingBalance
+                  ? openingBalance > 0
+                    ? "success"
+                    : "danger"
+                  : ""
+              } fs-5">${openingBalanceFormatted}</span>`, // Opening balance badge
+            ])
+            .draw(false); // Add row to DataTable
+
           // Add each account statement to the DataTable
           response.sub_account.forEach(function (account) {
+            const amount = parseFloat(account.account_statement_amount);
             // Add rows with the appropriate data
             dataTable.row.add([
               account.account_statement_date, // Example date from the statement
               account.receiver_user, // Example sub-account username
               account.receiver_sub_account_username, // Example narration
               account.account_statement_narration, // Example narration
-              account.account_statement_amount < 0
-                ? account.account_statement_amount
-                : 0, // Minus
-              account.account_statement_amount > 0
-                ? account.account_statement_amount
-                : 0, // Plus
-              account.account_statement_balance, // Balance
+              `<span class="badge bg-danger fs-5">${
+                account.account_statement_amount < 0
+                  ? account.account_statement_amount
+                  : ""
+              }</span>`, // Minus
+              `<span class="badge bg-success fs-5">${
+                account.account_statement_amount > 0
+                  ? account.account_statement_amount
+                  : ""
+              }</span>`, // Plus
+              `<span class="badge bg-${
+                account.account_statement_balance > 0 ? "success" : "danger"
+              } fs-5">
+                ${Math.round(account.account_statement_balance)}
+              </span>`,
             ]);
-          });
+            // Add the balance to totalBalance
+            // Only add to totalMinus if the amount is less than 0
+            if (amount < 0) {
+              totalMinus += amount;
+            }
 
+            // Only add to totalPlus if the amount is greater than 0
+            if (amount > 0) {
+              totalPlus += amount;
+            }
+            totalBalance += parseFloat(account.account_statement_balance);
+          });
           // After the data is populated, update the opening balance row
-          updateOpeningBalanceRow();
+          // Draw the DataTable after populating the rows
+          $("#total_minus").text(Math.round(totalMinus).toLocaleString());
+          $("#total_plus").text(Math.round(totalPlus).toLocaleString());
+          $("#total_balance").text(Math.round(totalBalance).toLocaleString());
+          dataTable.draw();
         },
         error: function (error) {
           console.log(error);
