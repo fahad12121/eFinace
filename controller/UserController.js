@@ -312,9 +312,10 @@ exports.getUsersBalanceSheet = asyncHandler(async (req, res, next) => {
         const company_id = req.params.id;
 
         const users = await User.findAll({
-            where: {
-                company_id: company_id
-            },
+            where: { company_id: company_id },
+            order: [
+                ['balance', 'DESC']  // Sorting by balance in descending order
+            ],
         });
 
 

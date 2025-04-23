@@ -1,0 +1,210 @@
+<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
+{"title":"Balance Sheet"}) %>
+<!-- DataTables -->
+<link
+  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+
+<!-- Responsive datatable examples -->
+<link
+  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+
+<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
+"Balance Sheet" , "title" : "Balance Sheet" }) %>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="row card-title mt-3">
+        <div class="col-md-8">
+          <h4 class="card-title">Balance Sheet</h4>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex flex-wrap justify-content-md-end header-actions">
+            <button class="btn btn-outline-info btn-action" id="addfavt">
+              <i class="bi bi-star"></i> Add to Favorites
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <table
+          id="balancedatatable"
+          class="table table-bordered dt-responsive nowrap w-100"
+        >
+          <thead>
+            <tr>
+              <th>Account</th>
+              <th>Minus</th>
+              <th>Account</th>
+              <th>Plus</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Loop through both minus and plus accounts together -->
+            <% for(let i = 0; i < Math.max(minusAccounts.length,
+            plusAccounts.length); i++) { %>
+            <tr>
+              <!-- Display Minus Account -->
+              <td>
+                <% if (minusAccounts[i]) { %>
+                <input
+                  type="checkbox"
+                  class="fav-checkbox"
+                  data-id="<%= minusAccounts[i].user_id %>"
+                />
+                <a
+                  href="/companies/<%= company_id %>/ledger/<%= minusAccounts[i].user_id %>"
+                >
+                  <%= minusAccounts[i].account %>
+                </a>
+                <% } %>
+              </td>
+              <!-- Display Minus Balance -->
+              <td>
+                <% let Minus = ""; if (minusAccounts[i] &&
+                minusAccounts[i].minus < 0) { Minus =
+                parseFloat(minusAccounts[i].minus).toFixed(minusAccounts[i].minus
+                % 1 === 0 ? 0 : 2); %>
+                <span class="badge bg-danger fs-2">
+                  <%= Math.round(Minus).toLocaleString() %>
+                </span>
+                <% } else if (minusAccounts[i]) { Minus =
+                parseFloat(minusAccounts[i].minus).toFixed(minusAccounts[i].minus
+                % 1 === 0 ? 0 : 2); %> <%= Math.round(Minus).toLocaleString() %>
+                <% } %>
+              </td>
+
+              <!-- Display Plus Account -->
+              <td>
+                <% if (plusAccounts[i]) { %>
+                <input
+                  type="checkbox"
+                  class="fav-checkbox"
+                  data-id="<%= plusAccounts[i].user_id %>"
+                />
+                <a
+                  href="/companies/<%= company_id %>/ledger/<%= plusAccounts[i].user_id %>"
+                >
+                  <%= plusAccounts[i].account %>
+                </a>
+                <% } %>
+              </td>
+              <!-- Display Plus Balance -->
+              <td>
+                <% if (plusAccounts[i] && plusAccounts[i].plus > 0) { %>
+                <span class="badge bg-success fs-2">
+                  <%= Math.round(plusAccounts[i].plus).toLocaleString() %>
+                </span>
+                <% } else if (plusAccounts[i]) { %> <%= plusAccounts[i].plus %>
+                <% } %>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+
+          <tfoot>
+            <tr>
+              <th>Total</th>
+              <th>
+                <span class="badge bg-danger fs-6"
+                  ><%= Math.round(totalMinus).toLocaleString() %></span
+                >
+              </th>
+              <th>Total</th>
+              <th>
+                <span class="badge bg-success fs-6"
+                  ><%= Math.round(totalPlus).toLocaleString() %></span
+                >
+              </th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+</div>
+<!-- end row -->
+
+<%- contentFor('FooterJs') %>
+<!-- Required datatable js -->
+<script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+<!-- Responsive examples -->
+<script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+
+<!-- Datatable init js -->
+<script src="/assets/js/pages/datatables.init.js"></script>
+<script>
+  $(document).ready(function () {
+    // Initialize DataTable
+    const dataTable = $("#balancedatatable").DataTable({
+      order: [
+        [1, "asc"],
+        [3, "asc"],
+      ],
+      pageLength: 300,
+      lengthMenu: [
+        [300, 50, 100, -1],
+        [300, 50, 100, "All"],
+      ],
+      paging: true,
+      searching: true,
+      // ordering: true,
+      autoWidth: false,
+    });
+    const storedCompanyId = localStorage.getItem("company_id");
+
+    // Listen for the "Add to Favt" button click
+    $("#addfavt").click(function () {
+      const selectedAccounts = [];
+
+      // Get all checked checkboxes
+      $(".fav-checkbox:checked").each(function () {
+        selectedAccounts.push($(this).data("id"));
+      });
+
+      // If no account is selected, show an alert
+      if (selectedAccounts.length === 0) {
+        toastr.error(
+          "Please select at least one account to add to favorites",
+          "Error"
+        );
+        return;
+      }
+
+      // Make the API call to add selected accounts to favorites
+      $.ajax({
+        type: "POST",
+        url: `/companies/${storedCompanyId}/add_to_favt`, // Update the URL as needed
+        data: {
+          accounts: selectedAccounts, // Send the array of selected account IDs
+        },
+        success: function (response) {
+          toastr.success(response.message, "Success");
+          // Optionally, refresh the DataTable or update the UI accordingly
+          setTimeout(function () {
+            location.reload();
+          }, 1500); // 3000 milliseconds = 3 seconds
+        },
+        error: function (error) {
+          console.log(error);
+          alert("Error adding accounts to favorites. Please try again.");
+        },
+      });
+    });
+
+    // If company_id exists in localStorage, display the relevant links in the sidebar
+    if (storedCompanyId) {
+      showSidebarLinks(storedCompanyId);
+    }
+  });
+</script>

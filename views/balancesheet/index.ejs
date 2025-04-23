@@ -33,98 +33,105 @@
         </div>
       </div>
       <div class="card-body">
-        <table
-          id="balancedatatable"
-          class="table table-bordered dt-responsive nowrap w-100"
-        >
-          <thead>
-            <tr>
-              <th>Account</th>
-              <th>Minus</th>
-              <th>Account</th>
-              <th>Plus</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Loop through both minus and plus accounts together -->
-            <% for(let i = 0; i < Math.max(minusAccounts.length,
-            plusAccounts.length); i++) { %>
-            <tr>
-              <!-- Display Minus Account -->
-              <td>
-                <% if (minusAccounts[i]) { %>
-                <input
-                  type="checkbox"
-                  class="fav-checkbox"
-                  data-id="<%= minusAccounts[i].user_id %>"
-                />
-                <a
-                  href="/companies/<%= company_id %>/ledger/<%= minusAccounts[i].user_id %>"
-                >
-                  <%= minusAccounts[i].account %>
-                </a>
+        <div class="row">
+          <div class="col-md-6">
+            <table
+              id="Minusdatatable"
+              class="table table-bordered dt-responsive nowrap w-100"
+            >
+              <thead>
+                <tr>
+                  <th>Account</th>
+                  <th>Minus</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Loop through both minus and plus accounts together -->
+                <% for(let i = 0; i < Math.max(minusAccounts.length,
+                plusAccounts.length); i++) { %>
+                <tr>
+                  <!-- Display Minus Account -->
+                  <td>
+                    <% if (minusAccounts[i]) { %>
+                    <input
+                      type="checkbox"
+                      class="fav-checkbox"
+                      data-id="<%= minusAccounts[i].user_id %>"
+                    />
+                    <a
+                      href="/companies/<%= company_id %>/ledger/<%= minusAccounts[i].user_id %>"
+                    >
+                      <%= minusAccounts[i].account %>
+                    </a>
+                    <% } %>
+                  </td>
+                  <!-- Display Minus Balance -->
+                  <td>
+                    <% let Minus = ""; if (minusAccounts[i] &&
+                    minusAccounts[i].minus < 0) { Minus =
+                    parseFloat(minusAccounts[i].minus).toFixed(minusAccounts[i].minus
+                    % 1 === 0 ? 0 : 2); %>
+                    <span class="badge bg-danger fs-5">
+                      <%= Math.round(Minus).toLocaleString() %>
+                    </span>
+                    <% } else if (minusAccounts[i]) { Minus =
+                    parseFloat(minusAccounts[i].minus).toFixed(minusAccounts[i].minus
+                    % 1 === 0 ? 0 : 2); %> <%=
+                    Math.round(Minus).toLocaleString() %> <% } %>
+                  </td>
+                </tr>
                 <% } %>
-              </td>
-              <!-- Display Minus Balance -->
-              <td>
-                <% let Minus = ""; if (minusAccounts[i] &&
-                minusAccounts[i].minus < 0) { Minus =
-                parseFloat(minusAccounts[i].minus).toFixed(minusAccounts[i].minus
-                % 1 === 0 ? 0 : 2); %>
-                <span class="badge bg-danger fs-6">
-                  <%= Math.round(Minus).toLocaleString() %>
-                </span>
-                <% } else if (minusAccounts[i]) { Minus =
-                parseFloat(minusAccounts[i].minus).toFixed(minusAccounts[i].minus
-                % 1 === 0 ? 0 : 2); %> <%= Math.round(Minus).toLocaleString() %>
-                <% } %>
-              </td>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-6">
+            <table
+              id="Plusdatatable"
+              class="table table-bordered dt-responsive nowrap w-100"
+            >
+              <thead>
+                <tr>
+                  <th>Account</th>
+                  <th>Plus</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Loop through both minus and plus accounts together -->
+                <% for(let i = 0; i < Math.max(plusAccounts.length,
+                plusAccounts.length); i++) { %>
+                <tr>
+                  <!-- Display Minus Account -->
 
-              <!-- Display Plus Account -->
-              <td>
-                <% if (plusAccounts[i]) { %>
-                <input
-                  type="checkbox"
-                  class="fav-checkbox"
-                  data-id="<%= plusAccounts[i].user_id %>"
-                />
-                <a
-                  href="/companies/<%= company_id %>/ledger/<%= plusAccounts[i].user_id %>"
-                >
-                  <%= plusAccounts[i].account %>
-                </a>
+                  <!-- Display Plus Account -->
+                  <td>
+                    <% if (plusAccounts[i]) { %>
+                    <input
+                      type="checkbox"
+                      class="fav-checkbox"
+                      data-id="<%= plusAccounts[i].user_id %>"
+                    />
+                    <a
+                      href="/companies/<%= company_id %>/ledger/<%= plusAccounts[i].user_id %>"
+                    >
+                      <%= plusAccounts[i].account %>
+                    </a>
+                    <% } %>
+                  </td>
+                  <!-- Display Plus Balance -->
+                  <td>
+                    <% if (plusAccounts[i] && plusAccounts[i].plus > 0) { %>
+                    <span class="badge bg-success fs-5">
+                      <%= Math.round(plusAccounts[i].plus).toLocaleString() %>
+                    </span>
+                    <% } else if (plusAccounts[i]) { %> <%= plusAccounts[i].plus
+                    %> <% } %>
+                  </td>
+                </tr>
                 <% } %>
-              </td>
-              <!-- Display Plus Balance -->
-              <td>
-                <% if (plusAccounts[i] && plusAccounts[i].plus > 0) { %>
-                <span class="badge bg-success fs-6">
-                  <%= Math.round(plusAccounts[i].plus).toLocaleString() %>
-                </span>
-                <% } else if (plusAccounts[i]) { %> <%= plusAccounts[i].plus %>
-                <% } %>
-              </td>
-            </tr>
-            <% } %>
-          </tbody>
-
-          <tfoot>
-            <tr>
-              <th>Total</th>
-              <th>
-                <span class="badge bg-danger fs-6"
-                  ><%= Math.round(totalMinus).toLocaleString() %></span
-                >
-              </th>
-              <th>Total</th>
-              <th>
-                <span class="badge bg-success fs-6"
-                  ><%= Math.round(totalPlus).toLocaleString() %></span
-                >
-              </th>
-            </tr>
-          </tfoot>
-        </table>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -146,11 +153,21 @@
 <script>
   $(document).ready(function () {
     // Initialize DataTable
-    const dataTable = $("#balancedatatable").DataTable({
-      order: [
-        [3, "desc"],
-        [0, "asc"],
+    const Minusdatatable = $("#Minusdatatable").DataTable({
+      order: [1, 'asc'],
+      pageLength: 300,
+      lengthMenu: [
+        [300, 50, 100, -1],
+        [300, 50, 100, "All"],
       ],
+      paging: true,
+      searching: true,
+      // ordering: true,
+      autoWidth: false,
+    });
+
+    const Plusdatatable = $("#Plusdatatable").DataTable({
+      order: [],
       pageLength: 300,
       lengthMenu: [
         [300, 50, 100, -1],
