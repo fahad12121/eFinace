@@ -547,8 +547,28 @@
       var receiver_sub_account_id = $("#receiver_sub_account_id").val();
       var narration = $("#narration").val();
       var notes = $("#notes").val();
+      // Get the current date
+      // Get the current date and time
+      // Get the current date and time
       var transaction_date = new Date();
+
+      // Subtract one day to set it to the previous day
+      transaction_date.setDate(transaction_date.getDate() - 1);
+
+      // Set the time to 5:00 AM on the previous day
+      transaction_date.setHours(5, 0, 0, 0);
+
+      // Get the current time
+      const currentTime = new Date();
+
+      // If the current time is past 5 AM today, the date should be today at 5 AM
+      if (currentTime.getHours() >= 5) {
+        transaction_date.setDate(transaction_date.getDate() + 1); // Move to the next day at 5 AM
+      }
+
+      // Format the date to "YYYY-MM-DD" format
       var formattedDate = transaction_date.toISOString().split("T")[0];
+
       var companyId = window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
 
       // Example of submitting the form data to the backend (using AJAX)
@@ -566,7 +586,7 @@
         },
         success: function (response) {
           // Call the GET method to fetch and update the table
-          location.reload();
+          // location.reload();
           // //   alert("Company submitted successfully!");
           // modal.hide(); // Hide the modal after successful submission
           // $("#modalForm")[0].reset(); // Reset the form
