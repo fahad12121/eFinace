@@ -540,7 +540,8 @@
     // Handle form submission inside the modal
     $("#modalForm").submit(function (event) {
       event.preventDefault(); // Prevent the default form submission behavior
-
+      // Disable the submit button to prevent multiple submissions
+      $("button[type='submit']").prop("disabled", true).text("Submitting...");
       // Get the value from the form input (company name)
       var sender_sub_account_id = $("#sender_sub_account_id").val();
       var amount = $("#amount").val();
@@ -587,18 +588,10 @@
         success: function (response) {
           // Call the GET method to fetch and update the table
           location.reload();
-          // //   alert("Company submitted successfully!");
-          // modal.hide(); // Hide the modal after successful submission
-          // $("#modalForm")[0].reset(); // Reset the form
-          // document.getElementById("parent_sender").style.display = "none";
-          // document.getElementById("parent_receiver").style.display = "none";
-          // // Display the sender's parent balance in the span
-          // document.getElementById("sender_parent_balance").innerText =
-          //   "Current Balance: " + 0;
-          // fetchTransactionTable();
         },
         error: function (error) {
           alert("Error submitting the company. Please try again.");
+          $("button[type='submit']").prop("disabled", false).text("Submit");
         },
       });
     });
