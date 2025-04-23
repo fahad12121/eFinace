@@ -216,10 +216,15 @@ exports.getSingleAccountUser = asyncHandler(async (req, res, next) => {
             }]
         });
 
+        const totalBalance = account.subAccounts.reduce((accumulator, currentValue) => {
+            return accumulator + parseFloat(currentValue.balance.replace(/,/g, '')); // Convert the string to a number and sum
+        }, 0);
+
 
         // Render the account details page with the fetched account data
         res.render('accounts/Detail', {
             account: account,  // Pass the account data (with included subAccounts and AccountType) to the view
+            totalBalance
         });
     } catch (error) {
         next(error);  // Handle any errors

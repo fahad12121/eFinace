@@ -107,6 +107,16 @@
             </tr>
             <% }) %>
           </tbody>
+          <tfoot>
+            <td></td>
+            <td>Total</td>
+            <td>
+              <span class="badge bg-<%= totalBalance > 0 ? 'success' : 'danger' %> fs-6"><%= totalBalance %></span>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tfoot>
         </table>
       </div>
     </div>
