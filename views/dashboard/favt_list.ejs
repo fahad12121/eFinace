@@ -22,12 +22,12 @@
     <div class="card">
       <div class="row align-items-center mb-4 card-title mt-2">
         <div class="col-md-6">
-          <h4 class="card-title">Favorites List</h4>
+          <h4 class="card-title">Sheet 1 </h4>
         </div>
       </div>
       <div class="card-body">
         <table
-          id="datatable"
+          id="sheet1"
           class="table table-bordered dt-responsive nowrap w-100"
         >
           <thead>
@@ -41,20 +41,20 @@
           </thead>
 
           <tbody>
-            <% favtUsers.forEach(function(account) { %>
+            <% sheet1.forEach(function(account) { %>
             <tr>
               <td><%= account.account_pk %></td>
               <td><%= account.username %></td>
               <td>
                 <% 
-                  let balanceClass = '';
-                  if (account.balance > 0) {
-                    balanceClass = 'success'; // For positive balance
-                  } else if (account.balance < 0) {
-                    balanceClass = 'danger'; // For negative balance
-                  }
+                  let balanceClass = ''; 
+                  if (account.balance > 0) { 
+                    balanceClass = 'success';  // For positive balance 
+                  } else if (account.balance < 0) { 
+                    balanceClass = 'danger';  // For negative balance 
+                  } 
                 %>
-                
+              
                 <span class="badge bg-<%= balanceClass %> fs-6">
                   <%= Math.round(account.balance).toLocaleString() %>
                 </span>
@@ -76,7 +76,72 @@
           <tfoot>
             <tr>
               <th colspan="2">Total Balance</th>
-              <th><%= Math.round(totalBalance).toLocaleString() %></th>
+              <th><%= Math.round(sheet1Balance).toLocaleString() %></th>
+              <!-- Format with commas -->
+              <th colspan="2"></th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row align-items-center mb-4 card-title mt-2">
+        <div class="col-md-6">
+          <h4 class="card-title">Sheet 2 </h4>
+        </div>
+      </div>
+      <div class="card-body">
+        <table
+          id="sheet2"
+          class="table table-bordered dt-responsive nowrap w-100"
+        >
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Balance</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% sheet2.forEach(function(account) { %>
+            <tr>
+              <td><%= account.account_pk %></td>
+              <td><%= account.username %></td>
+              <td>
+                <% 
+                  let balanceClass = ''; 
+                  if (account.balance > 0) { 
+                    balanceClass = 'success';  // For positive balance 
+                  } else if (account.balance < 0) { 
+                    balanceClass = 'danger';  // For negative balance 
+                  } 
+                %>
+              
+                <span class="badge bg-<%= balanceClass %> fs-6">
+                  <%= Math.round(account.balance).toLocaleString() %>
+                </span>
+              </td>
+              <td><%= account.notes %></td>
+              <td>
+                <a
+                  href="/companies/<%= companyId %>/accounts/<%= account.id %>"
+                  class="btn btn-sm btn-info view-btn"
+                  title="View"
+                >
+                  <i class="fa fa-eye"></i>
+                </a>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+          <!-- Display total balance in tfoot -->
+          <tfoot>
+            <tr>
+              <th colspan="2">Total Balance</th>
+              <th><%= Math.round(sheet2Balance).toLocaleString() %></th>
               <!-- Format with commas -->
               <th colspan="2"></th>
             </tr>
@@ -101,9 +166,34 @@
 <!-- Datatable init js -->
 <script src="/assets/js/pages/datatables.init.js"></script>
 <script>
+  $(document).ready(function () {
+    const dataTable = $("#sheet1").DataTable({
+    pageLength: 100,
+    lengthMenu: [
+      [100, 80, 70, -1],
+      [100, 80, 70, "All"],
+    ],
+    paging: true,
+    searching: true,
+    // ordering: true,
+    autoWidth: false,
+  });
+  const dataTable1 = $("#sheet2").DataTable({
+    pageLength: 100,
+    lengthMenu: [
+      [100, 80, 70, -1],
+      [100, 80, 70, "All"],
+    ],
+    paging: true,
+    searching: true,
+    // ordering: true,
+    autoWidth: false,
+  });
   // If company_id exists in localStorage, display the relevant links in the sidebar
   const storedCompanyId = localStorage.getItem("company_id");
   if (storedCompanyId) {
     showSidebarLinks(storedCompanyId);
   }
+  });
+
 </script>

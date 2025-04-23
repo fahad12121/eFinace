@@ -73,20 +73,80 @@ exports.index = asyncHandler(async (req, res, next) => {
 });
 
 
+// exports.favtList = asyncHandler(async (req, res, next) => {
+//     try {
+//         const companyId = req.params.id; // Get company_id from request parameters
+
+//         const favtUsers = await User.findAll({
+//             where: { is_favt: true, company_id: companyId },
+//         });
+
+//         const totalBalance = favtUsers.reduce((sum, account) => sum + parseFloat(account.balance || 0), 0);
+
+//         // Log the result of the query for debugging
+
+//         res.render('dashboard/favt_list', { companyId, favtUsers, totalBalance });  // Render the companies.ejs view with companies data
+//     } catch (error) {
+//         next(error);
+//     }
+// });
+
 exports.favtList = asyncHandler(async (req, res, next) => {
     try {
         const companyId = req.params.id; // Get company_id from request parameters
 
+        // Fetch users marked as favorites, ordered by updatedAt
         const favtUsers = await User.findAll({
             where: { is_favt: true, company_id: companyId },
+            order: [['updatedAt', 'DESC']], // Order by most recent updatedAt
         });
 
-        const totalBalance = favtUsers.reduce((sum, account) => sum + parseFloat(account.balance || 0), 0);
+        // Get today's date and tomorrow's date
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1); // Set tomorrow's date
 
-        // Log the result of the query for debugging
+        // Extract the date part (YYYY-MM-DD) for comparison
+        const todayDate = today.toISOString().split('T')[0];
+        const tomorrowDate = tomorrow.toISOString().split('T')[0];
 
-        res.render('dashboard/favt_list', { companyId, favtUsers, totalBalance });  // Render the companies.ejs view with companies data
+        // Group users into two sheets based on their updatedAt date
+        const sheet1 = [];  // Users added yesterday or earlier
+        const sheet2 = [];  // Users added today or tomorrow
+
+        favtUsers.forEach(user => {
+            const userUpdatedAt = user.updatedAt.toISOString().split('T')[0];
+
+            // If the user was updated yesterday or earlier (i.e., `updatedAt` is before today), add to sheet1
+            if (userUpdatedAt <= todayDate) {
+                sheet1.push(user);
+            }
+            // If the user was updated today or tomorrow, add to sheet2
+            else if (userUpdatedAt === todayDate || userUpdatedAt === tomorrowDate) {
+                sheet2.push(user);
+            }
+        });
+
+        // Calculate the total balance for all the users
+        const sheet1Balance = sheet1.reduce((sum, account) => sum + parseFloat(account.balance || 0), 0);
+        const sheet2Balance = sheet2.reduce((sum, account) => sum + parseFloat(account.balance || 0), 0);
+
+        console.log("Sheet 1 (Yesterday or Earlier Users):", sheet1);
+        console.log("Sheet 2 (Today or Tomorrow Users):", sheet2);
+
+        // Render the view with the two sheets and total balance
+        res.render('dashboard/favt_list', {
+            companyId,
+            sheet1,  // Users added yesterday or earlier
+            sheet2,  // Users added today or tomorrow
+            sheet1Balance,
+            sheet2Balance,
+        });
     } catch (error) {
         next(error);
     }
 });
+
+
+
+
