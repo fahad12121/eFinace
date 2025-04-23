@@ -101,10 +101,7 @@
   $(document).ready(function () {
     // Initialize DataTable
     var dataTable = $("#transaction").DataTable({
-      order: [
-        [3, "desc"],
-        [0, "asc"],
-      ],
+      order: [],
       pageLength: 120,
       lengthMenu: [
         [120, 50, 100, -1],
@@ -114,72 +111,6 @@
       searching: true,
       // ordering: true,
       autoWidth: false,
-      rowCallback: function (row, data, index, start, end, display) {
-        // Change color of the 'Balance' column based on value
-        var balance = parseFloat(data[6]); // Assuming 'Balance' is the 7th column (index 6)
-
-        if (balance > 0) {
-          // Green color for positive balance
-          $(row).find("td:eq(6)").css("color", "#008001");
-          $(row).find("td:eq(5)").css("color", "#008001");
-        } else if (balance < 0) {
-          // Red color for negative balance
-          $(row).find("td:eq(6)").css("color", "red");
-          $(row).find("td:eq(4)").css("color", "red");
-        }
-      },
-      footerCallback: function (row, data, start, end, display) {
-        var api = this.api();
-
-        // Calculate sum for "Minus", "Plus", and "Balance" columns
-        var totalMinus = api
-          .column(4, { page: "current" }) // Column index for "Minus"
-          .data()
-          .reduce(function (a, b) {
-            return parseFloat(a) + parseFloat(b);
-          }, 0);
-
-        var totalPlus = api
-          .column(5, { page: "current" }) // Column index for "Plus"
-          .data()
-          .reduce(function (a, b) {
-            return parseFloat(a) + parseFloat(b);
-          }, 0);
-
-        var totalBalance = api
-          .column(6, { page: "current" }) // Column index for "Balance"
-          .data()
-          .reduce(function (a, b) {
-            return parseFloat(a) + parseFloat(b);
-          }, 0);
-
-        // Update footer with calculated totals
-        $(api.column(4).footer()).html(totalMinus.toFixed(2)); // Minus total
-        $(api.column(5).footer()).html(totalPlus.toFixed(2)); // Plus total
-        $(api.column(6).footer()).html(totalBalance.toFixed(2)); // Balance total
-
-        // Change footer color based on the total value
-        // Change the color of the footer cell for 'Minus' column
-        if (totalMinus < 0) {
-          $(api.column(4).footer()).css("color", "red");
-        } else {
-          $(api.column(4).footer()).css("color", "red"); // Green for positive total
-        }
-
-        // Change the color of the footer cell for 'Plus' column
-        if (totalPlus >= 0) {
-          $(api.column(5).footer()).css("color", "#008001");
-        } else {
-          $(api.column(5).footer()).css("color", "red"); // Red for negative total
-        }
-
-        // Change the color of the footer cell for 'Balance' column
-        if (totalBalance > 0) {
-          $(api.column(6).footer()).css("color", "#008001");
-        } else {
-          $(api.column(6).footer()).css("color", "red");
-        }
-      },
     });
     let subAccountsArray = [];
     const get_opening_balance = (subAccountsArray) => {

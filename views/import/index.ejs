@@ -158,11 +158,21 @@
         success: function (response) {
           // Clear any existing data in the table
           const table = $("#import").DataTable({
+            order: [],
+            pageLength: 500, // Show 20 records per page
+            lengthMenu: [
+              [500, 200, 100, -1],
+              [500, 200, 100, "All"],
+            ], // Options for records per page
+            paging: true,
+            searching: true,
+            ordering: true,
+            autoWidth: false,
             destroy: true,
             createdRow: function (row, data, dataIndex) {
               const isFound = response.sheetJson[dataIndex].is_found;
               if (isFound === false) {
-                $('td', row).css('background-color', '#D79B9B');
+                $("td", row).css("background-color", "#D79B9B");
                 // $(row).css("background-color", "#D79B9B");
               }
             },
