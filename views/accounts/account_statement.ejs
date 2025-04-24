@@ -79,8 +79,12 @@
           <tfoot>
             <tr>
               <th colspan="4">Total</th>
-              <th><span id="total_minus" class="badge bg-danger fs-5"></span></th>
-              <th><span id="total_plus" class="badge bg-success fs-5"></span></th>
+              <th>
+                <span id="total_minus" class="badge bg-danger fs-5"></span>
+              </th>
+              <th>
+                <span id="total_plus" class="badge bg-success fs-5"></span>
+              </th>
               <th id="total_balance" class="fs-5"></th>
             </tr>
           </tfoot>
@@ -171,10 +175,10 @@
               "", // Empty column
               "Opening Balance", // Description for the row
               `<span class="badge bg-danger fs-5">${
-                openingBalance < 0 ? openingBalanceFormatted : ""
+                openingBalance < 0 ? openingBalanceFormatted.toLocaleString() : ""
               }</span>`, // Negative balance
               `<span class="badge bg-success fs-5">${
-                openingBalance > 0 ? openingBalanceFormatted : ""
+                openingBalance > 0 ? openingBalanceFormatted.toLocaleString() : ""
               }</span>`, // Positive balance
               `<span class="badge bg-${
                 openingBalance
@@ -182,12 +186,12 @@
                     ? "success"
                     : "danger"
                   : ""
-              } fs-5">${openingBalanceFormatted}</span>`, // Opening balance badge
+              } fs-5">${openingBalanceFormatted.toLocaleString()}</span>`, // Opening balance badge
             ])
             .draw(false); // Add row to DataTable
-
           // Add each account statement to the DataTable
-          response.sub_account.forEach(function (account) {
+          let secondLastBalance = '';
+          response.sub_account.forEach(function (account, index) {
             const amount = parseFloat(account.account_statement_amount);
             // Add rows with the appropriate data
             dataTable.row.add([
@@ -197,21 +201,38 @@
               account.account_statement_narration, // Example narration
               `<span class="badge bg-danger fs-5">${
                 account.account_statement_amount < 0
-                  ? account.account_statement_amount
+                  ? parseFloat(account.account_statement_amount).toLocaleString() 
                   : ""
               }</span>`, // Minus
               `<span class="badge bg-success fs-5">${
                 account.account_statement_amount > 0
-                  ? account.account_statement_amount
+                  ? parseFloat(account.account_statement_amount).toLocaleString() 
                   : ""
               }</span>`, // Plus
               `<span class="badge bg-${
                 account.account_statement_balance > 0 ? "success" : "danger"
               } fs-5">
-                ${Math.round(account.account_statement_balance)}
+                ${Math.round(account.account_statement_balance).toLocaleString()}
               </span>`,
             ]);
             // Add the balance to totalBalance
+            // Log the first balance of each index
+            // Log the first balance of each index
+            console.log(
+              `Index ${index + 1} Balance: ${account.account_statement_balance}`
+            );
+
+            // Get the second last index balance (if there are enough records)
+            if (index > 0) {
+              // Check to ensure there's a previous record
+              const secondLastBalance =
+                response.sub_account[index - 1].account_statement_balance;
+              console.log(
+                `Second Last Balance at Index ${
+                  index + 1
+                }: ${secondLastBalance}`
+              );
+            }
             // Only add to totalMinus if the amount is less than 0
             if (amount < 0) {
               totalMinus += amount;
@@ -223,6 +244,7 @@
             }
             totalBalance += parseFloat(account.account_statement_balance);
           });
+          // After the loop, the secondLastBalance variable holds the second-to-last balance
           // After the data is populated, update the opening balance row
           // Draw the DataTable after populating the rows
           $("#total_minus").text(Math.round(totalMinus).toLocaleString());
