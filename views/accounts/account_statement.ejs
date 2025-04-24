@@ -210,7 +210,7 @@
                   : ""
               }</span>`, // Plus
               `<span class="badge bg-${
-                account.account_statement_balance > 0 ? "success" : "danger"
+                account.account_statement_balance >= 0 ? "success" : "danger"
               } fs-5">
                 ${Math.round(account.account_statement_balance).toLocaleString()}
               </span>`,
