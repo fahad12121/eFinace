@@ -162,8 +162,13 @@ const getAccountStatementBalance = async (sub_account_id) => {
         where: { sub_account_id },
         attributes: ['balance'],
     });
+    // Check if there are any account statements
+    if (account_statements.length === 0) {
+        // console.log('No account statements found for this sub-account');
+        return 0; // Return 0 or another default value when no statements exist
+    }
     let last_acc_st = account_statements[account_statements.length - 1];
-    return parseFloat(last_acc_st.balance);
+    return parseFloat(last_acc_st?.balance || 0);
     // return account_statements.reduce((total, statement) => total + statement.balance, 0);
 };
 
@@ -340,7 +345,7 @@ exports.getSubAccountStatementAJax = asyncHandler(async (req, res, next) => {
         const subAccountDetails = await sequelize.query(sqlQuery, {
             type: sequelize.QueryTypes.SELECT, // SELECT query type
         });
-       
+
         // Return the formatted sub account details
         res.status(200).json({
             success: true,

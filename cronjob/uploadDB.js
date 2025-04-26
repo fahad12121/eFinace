@@ -1,8 +1,6 @@
 const cron = require('node-cron');
 const backupDatabase = require('../google/mysqldump');
 const uploadFileToDrive = require('../google/auth');
-const { exec } = require('child_process');
-
 // Database details
 const dbHost = '69.62.122.99';  // Your host IP
 const dbName = 'efinance_db';  // Your database name
@@ -14,40 +12,47 @@ cron.schedule('0 5 * * *', async () => {
     console.log('Starting MySQL Backup...');
 
     const date = new Date().toISOString().split('T')[0];  // Get current date in YYYY-MM-DD format
-    const backupFilePath = `efinance_${date}.sql`;
+    let backupFilePath = `efinance_${date}.sql`;
 
     // Backup MySQL Database
-    backupDatabase(dbHost, username, password, dbName, backupFilePath);
+    // backupDatabase(dbHost, username, password, dbName, backupFilePath);
+    // Path to your existing backup file
 
-    console.log('Backup created, uploading to Google Drive...');
+    backupFilePath = `../efinance_2025-04-25.sql`;
 
     // Upload to Google Drive
-    uploadFileToDrive(backupFilePath, 'root');
+    setTimeout(function () {
+      uploadFileToDrive(backupFilePath, '1w_6YIxrNWunnUkMRrqxnLJqH5qxOjDAP');
+      console.log('Backup uploaded successfully to Google Drive.');
 
-    console.log('Backup uploaded successfully to Google Drive.');
+    }, 50000);
+
   } catch (error) {
     console.error('Error during backup or upload:', error);
   }
 });
 
 
-// Trigger the cron job manually for testing
+// // Trigger the cron job manually for testing
 (async () => {
   try {
     console.log('Starting MySQL Backup...');
 
     const date = new Date().toISOString().split('T')[0];  // Get current date in YYYY-MM-DD format
-    const backupFilePath = `efinance_${date}.sql`;
+    let backupFile = `efinance_${date}.sql`;
+
 
     // Backup MySQL Database
-    backupDatabase(dbHost, username, password, dbName, backupFilePath);
+    backupDatabase(dbHost, username, password, dbName, backupFile);
 
     console.log('Backup created, uploading to Google Drive...');
 
     // Upload to Google Drive
-    uploadFileToDrive(backupFilePath, 'root');
+    setTimeout(function () {
+      uploadFileToDrive(backupFile, '1w_6YIxrNWunnUkMRrqxnLJqH5qxOjDAP');
 
-    console.log('Backup uploaded successfully to Google Drive.');
+      console.log('Backup uploaded successfully to Google Drive.');
+    }, 30000);
   } catch (error) {
     console.error('Error during backup or upload:', error);
   }
