@@ -1,12 +1,14 @@
 const cron = require('node-cron');
 const backupDatabase = require('../google/mysqldump');
 const uploadFileToDrive = require('../google/auth');
+const fs = require('fs');
 // Database details
 const dbHost = '69.62.122.99';  // Your host IP
 const dbName = 'efinance_db';  // Your database name
 const username = 'root';  // Your database name
 const password = 'Precious@96';  // Your database name
 // Cron job to run daily at 5 AM
+
 cron.schedule('0 5 * * *', async () => {
   try {
     console.log('Starting MySQL Backup...');
@@ -15,7 +17,7 @@ cron.schedule('0 5 * * *', async () => {
     let backupFilePath = `efinance_${date}.sql`;
 
     // Backup MySQL Database
-    // backupDatabase(dbHost, username, password, dbName, backupFilePath);
+    backupDatabase(dbHost, username, password, dbName, backupFilePath);
     // Path to your existing backup file
 
     backupFilePath = `../efinance_2025-04-25.sql`;
@@ -31,6 +33,7 @@ cron.schedule('0 5 * * *', async () => {
     console.error('Error during backup or upload:', error);
   }
 });
+
 
 
 // // Trigger the cron job manually for testing
