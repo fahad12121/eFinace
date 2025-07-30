@@ -1,0 +1,178 @@
+<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
+{"title":"Account Access"}) %>
+<!-- DataTables -->
+<link
+  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+
+<!-- Responsive datatable examples -->
+<link
+  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+
+<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
+"Account Access" , "title" : "Account Access" }) %>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="row card-title mt-3">
+        <div class="col-md-10">
+          <h4 class="card-title">Accounts</h4>
+        </div>
+        <div class="col-md-2">
+          <div class="d-flex flex-wrap justify-content-md-end header-actions">
+            <button class="btn btn-outline-success btn-action" id="addfavt">
+              <i class="bi bi-star"></i> Add Access
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <table
+          id="accountsTable"
+          class="table table-bordered dt-responsive nowrap w-100"
+        >
+          <thead>
+            <tr>
+              <th style="width: 100px">
+                <div class="form-check font-size-16 align-middle">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="selectAllCheckbox"
+                  />
+                  <label
+                    class="form-check-label"
+                    for="selectAllCheckbox"
+                  ></label>
+                </div>
+              </th>
+              <th>Username</th>
+            </tr>
+          </thead>
+
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- end col -->
+</div>
+<!-- end row -->
+<%- contentFor('FooterJs') %>
+<!-- Required datatable js -->
+<script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+<!-- Responsive examples -->
+<script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+
+<!-- Datatable init js -->
+<script src="/assets/js/pages/datatables.init.js"></script>
+<script>
+  $(document).ready(function () {
+    const viewableAccounts =
+      "<%= JSON.parse(JSON.stringify(accessibility.viewable_accounts)) %>"; // Pass accessibility data
+    console.log(viewableAccounts);
+    // Initialize DataTable
+    const dataTable = $("#accountsTable").DataTable({
+      order: [],
+      pageLength: 500,
+      lengthMenu: [
+        [500, 200, 100, -1],
+        [500, 200, 100, "All"],
+      ],
+      paging: true,
+      searching: true,
+      // ordering: true,
+      autoWidth: false,
+    });
+    var storedCompanyId = localStorage.getItem("company_id");
+
+    // Function to fetch users and update the DataTable
+    function fetchUsersTable() {
+      $.ajax({
+        type: "GET",
+        url: `/companies/${storedCompanyId}/users/ajax?user_type=User`,
+        success: function (response) {
+          dataTable.clear();
+          response.users.forEach(function (user) {
+            const isChecked = viewableAccounts.includes(user.id);
+            dataTable.row.add([
+              `<input type="checkbox" class="fav-checkbox" data-id="${
+                user.id
+              }" ${isChecked ? "checked" : ""} />`,
+              user.username,
+            ]);
+          });
+          dataTable.draw();
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+
+    // Select/Deselect all checkboxes when the header checkbox is clicked
+    $("#selectAllCheckbox").change(function () {
+      const isChecked = $(this).prop("checked");
+      $(".fav-checkbox").prop("checked", isChecked); // Check/uncheck all checkboxes
+    });
+
+    // Listen for the "Add to Favt" button click
+    $("#addfavt").click(function () {
+      const selectedAccounts = [];
+
+      // Get all checked checkboxes and push the accountId to the array
+      $(".fav-checkbox:checked").each(function () {
+        const accountId = $(this).data("id");
+
+        // Push only accountId (without any key) to the array
+        selectedAccounts.push(parseInt(accountId));
+      });
+
+      // If no account is selected, show an alert
+      if (selectedAccounts.length === 0) {
+        toastr.error(
+          "Please select at least one account to add to favorites",
+          "Error"
+        );
+        return;
+      }
+
+      const user_id = window.location.pathname.split("/")[4];
+      $.ajax({
+        type: "POST",
+        url: `/companies/${storedCompanyId}/users/${user_id}/accessibility`, // Update the URL as needed
+        data: {
+          resource: "viewable_accounts",
+          selectedAccounts: selectedAccounts, // Send the array of selected account IDs
+        },
+        success: function (response) {
+          toastr.success(response.message, "Success");
+          // Optionally, refresh the DataTable or update the UI accordingly
+          //   fetchUsersTable(); // Reload the table to reflect any changes
+          setTimeout(function () {
+            location.reload();
+          }, 1000); // 3000 milliseconds = 3 seconds
+        },
+        error: function (error) {
+          console.log(error);
+          alert("Error adding accounts to favorites. Please try again.");
+        },
+      });
+    });
+
+    // If a company_id exists, display the relevant links in the sidebar
+    if (storedCompanyId) {
+      showSidebarLinks(storedCompanyId);
+    }
+    fetchUsersTable();
+  });
+</script>

@@ -60,7 +60,8 @@ module.exports = function (route) {
     route.post('/companies/:id/user/:user_id/status', UserController.updateUserStatus);
     route.get('/companies/:company_id/users/ajax', UserController.getUsersAjax);
     route.get('/companies/:company_id/user/:user_id', AccessbilityController.getAccessbility);
-    route.put('/companies/:company_id/user/:user_id', AccessbilityController.updateAccessbility);
+    route.get('/companies/:company_id/user/:user_id/account-access', AccessbilityController.getAccessbilityAccounts);
+    route.post('/companies/:company_id/users/:user_id/accessibility', AccessbilityController.updateAccessbility);
 
     //Accounts Routes 
     route.get('/companies/:id/accounts', UserController.getAccountUsers);

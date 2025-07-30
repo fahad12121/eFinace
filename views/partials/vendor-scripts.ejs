@@ -9,37 +9,119 @@
 <script>
   // Function to show the sidebar links based on company_id in localStorage
   function showSidebarLinks(companyId) {
-    // Show the sidebar links for the selected company
-    $("#dashboardLink").removeClass("d-none");
-    $("#accountsLink").removeClass("d-none");
-    $("#transactionsLink").removeClass("d-none");
-    $("#accountstypeLink").removeClass("d-none");
-    $("#balanceLink").removeClass("d-none");
-    $("#importLink").removeClass("d-none");
-    $("#usersLink").removeClass("d-none");
+    // Get user permissions from localStorage
+    const permissions = JSON.parse(localStorage.getItem("permissions"));
+    const userType = localStorage.getItem("userType");
+    // console.log(userType);
+    // If permissions are not available, return and do not show any sidebar links
+    // if (!permissions) return;
 
-    // Set the correct href for each link
-    $("#dashboardLink a").attr("href", "/companies/" + companyId + "/dashboard");
+    // Dashboard link
+    if (userType === 'Admin') {
+      $("#dashboardLink").removeClass("d-none");
+      $("#dashboardLink a").attr(
+        "href",
+        "/companies/" + companyId + "/dashboard"
+      );
+    } else {
+      $("#dashboardLink").addClass("d-none");
+      $("#companiesLink").addClass("d-none");
+    }
+    // Accounts link
+    if ((permissions.accounts && permissions.accounts.view == true) || userType === 'Admin') {
+      
+      $("#accountsLink").removeClass("d-none");
+      $("#accountsLink a").attr(
+        "href",
+        "/companies/" + companyId + "/accounts"
+      );
+    } else {
+      $("#accountsLink").addClass("d-none");
+    }
 
-    $("#accountsLink a").attr("href", "/companies/" + companyId + "/accounts");
+    // Transactions link
+    if ((permissions.transactions && permissions.transactions.view == true) || userType === 'Admin') {
+      $("#transactionsLink").removeClass("d-none");
+      $("#transactionsLink a").attr(
+        "href",
+        "/companies/" + companyId + "/transactions"
+      );
+    } else {
+      $("#transactionsLink").addClass("d-none");
+    }
 
-    $("#transactionsLink a").attr(
-      "href",
-      "/companies/" + companyId + "/transactions"
-    );
+    // Account Types link
+    if ((permissions.account_types && permissions.account_types.view === true) || userType === 'Admin') {
+      $("#accountstypeLink").removeClass("d-none");
+      $("#accountstypeLink a").attr(
+        "href",
+        "/companies/" + companyId + "/account_types"
+      );
+    } else {
+      $("#accountstypeLink").addClass("d-none");
+    }
 
-    $("#accountstypeLink a").attr(
-      "href",
-      "/companies/" + companyId + "/account_types"
-    );
+    // Balance Sheet link
+    if ((permissions.balance_sheet && permissions.balance_sheet.view === true) || userType === 'Admin') {
+      $("#balanceLink").removeClass("d-none");
+      $("#balanceLink a").attr(
+        "href",
+        "/companies/" + companyId + "/balance-sheet"
+      );
+    } else {
+      $("#balanceLink").addClass("d-none");
+    }
 
-    $("#balanceLink a").attr(
-      "href",
-      "/companies/" + companyId + "/balance-sheet"
-    );
-    $("#importLink a").attr("href", "/companies/" + companyId + "/import");
-    $("#usersLink a").attr("href", "/companies/" + companyId + "/users");
+    // Import link
+    if ((permissions.import && permissions.import.add == true) || userType === 'Admin') {
+      $("#importLink").removeClass("d-none");
+      $("#importLink a").attr("href", "/companies/" + companyId + "/import");
+    } else {
+      $("#importLink").addClass("d-none");
+    }
+
+    // Users link (optional, based on permissions)
+    if (userType === 'Admin') {
+      $("#usersLink").removeClass("d-none");
+      $("#usersLink a").attr("href", "/companies/" + companyId + "/users");
+    } else {
+      $("#usersLink").addClass("d-none");
+    }
+    return permissions;
   }
+
+  // function showSidebarLinks(companyId) {
+  //   // Show the sidebar links for the selected company
+  //   $("#dashboardLink").removeClass("d-none");
+  //   $("#accountsLink").removeClass("d-none");
+  //   $("#transactionsLink").removeClass("d-none");
+  //   $("#accountstypeLink").removeClass("d-none");
+  //   $("#balanceLink").removeClass("d-none");
+  //   $("#importLink").removeClass("d-none");
+  //   $("#usersLink").removeClass("d-none");
+
+  //   // Set the correct href for each link
+  //   $("#dashboardLink a").attr("href", "/companies/" + companyId + "/dashboard");
+
+  //   $("#accountsLink a").attr("href", "/companies/" + companyId + "/accounts");
+
+  //   $("#transactionsLink a").attr(
+  //     "href",
+  //     "/companies/" + companyId + "/transactions"
+  //   );
+
+  //   $("#accountstypeLink a").attr(
+  //     "href",
+  //     "/companies/" + companyId + "/account_types"
+  //   );
+
+  //   $("#balanceLink a").attr(
+  //     "href",
+  //     "/companies/" + companyId + "/balance-sheet"
+  //   );
+  //   $("#importLink a").attr("href", "/companies/" + companyId + "/import");
+  //   $("#usersLink a").attr("href", "/companies/" + companyId + "/users");
+  // }
 
   // Check if we are on the /companies page
   if (window.location.pathname === "/companies") {

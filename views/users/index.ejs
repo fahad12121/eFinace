@@ -78,6 +78,7 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="name" class="col-form-label">Name:</label>
+                <input type="hidden" class="form-control" id="user_id" required />
                 <input type="text" class="form-control" id="name" required />
               </div>
             </div>
@@ -92,8 +93,6 @@
                 />
               </div>
             </div>
-          </div>
-          <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="password" class="col-form-label">Password:</label>
@@ -106,6 +105,7 @@
               </div>
             </div>
           </div>
+        
         </form>
       </div>
       <div class="modal-footer">
@@ -179,6 +179,9 @@
               // Add a new column with a lock icon
               `<button class="btn btn-sm btn-warning lock-btn" data-id="${user.id}" title="Lock Account">
                 <i class="fas fa-user-lock"></i>
+               </button> 
+               <button class="btn btn-sm btn-success edit-btn" data-id="${user.id}" data-name="${user.name}" title="Edit User">
+                <i class="fas fa-pencil-alt"></i>
                </button>`,
             ]);
           });
@@ -210,10 +213,10 @@
       $.ajax({
         type: "post",
         url: `/companies/${companyId}/user/${userId}/status`, // Adjust the URL as per your API
-        data: {status: newStatus}, // Send the new status (0 or 1)
+        data: { status: newStatus }, // Send the new status (0 or 1)
         success: function (updateResponse) {
           // Optionally show a success message or handle the response
-          toastr.success(updateResponse.message, 'Success');
+          toastr.success(updateResponse.message, "Success");
           fetchUsersTable();
         },
         error: function (error) {
@@ -225,6 +228,25 @@
     // Get the modal and the open modal button
     var modal = new bootstrap.Modal(document.getElementById("userModal"), {
       keyboard: false,
+    });
+
+    $(document).on("click", ".edit-btn", function () {
+      const userId = $(this).data("id");
+      const name = $(this).data("name");
+      // Set hidden input value
+      $("#user_id").val(userId);
+      modal.show();
+      // Change modal title to "Edit Account"
+      $("#userModal .modal-dialog .modal-content h5").text("Edit User");
+
+      // Hide the title field
+      // Hide the title field and remove required attribute
+      $("#name").val(name);
+      const usernameInput = $("#username");
+      const passwordInput = $("#password");
+      usernameInput.closest(".col-md-6").hide();
+      usernameInput.removeAttr("required");
+      passwordInput.removeAttr("required");
     });
 
     // Open the modal when the "Add+" button is clicked
@@ -249,17 +271,19 @@
       event.preventDefault(); // Prevent the default form submission behavior
 
       // Get the value from the form input (company name)
+      var user_id = $("#user_id").val();
       var name = $("#name").val();
       var username = $("#username").val();
       var password = $("#password").val();
       var user_type = "Company";
-      var companyId = window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
+      var companyId = storedCompanyId; // Assuming URL format is /companies/:id
 
       // Example of submitting the form data to the backend (using AJAX)
       $.ajax({
         type: "POST",
         url: `/companies/${companyId}/users`, // Adjust this to your API endpoint
         data: {
+          userId: user_id,
           name: name,
           company_id: companyId,
           username: username,
@@ -268,10 +292,11 @@
         },
         success: function (response) {
           // Call the GET method to fetch and update the table
-          fetchUsersTable();
+          // fetchUsersTable();
           //   alert("Company submitted successfully!");
           modal.hide(); // Hide the modal after successful submission
           $("#modalForm")[0].reset(); // Reset the form
+          location.reload();
         },
         error: function (error) {
           alert("Error submitting the company. Please try again.");
