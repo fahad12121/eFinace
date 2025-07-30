@@ -131,6 +131,15 @@
     localStorage.setItem("accessToken", value);
   };
 
+  const setUserType = (value) => {
+    localStorage.setItem("userType", value);
+  };
+
+  const setPermissions = (value) => {
+    // Store the permissions object in localStorage
+    localStorage.setItem("permissions", JSON.stringify(value));
+  };
+
   $(document).ready(function () {
     // Handle form submission inside the modal
     $("#loginForm").submit(function (event) {
@@ -149,9 +158,14 @@
         },
         success: function (response) {
           setToken(response.user.token);
+          setPermissions(response.user.permissions);
+          setUserType(response.user.user.user_type );
           // If login is successful, the backend will handle the token (via cookie or response)
-          if (response.success) {
+          if (response.user.user.user_type === "Admin") {
             window.location.href = "/companies"; // Redirect to dashboard after login
+          } else {
+            localStorage.setItem("company_id", response.user.user.company_id);
+            window.location.href = `/companies/${response.user.user.company_id}/accounts`;
           }
         },
         error: function (error) {

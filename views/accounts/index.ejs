@@ -312,14 +312,32 @@
       autoWidth: false,
     });
 
-    // Function to extract companyId from URL
-    function getCompanyIdFromUrl() {
-      return window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
+    // If company_id exists in localStorage, display the relevant links in the sidebar
+    const storedCompanyId = localStorage.getItem("company_id");
+    const userType = localStorage.getItem("userType");
+
+    if (userType === "Admin") {
+      $("#addfavt").css("display", "block");
+    } else {
+      $("#addfavt").css("display", "none");
+    }
+    let permissions
+    if (storedCompanyId) {
+      permissions = showSidebarLinks(storedCompanyId);
+      
+      if ((permissions.accounts && permissions.accounts.add == true) || userType === "Admin") {
+        $("#openModal").css("display", "block");
+        $("#openSubModal").css("display", "block");
+      } else {
+        $("#openModal").css("display", "none");
+        $("#openSubModal").css("display", "none");
+      }
+
     }
 
     // Function to fetch users and update the DataTable
     function fetchUsersTable() {
-      const companyId = getCompanyIdFromUrl();
+      const companyId = storedCompanyId;
       $.ajax({
         type: "GET",
         url: `/companies/${companyId}/users/ajax?user_type=User`,
@@ -331,6 +349,8 @@
             balance = parseFloat(balance).toFixed(balance % 1 === 0 ? 0 : 2);
             const balanceClass =
               balance === 0 ? "" : balance < 0 ? "danger" : "success"; // No class for 0 balance
+              // Determine if the user can edit based on permissions
+            const canEdit = (permissions && permissions.accounts && permissions.accounts.edit) || userType === "Admin";
             dataTable.row.add([
               `<input type="checkbox" class="fav-checkbox" data-id="${user.id}" />`,
               user.account_pk,
@@ -340,12 +360,14 @@
                </span>`,
               user.notes,
               // Actions column with eye and pencil icons
-              `<button class="btn btn-sm btn-info view-btn" data-id="${user.id}" title="View">
-                 <i class="fa fa-eye"></i>
+             `<button class="btn btn-sm btn-info view-btn" data-id="${user.id}" title="View">
+                <i class="fa fa-eye"></i>
                 </button>
-                <button class="btn btn-sm btn-warning edit-btn" data-id="${user.id}" title="Edit">
-                 <i class="fas fa-pencil-alt"></i>
-                </button>`,
+                ${canEdit ? 
+                `<button class="btn btn-sm btn-warning edit-btn" data-id="${user.id}" title="Edit">
+                    <i class="fas fa-pencil-alt"></i>
+                    </button>` 
+                : ''}`,
             ]);
             // Add the balance to totalBalance
             totalBalance += parseFloat(balance);
@@ -363,7 +385,7 @@
 
     // Function to fetch account types based on companyId
     function fetchAccounttype() {
-      const companyId = getCompanyIdFromUrl();
+      const companyId = storedCompanyId;
       $.ajax({
         type: "GET",
         url: `/companies/${companyId}/account_types/ajax`,
@@ -387,7 +409,7 @@
     }
 
     function fetchParentAccount() {
-      const companyId = getCompanyIdFromUrl();
+      const companyId = storedCompanyId;
       $.ajax({
         type: "GET",
         url: `/companies/${companyId}/users/ajax?user_type=User`,
@@ -413,7 +435,7 @@
     $(document).on("click", ".view-btn", function () {
       const userId = $(this).data("id");
       // Perform view action, for example, redirect to a view page
-      window.location.href = `/companies/${getCompanyIdFromUrl()}/accounts/${userId}`;
+      window.location.href = `/companies/${storedCompanyId}/accounts/${userId}`;
     });
 
     // Modal logic
@@ -461,7 +483,7 @@
       }
 
       // Make the API call to add selected accounts to favorites
-      const companyId = getCompanyIdFromUrl();
+      const companyId = storedCompanyId;
       $.ajax({
         type: "POST",
         url: `/companies/${companyId}/add_to_favt`, // Update the URL as needed
@@ -518,7 +540,7 @@
       const username = $("#username").val();
       const notes = $("#notes").val();
       const user_type = "User";
-      const companyId = getCompanyIdFromUrl();
+      const companyId = storedCompanyId;
       const userId = $("#userId").val(); // Get hidden value
 
       $.ajax({
@@ -559,7 +581,7 @@
       const user_id = $("#user_id").val();
       const account_type_id = $("#account_type_id").val();
       const notes = $("#sub_notes").val();
-      const companyId = getCompanyIdFromUrl();
+      const companyId = storedCompanyId;
 
       $.ajax({
         type: "POST",
@@ -582,11 +604,6 @@
       });
     });
 
-    // If company_id exists in localStorage, display the relevant links in the sidebar
-    const storedCompanyId = localStorage.getItem("company_id");
-    if (storedCompanyId) {
-      showSidebarLinks(storedCompanyId);
-    }
 
     // Fetch and display the users table and account types
     fetchUsersTable();

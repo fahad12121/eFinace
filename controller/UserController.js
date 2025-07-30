@@ -3,9 +3,10 @@ const User = require("../models/UserModel");
 const CompanyUser = require("../models/CompanyUsers");
 const subAccount = require("../models/subAccounts");
 const AccountType = require("../models/AccountType");
+const Accessibility = require("../models/Accessbility");
 const asyncHandler = require("../middleware/async");
 const { Op } = require('sequelize');
-const { forEach } = require('jszip');
+const jwt = require('jsonwebtoken');
 
 // User Crud Starts here
 
@@ -24,6 +25,13 @@ exports.createUser = asyncHandler(async (req, res, next) => {
             }
 
             user.notes = notes;
+            if (name) {
+                user.name = name;
+            }
+            if (password) {
+                const hashedPassword = bcrypt.hashSync(password, 10);
+                user.password = hashedPassword;
+            }
             await user.save();
 
             return res.status(200).json({
@@ -114,6 +122,14 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
 
 exports.getUsersAjax = asyncHandler(async (req, res, next) => {
     try {
+        const currentUser = jwt.verify(req.cookies.token, 'secret');
+        // Fetch the user type from the User model based on the currentUser.id
+        const user = await User.findOne({
+            where: { id: currentUser.id }
+        });
+        const accessibility = await Accessibility.findOne({
+            where: { user_id: user.id },
+        });
         const companyId = req.params.company_id; // Get company_id from request parameters
         const { user_type } = req.query; // Get user_type from query parameters
 
@@ -125,10 +141,25 @@ exports.getUsersAjax = asyncHandler(async (req, res, next) => {
             whereClause.user_type = user_type;
         }
 
+        // If the user type is "Company", we need to filter users by viewable_accounts
+        if (user.user_type === 'Company' && accessibility && accessibility.viewable_accounts) {
+            // Parse the stringified viewable_accounts and filter users whose IDs match
+            const viewableAccountsArray = JSON.parse(accessibility.viewable_accounts);
+
+            // Adjust the whereClause to match users whose id is in the `viewable_accounts` array
+            whereClause.id = {
+                [Op.in]: viewableAccountsArray
+            };
+        }
+
+        console.log(whereClause);
         // Fetch users associated with the specific company_id and optionally filtered by user_type
         const users = await User.findAll({
             where: whereClause // Apply the where clause with both company_id and user_type if available
         });
+
+        console.log(users);
+
 
         // Return the users data as JSON (for AJAX response)
         res.status(200).json({

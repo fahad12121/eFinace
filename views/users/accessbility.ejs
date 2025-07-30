@@ -21,8 +21,11 @@
   <div class="col-12">
     <div class="card">
       <div class="row card-title mt-3">
-        <div class="col-md-11">
+        <div class="col-md-10">
           <h4 class="card-title">Accessbilities</h4>
+        </div>
+        <div class="col-md-2">
+          <a href="/companies/<%= company_id %>/user/<%= user_id%>/account-access" class="btn btn-outline-primary">Account Access</a>
         </div>
       </div>
       <div class="card-body">
@@ -66,6 +69,7 @@
                                 class="permission-checkbox"
                                 data-module="<%= module.name %>"
                                 data-permission="view_only"
+                                data-id="<%= moduleData %>"
                                 <% if (moduleData.view === true) { %> checked <% } %> />
                         <% } %> <!-- End of 'if' for view_only -->
                     </td>
@@ -77,6 +81,7 @@
                                 class="permission-checkbox"
                                 data-module="<%= module.name %>"
                                 data-permission="edit"
+                                data-id="<%= moduleData %>"
                                 <% if (moduleData.edit === true) { %> checked <% } %> />
                         <% } %> <!-- End of 'if' for edit -->
                     </td>
@@ -89,6 +94,7 @@
                               class="permission-checkbox"
                               data-module="<%= module.name %>"
                               data-permission="add"
+                              data-id="<%= moduleData %>"
                               <% if (moduleData.add === true) { %> checked <% } %> />
                         <% } %> <!-- End of 'if' for edit -->
                     </td>
@@ -129,21 +135,21 @@
       const module = $(this).data("module");
       const permission = $(this).data("permission");
       const isChecked = $(this).prop("checked"); // Get whether the checkbox is checked or not
-
+      const user_id = window.location.pathname.split("/")[4];
       // Create the payload to send to the server
       const data = {
-        user_id: currentUser.id, // Assuming `currentUser.id` is available
-        module: module,
-        permission: permission,
-        value: isChecked, // Whether the checkbox is checked (true or false)
+        user_id: user_id,
+        resource: module,
+        action: permission,
+        is_checked: isChecked, // Whether the checkbox is checked (true or false)
       };
+
 
       // Send the updated data to the server
       $.ajax({
-        type: "PUT",
-        url: `/companies/${storedCompanyId}/user/:user_id`, // URL for handling permission updates on the server
-        data: JSON.stringify(data), // Send data as JSON
-        contentType: "application/json",
+        type: "POST",
+        url: `/companies/${storedCompanyId}/users/${user_id}/accessibility`, // URL for handling permission updates on the server
+        data: data, // Send data as JSON
         success: function (response) {
           // Handle success (e.g., show a success message or update the UI)
           console.log("Permission updated successfully");

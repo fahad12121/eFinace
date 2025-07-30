@@ -1,4 +1,5 @@
 const User = require("../models/UserModel");
+const Accessbility = require("../models/Accessbility");
 const asyncHandler = require("../middleware/async");
 const ErrorResponse = require("../utils/errorResponse");
 const bcrypt = require('bcryptjs');
@@ -20,6 +21,28 @@ exports.login = asyncHandler(async (req, res, next) => {
     if (!user) {
         return next(new ErrorResponse("Invalid Username"), 401);
     }
+
+    // Fetch the accessibility record to get user permissions
+    const accessibility = await Accessbility.findOne({
+        where: { user_id: user.id },
+    });
+
+    let permissions
+    if (user.user_type === 'Admin') {
+        permissions = {};
+    } else {
+        permissions = {
+            account_types: JSON.parse(accessibility.account_types),
+            accounts: JSON.parse(accessibility.accounts),
+            transactions: JSON.parse(accessibility.transactions),
+            import: JSON.parse(accessibility.import),
+            balance_sheet: JSON.parse(accessibility.balance_sheet),
+            viewable_accounts: JSON.parse(accessibility.viewable_accounts),
+        };
+    }
+
+    // Parse permissions if they are stored as JSON strings
+
 
     bcrypt.compare(password, user.password, (err, isMatch) => {
         if (err) {
@@ -45,6 +68,8 @@ exports.login = asyncHandler(async (req, res, next) => {
                     maxAge: 90 * 24 * 60 * 60 * 1000 // 90 days in milliseconds 
                 });
 
+
+
                 // Return response with success
                 res.status(200).json({
                     success: true,
@@ -52,6 +77,8 @@ exports.login = asyncHandler(async (req, res, next) => {
                     user: {
                         id: user.id,
                         username: user.username,
+                        user,
+                        permissions: permissions,
                     }
                 });
             } else {

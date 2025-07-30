@@ -5,7 +5,7 @@ const { Sequelize } = require('sequelize');
 
 //development
 //production
-const dbConfig = config['production'];
+const dbConfig = config['development'];
 
 // Create a new Sequelize instance and connect to the MySQL database
 const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
