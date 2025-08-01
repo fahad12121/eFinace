@@ -144,7 +144,7 @@ exports.getUsersAjax = asyncHandler(async (req, res, next) => {
         // If the user type is "Company", we need to filter users by viewable_accounts
         if (user.user_type === 'Company' && accessibility && accessibility.viewable_accounts) {
             // Parse the stringified viewable_accounts and filter users whose IDs match
-            const viewableAccountsArray = JSON.parse(accessibility.viewable_accounts);
+            const viewableAccountsArray = parseIfJSONString(accessibility.viewable_accounts);
 
             // Adjust the whereClause to match users whose id is in the `viewable_accounts` array
             whereClause.id = {
@@ -479,6 +479,17 @@ exports.getUsersLedger = asyncHandler(async (req, res, next) => {
         next(error);  // Handle any errors
     }
 });
+
+function parseIfJSONString(input) {
+    if (typeof input === 'string') {
+        try {
+            return JSON.parse(input);
+        } catch (err) {
+            return input; // Return original string if not valid JSON
+        }
+    }
+    return input; // Return as-is if not a string
+}
 
 
 
