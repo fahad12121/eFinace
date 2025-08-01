@@ -152,13 +152,10 @@ exports.getUsersAjax = asyncHandler(async (req, res, next) => {
             };
         }
 
-        console.log(whereClause);
         // Fetch users associated with the specific company_id and optionally filtered by user_type
         const users = await User.findAll({
             where: whereClause // Apply the where clause with both company_id and user_type if available
         });
-
-        console.log(users);
 
 
         // Return the users data as JSON (for AJAX response)
@@ -175,7 +172,6 @@ exports.getUsersAjax = asyncHandler(async (req, res, next) => {
 exports.getAccountUsers = asyncHandler(async (req, res, next) => {
     try {
         const company_id = req.headers['company_id'];
-        console.log(company_id);
         // Generate account_pk based on the last user (if any)
         const all_users = await User.findAll({
             where: {
@@ -463,7 +459,7 @@ exports.getUsersLedger = asyncHandler(async (req, res, next) => {
             sumOfPlus = sumOfPlus - parentBalance;
         }
 
-        console.log(user);
+        // console.log(user);
 
         // Render the ledger page with the data and totals
         res.render('ledger/index', {

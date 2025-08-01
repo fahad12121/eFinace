@@ -131,9 +131,6 @@ exports.favtList = asyncHandler(async (req, res, next) => {
         const sheet1Balance = sheet1.reduce((sum, account) => sum + parseFloat(account.balance || 0), 0);
         const sheet2Balance = sheet2.reduce((sum, account) => sum + parseFloat(account.balance || 0), 0);
 
-        console.log("Sheet 1 (Yesterday or Earlier Users):", sheet1);
-        console.log("Sheet 2 (Today or Tomorrow Users):", sheet2);
-
         // Render the view with the two sheets and total balance
         res.render('dashboard/favt_list', {
             companyId,
