@@ -32,12 +32,12 @@ exports.login = asyncHandler(async (req, res, next) => {
         permissions = {};
     } else {
         permissions = {
-            account_types: JSON.parse(accessibility.account_types),
-            accounts: JSON.parse(accessibility.accounts),
-            transactions: JSON.parse(accessibility.transactions),
-            import: JSON.parse(accessibility.import),
-            balance_sheet: JSON.parse(accessibility.balance_sheet),
-            viewable_accounts: JSON.parse(accessibility.viewable_accounts),
+            account_types: parseIfJSONString(accessibility.account_types),
+            accounts: parseIfJSONString(accessibility.accounts),
+            transactions: parseIfJSONString(accessibility.transactions),
+            import: parseIfJSONString(accessibility.import),
+            balance_sheet: parseIfJSONString(accessibility.balance_sheet),
+            viewable_accounts: parseIfJSONString(accessibility.viewable_accounts),
         };
     }
 
@@ -129,3 +129,14 @@ const sendTokenResponse = (user, statusCode, res) => {
         user: userWithToken,
     });
 };
+
+function parseIfJSONString(input) {
+    if (typeof input === 'string') {
+        try {
+            return JSON.parse(input);
+        } catch (err) {
+            return input; // Return original string if not valid JSON
+        }
+    }
+    return input; // Return as-is if not a string
+}
