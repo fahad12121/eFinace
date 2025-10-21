@@ -27,7 +27,7 @@ cron.schedule('0 5 * * *', async () => {
       uploadFileToDrive(backupFile, '1w_6YIxrNWunnUkMRrqxnLJqH5qxOjDAP');
 
       console.log('Backup uploaded successfully to Google Drive.');
-    }, 30000);
+    }, 40000);
   } catch (error) {
     console.error('Error during backup or upload:', error);
   }

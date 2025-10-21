@@ -56,7 +56,7 @@ function upload_file_on_google_drive(filename, parent_folder_id, delete_after_up
                 console.log('File created with ID: ', file.data.id);
 
                 // if allowed, delete the file once upload from local
-                if (delete_after_upload) {
+                if (file.data.id) {
                     fs.unlink(filename, (err) => {
                         if (err) {
                             console.log('An error occurred while deleting th DB file: ' + err)
