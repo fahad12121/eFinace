@@ -576,7 +576,7 @@
     // Handle sub-account form submission
     $("#subAccountmodalForm").submit(function (event) {
       event.preventDefault();
-
+      $("button[type='submit']").prop("disabled", true).text("Submitting...");
       const account_username = $("#account_username").val();
       const user_id = $("#user_id").val();
       const account_type_id = $("#account_type_id").val();
@@ -595,10 +595,12 @@
         },
         success: function (response) {
           fetchUsersTable(); // Update the users table after adding a new sub-account
+          $("button[type='submit']").prop("disabled", false).text("Submit");
           subAccountModal.hide();
           $("#subAccountmodalForm")[0].reset(); // Reset the sub-account form
         },
         error: function (error) {
+          $("button[type='submit']").prop("disabled", false).text("Submit");
           alert("Error submitting the sub-account. Please try again.");
         },
       });
