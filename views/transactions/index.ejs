@@ -109,7 +109,7 @@
               <div class="mb-3">
                 <label for="sender_sub_account_id" class="col-form-label"
                   >Sender</label
-                >
+                > <span class="text-danger">*</span>
                 <select
                   class="form-control select2 sender_id"
                   style="width: 100%"
@@ -135,7 +135,7 @@
 
             <div class="col-md-4">
               <div class="mb-3">
-                <label for="amount" class="col-form-label">Amount</label>
+                <label for="amount" class="col-form-label">Amount</label> <span class="text-danger">*</span>
                 <input
                   type="number"
                   class="form-control"
@@ -153,7 +153,7 @@
               <div class="mb-3">
                 <label for="receiver_sub_account_id" class="col-form-label"
                   >Receiver</label
-                >
+                > <span class="text-danger">*</span>
                 <select
                   class="form-control select2 receiver_sub_account_id"
                   style="width: 100%"
@@ -590,7 +590,8 @@
           location.reload();
         },
         error: function (error) {
-          alert("Error submitting the company. Please try again.");
+          // alert("Error submitting the company. Please try again.");
+          toastr.error(error.responseJSON.error, "Error");
           $("button[type='submit']").prop("disabled", false).text("Submit");
         },
       });
