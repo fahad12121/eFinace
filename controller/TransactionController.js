@@ -66,6 +66,9 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
 
     try {
         const { sender_sub_account_id, receiver_sub_account_id, amount, narration, transaction_date, company_id, notes } = req.body;
+        if (!sender_sub_account_id) throw new Error('Sender is required');
+        if (!receiver_sub_account_id) throw new Error('Receiver is required');
+        if (!amount) throw new Error('Amount is required');
 
         // Fetch sender sub-account and user
         let sender_sub_account = await SubAccount.findByPk(sender_sub_account_id, { transaction: t });
@@ -150,7 +153,7 @@ exports.createTransaction = asyncHandler(async (req, res, next) => {
 
         res.status(200).json(transaction);
     } catch (error) {
-        console.error(error);
+        // console.error(error);
         await t.rollback(); // Rollback if there’s an error
         res.status(500).json({ error: error.message });
     }
