@@ -16,61 +16,58 @@ const jwtClient = new google.auth.JWT(
     null
 );
 
-// upload function
-function upload_file_on_google_drive(filename, parent_folder_id, delete_after_upload = false) {
-    // attempt authorization
-    jwtClient.authorize((authErr) => {
-
-        // if auth is unsuccessful then throw error and stop further execution
-        if (authErr) {
-            console.log(authErr);
-            return;
-        }
-
-        // otherwise, proceed and make authorized requests
-        else {
-
-            // create file meta data
-            const fileMetadata = {
-                name: filename, //name of the file to be created on google drive
-                parents: [parent_folder_id] // id of the parent folder
-            };
-
-            console.log(fileMetadata);
-            // create data object (from file contents)
-            const media = {
-                mimeType: 'text/plain',
-                body: fs.createReadStream(filename)
-            };
-            // initate create request
-            drive.files.create({
-                auth: jwtClient,
-                resource: fileMetadata,
-                media,
-                fields: 'id'
-            }, (err, file) => {
-                if (err) {
-                    console.log('fff', err);
-                    return;
-                }
-                console.log('File created with ID: ', file.data.id);
-
-                // if allowed, delete the file once upload from local
-                if (file.data.id) {
-                    fs.unlink(filename, (err) => {
-                        if (err) {
-                            console.log('An error occurred while deleting th DB file: ' + err)
-                        }
-                    })
-                }
-            });
-        }
-
-
+function authorize() {
+    return new Promise((resolve, reject) => {
+        jwtClient.authorize((authErr) => {
+            if (authErr) reject(authErr);
+            else resolve(jwtClient);
+        });
     });
 }
 
+async function getAuthenticatedDrive() {
+    await authorize();
+    return google.drive({ version: 'v3', auth: jwtClient });
+}
 
-// Function to list available files in Google Drive
+// upload function
+async function upload_file_on_google_drive(filename, parent_folder_id, delete_after_upload = false) {
+    await authorize();
 
-module.exports = upload_file_on_google_drive
+    // create file meta data
+    const fileMetadata = {
+        name: filename, //name of the file to be created on google drive
+        parents: [parent_folder_id] // id of the parent folder
+    };
+
+    console.log(fileMetadata);
+    // create data object (from file contents)
+    const media = {
+        mimeType: 'text/plain',
+        body: fs.createReadStream(filename)
+    };
+    // initate create request
+    const file = await drive.files.create({
+        auth: jwtClient,
+        resource: fileMetadata,
+        media,
+        fields: 'id'
+    });
+
+    console.log('File created with ID: ', file.data.id);
+
+    // if allowed, delete the file once upload from local
+    if (file.data.id) {
+        fs.unlink(filename, (err) => {
+            if (err) {
+                console.log('An error occurred while deleting th DB file: ' + err)
+            }
+        })
+    }
+
+    return file.data.id;
+}
+
+upload_file_on_google_drive.getAuthenticatedDrive = getAuthenticatedDrive;
+
+module.exports = upload_file_on_google_drive;
