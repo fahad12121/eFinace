@@ -1,0 +1,586 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+/* Logo / brand box (top-left column) */
+body[data-sidebar="dark"] .navbar-brand-box.ef-brand-box {
+  background: linear-gradient(180deg, #1e2433 0%, #252b3b 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.04);
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  position: relative;
+}
+
+body[data-sidebar="dark"] .navbar-brand-box.ef-brand-box::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 1rem;
+  right: 1rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+}
+
+body[data-sidebar="dark"] .ef-brand-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  line-height: normal !important;
+  padding: 0.35rem 0;
+  transition: opacity 0.2s ease;
+}
+
+body[data-sidebar="dark"] .ef-brand-link:hover {
+  opacity: 0.92;
+}
+
+body[data-sidebar="dark"] .ef-brand-emblem {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  padding: 2px;
+  flex-shrink: 0;
+  background: linear-gradient(145deg, #f4e4a6 0%, #d4af37 50%, #b8941f 100%);
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.25),
+    0 4px 14px rgba(212, 175, 55, 0.2);
+  overflow: hidden;
+}
+
+body[data-sidebar="dark"] .ef-brand-emblem-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #0a1018;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+body[data-sidebar="dark"] .ef-brand-emblem-inner img {
+  width: 100%;
+  height: auto;
+  display: block;
+  clip-path: inset(0 0 41% 0);
+  -webkit-clip-path: inset(0 0 41% 0);
+  transform: scale(1.02);
+  transform-origin: top center;
+}
+
+body[data-sidebar="dark"] .ef-brand-info {
+  text-align: left;
+  min-width: 0;
+}
+
+body[data-sidebar="dark"] .ef-brand-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #fff;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+body[data-sidebar="dark"] .ef-brand-accent {
+  background: linear-gradient(135deg, #f4e4a6 0%, #e8c547 50%, #d4af37 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body[data-sidebar="dark"] .ef-brand-subtitle {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+  margin-top: 0.2rem;
+  white-space: nowrap;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-brand-info {
+  display: none;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-brand-link {
+  justify-content: center;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-brand-emblem {
+  width: 34px;
+  height: 34px;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .navbar-brand-box.ef-brand-box {
+  padding: 0 0.5rem;
+}
+
+/* Collapsed sidebar */
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar-label,
+body[data-sidebar="dark"].vertical-collpsed .ef-nav-text,
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar-footer {
+  display: none !important;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar #sidebar-menu {
+  padding: 0.65rem 0.4rem;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar #sidebar-menu ul li {
+  margin-bottom: 0.45rem;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar #sidebar-menu ul li a.ef-nav-link {
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem !important;
+  min-height: auto;
+  width: 100%;
+  background: transparent !important;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar #sidebar-menu ul li a.ef-nav-link::before {
+  display: none;
+}
+
+/* Skote hides all spans when collapsed — keep icon spans visible */
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li > a span.ef-nav-icon {
+  display: inline-flex !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  width: 38px;
+  height: 38px;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li > a span.ef-nav-text {
+  display: none !important;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li > a i {
+  margin-left: 0 !important;
+  font-size: 1.2rem !important;
+}
+
+/* Collapsed hover — show label tooltip to the right */
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li {
+  position: relative;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li > a:hover,
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li > a:focus {
+  width: 100% !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #fff !important;
+  transition: background 0.2s ease;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li > a:hover span.ef-nav-text,
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li > a:focus span.ef-nav-text {
+  display: none !important;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li > a:hover .ef-nav-icon,
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li > a:focus .ef-nav-icon {
+  transform: scale(1.08);
+}
+
+/* Tooltip label on hover in collapsed mode */
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li > a::after {
+  content: attr(data-title);
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: #1e2433;
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 1100;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li > a:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li > a.ef-nav-link {
+  position: relative;
+  overflow: visible !important;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu .simplebar-mask,
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu .simplebar-content-wrapper {
+  overflow: visible !important;
+}
+
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li.mm-active > a .ef-nav-icon,
+body[data-sidebar="dark"].vertical-collpsed .ef-sidebar.vertical-menu #sidebar-menu > ul > li > a.active .ef-nav-icon {
+  transform: scale(1.05);
+  filter: brightness(1.15);
+}
+body[data-sidebar="dark"] .ef-sidebar.vertical-menu {
+  background: linear-gradient(180deg, #252b3b 0%, #1e2433 55%, #1a1f2e 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 4px 0 24px rgba(15, 23, 42, 0.12);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body[data-sidebar="dark"] .ef-brand-link.logo-light {
+  display: flex !important;
+}
+
+body[data-sidebar="dark"] .ef-sidebar #sidebar-menu {
+  padding: 1.15rem 0.85rem 1.5rem;
+}
+
+.ef-sidebar-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0 0.65rem 0.85rem;
+  padding: 0;
+}
+
+/* Nav links */
+.ef-sidebar #sidebar-menu ul li {
+  margin-bottom: 0.35rem;
+}
+
+.ef-sidebar #sidebar-menu ul li a.ef-nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.65rem 0.85rem !important;
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.62) !important;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.ef-sidebar #sidebar-menu ul li a.ef-nav-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(180deg, #556ee6 0%, #764ba2 100%);
+  transition: height 0.25s ease;
+}
+
+.ef-sidebar #sidebar-menu ul li a.ef-nav-link i {
+  font-size: 1.15rem !important;
+  min-width: auto !important;
+  padding-bottom: 0 !important;
+  line-height: 1 !important;
+  color: inherit !important;
+}
+
+.ef-nav-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+  box-shadow: none;
+  border: 1px solid transparent;
+}
+
+.ef-nav-icon i {
+  font-size: 1.15rem !important;
+}
+
+/* Light pastel icon variants */
+.ef-icon-companies {
+  background: rgba(147, 197, 253, 0.18);
+  border-color: rgba(147, 197, 253, 0.22);
+}
+
+.ef-icon-companies i {
+  color: #93c5fd !important;
+}
+
+.ef-icon-dashboard {
+  background: rgba(196, 181, 253, 0.18);
+  border-color: rgba(196, 181, 253, 0.22);
+}
+
+.ef-icon-dashboard i {
+  color: #c4b5fd !important;
+}
+
+.ef-icon-accounts {
+  background: rgba(134, 239, 172, 0.16);
+  border-color: rgba(134, 239, 172, 0.22);
+}
+
+.ef-icon-accounts i {
+  color: #86efac !important;
+}
+
+.ef-icon-transactions {
+  background: rgba(253, 230, 138, 0.16);
+  border-color: rgba(253, 230, 138, 0.22);
+}
+
+.ef-icon-transactions i {
+  color: #fde68a !important;
+}
+
+.ef-icon-account-type {
+  background: rgba(249, 168, 212, 0.16);
+  border-color: rgba(249, 168, 212, 0.22);
+}
+
+.ef-icon-account-type i {
+  color: #f9a8d4 !important;
+}
+
+.ef-icon-balance {
+  background: rgba(125, 211, 252, 0.16);
+  border-color: rgba(125, 211, 252, 0.22);
+}
+
+.ef-icon-balance i {
+  color: #7dd3fc !important;
+}
+
+.ef-icon-import {
+  background: rgba(216, 180, 254, 0.16);
+  border-color: rgba(216, 180, 254, 0.22);
+}
+
+.ef-icon-import i {
+  color: #d8b4fe !important;
+}
+
+.ef-icon-users {
+  background: rgba(253, 186, 116, 0.16);
+  border-color: rgba(253, 186, 116, 0.22);
+}
+
+.ef-icon-users i {
+  color: #fdba74 !important;
+}
+
+.ef-nav-text {
+  line-height: 1.2;
+}
+
+.ef-sidebar #sidebar-menu ul li a.ef-nav-link:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.ef-sidebar #sidebar-menu ul li a.ef-nav-link:hover .ef-nav-icon {
+  transform: scale(1.05);
+  filter: brightness(1.12);
+}
+
+/* Active state — soft row highlight */
+.ef-sidebar #sidebar-menu ul li.mm-active > a.ef-nav-link,
+.ef-sidebar #sidebar-menu ul li > a.ef-nav-link.active {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none;
+}
+
+.ef-sidebar #sidebar-menu ul li.mm-active > a.ef-nav-link::before,
+.ef-sidebar #sidebar-menu ul li > a.ef-nav-link.active::before {
+  height: 70%;
+}
+
+.ef-sidebar #sidebar-menu ul li.mm-active > a.ef-nav-link .ef-nav-text,
+.ef-sidebar #sidebar-menu ul li > a.ef-nav-link.active .ef-nav-text {
+  color: #fff;
+  font-weight: 700;
+}
+
+.ef-sidebar #sidebar-menu ul li.mm-active > a.ef-nav-link .ef-nav-icon,
+.ef-sidebar #sidebar-menu ul li > a.ef-nav-link.active .ef-nav-icon {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+}
+
+.ef-sidebar #sidebar-menu ul li.mm-active > a.ef-nav-link .ef-icon-companies,
+.ef-sidebar #sidebar-menu ul li > a.active .ef-icon-companies {
+  background: rgba(147, 197, 253, 0.28);
+  border-color: rgba(147, 197, 253, 0.35);
+}
+
+.ef-sidebar #sidebar-menu ul li.mm-active > a.ef-nav-link .ef-icon-dashboard,
+.ef-sidebar #sidebar-menu ul li > a.active .ef-icon-dashboard {
+  background: rgba(196, 181, 253, 0.28);
+  border-color: rgba(196, 181, 253, 0.35);
+}
+
+.ef-sidebar #sidebar-menu ul li.mm-active > a.ef-nav-link .ef-icon-accounts,
+.ef-sidebar #sidebar-menu ul li > a.active .ef-icon-accounts {
+  background: rgba(134, 239, 172, 0.26);
+  border-color: rgba(134, 239, 172, 0.35);
+}
+
+.ef-sidebar #sidebar-menu ul li.mm-active > a.ef-nav-link .ef-icon-transactions,
+.ef-sidebar #sidebar-menu ul li > a.active .ef-icon-transactions {
+  background: rgba(253, 230, 138, 0.26);
+  border-color: rgba(253, 230, 138, 0.35);
+}
+
+.ef-sidebar #sidebar-menu ul li.mm-active > a.ef-nav-link .ef-icon-account-type,
+.ef-sidebar #sidebar-menu ul li > a.active .ef-icon-account-type {
+  background: rgba(249, 168, 212, 0.26);
+  border-color: rgba(249, 168, 212, 0.35);
+}
+
+.ef-sidebar #sidebar-menu ul li.mm-active > a.ef-nav-link .ef-icon-balance,
+.ef-sidebar #sidebar-menu ul li > a.active .ef-icon-balance {
+  background: rgba(125, 211, 252, 0.26);
+  border-color: rgba(125, 211, 252, 0.35);
+}
+
+.ef-sidebar #sidebar-menu ul li.mm-active > a.ef-nav-link .ef-icon-import,
+.ef-sidebar #sidebar-menu ul li > a.active .ef-icon-import {
+  background: rgba(216, 180, 254, 0.26);
+  border-color: rgba(216, 180, 254, 0.35);
+}
+
+.ef-sidebar #sidebar-menu ul li.mm-active > a.ef-nav-link .ef-icon-users,
+.ef-sidebar #sidebar-menu ul li > a.active .ef-icon-users {
+  background: rgba(253, 186, 116, 0.26);
+  border-color: rgba(253, 186, 116, 0.35);
+}
+
+/* Active left accent bar — soft pastel tones */
+.ef-sidebar #sidebar-menu li.mm-active > a:has(.ef-icon-companies)::before,
+.ef-sidebar #sidebar-menu li > a.active:has(.ef-icon-companies)::before {
+  background: #93c5fd;
+}
+
+.ef-sidebar #sidebar-menu li.mm-active > a:has(.ef-icon-dashboard)::before,
+.ef-sidebar #sidebar-menu li > a.active:has(.ef-icon-dashboard)::before {
+  background: #c4b5fd;
+}
+
+.ef-sidebar #sidebar-menu li.mm-active > a:has(.ef-icon-accounts)::before,
+.ef-sidebar #sidebar-menu li > a.active:has(.ef-icon-accounts)::before {
+  background: #86efac;
+}
+
+.ef-sidebar #sidebar-menu li.mm-active > a:has(.ef-icon-transactions)::before,
+.ef-sidebar #sidebar-menu li > a.active:has(.ef-icon-transactions)::before {
+  background: #fde68a;
+}
+
+.ef-sidebar #sidebar-menu li.mm-active > a:has(.ef-icon-account-type)::before,
+.ef-sidebar #sidebar-menu li > a.active:has(.ef-icon-account-type)::before {
+  background: #f9a8d4;
+}
+
+.ef-sidebar #sidebar-menu li.mm-active > a:has(.ef-icon-balance)::before,
+.ef-sidebar #sidebar-menu li > a.active:has(.ef-icon-balance)::before {
+  background: #7dd3fc;
+}
+
+.ef-sidebar #sidebar-menu li.mm-active > a:has(.ef-icon-import)::before,
+.ef-sidebar #sidebar-menu li > a.active:has(.ef-icon-import)::before {
+  background: #d8b4fe;
+}
+
+.ef-sidebar #sidebar-menu li.mm-active > a:has(.ef-icon-users)::before,
+.ef-sidebar #sidebar-menu li > a.active:has(.ef-icon-users)::before {
+  background: #fdba74;
+}
+
+body[data-sidebar="dark"] .ef-sidebar .mm-active {
+  color: inherit !important;
+}
+
+body[data-sidebar="dark"] .ef-sidebar .mm-active > a {
+  color: #fff !important;
+}
+
+body[data-sidebar="dark"] .ef-sidebar .mm-active > a i {
+  color: inherit !important;
+}
+
+/* Footer card */
+.ef-sidebar-footer {
+  margin-top: 1.5rem;
+  padding: 0 0.65rem;
+}
+
+.ef-sidebar-footer-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ef-sidebar-footer-card > i {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(134, 239, 172, 0.16);
+  border: 1px solid rgba(134, 239, 172, 0.22);
+  color: #86efac !important;
+  box-shadow: none;
+}
+
+.ef-sidebar-footer-title {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.2;
+}
+
+.ef-sidebar-footer-desc {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 0.15rem;
+}
+
+/* Mobile overlay sidebar */
+@media (max-width: 992px) {
+  body[data-sidebar="dark"].sidebar-enable .ef-sidebar.vertical-menu {
+    box-shadow: 8px 0 32px rgba(15, 23, 42, 0.35);
+  }
+}

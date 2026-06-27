@@ -1,0 +1,463 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+.companies-page {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.companies-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.companies-page-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #556ee6;
+  margin-bottom: 0.35rem;
+}
+
+.companies-page-title {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.02em;
+}
+
+.companies-page-desc {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+.companies-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 46px;
+  padding: 0 1.25rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #556ee6 0%, #6b5ce7 55%, #764ba2 100%);
+  box-shadow: 0 8px 20px rgba(85, 110, 230, 0.28);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.companies-add-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(85, 110, 230, 0.35);
+  color: #fff;
+}
+
+.companies-stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.companies-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.15rem 1.25rem;
+  background: #fff;
+  border: 1px solid #e8edf5;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+}
+
+.companies-stat-card .stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  color: #556ee6;
+  background: linear-gradient(135deg, rgba(85, 110, 230, 0.12) 0%, rgba(118, 75, 162, 0.08) 100%);
+}
+
+.companies-stat-card .stat-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.1;
+}
+
+.companies-stat-card .stat-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #64748b;
+  margin-top: 0.15rem;
+}
+
+.companies-table-card {
+  background: #fff;
+  border: 1px solid #e8edf5;
+  border-radius: 18px;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.companies-table-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #eef2f7;
+  background: linear-gradient(180deg, rgba(85, 110, 230, 0.04) 0%, transparent 100%);
+}
+
+.companies-table-card-header h5 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.companies-table-card-header p {
+  margin: 0.2rem 0 0;
+  font-size: 0.8125rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.companies-table-body {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.companies-page .dataTables_wrapper .dataTables_length label,
+.companies-page .dataTables_wrapper .dataTables_filter label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.companies-page .dataTables_wrapper .dataTables_length select,
+.companies-page .dataTables_wrapper .dataTables_filter input {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #1e293b;
+  background: #f8fafc;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.companies-page .dataTables_wrapper .dataTables_filter input:focus {
+  border-color: #556ee6;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(85, 110, 230, 0.12);
+}
+
+.companies-page .dataTables_wrapper .dataTables_info {
+  font-size: 0.8125rem;
+  color: #64748b;
+  font-weight: 500;
+  padding-top: 1rem;
+}
+
+.companies-page .dataTables_wrapper .dataTables_paginate {
+  padding-top: 1rem;
+}
+
+.companies-page .dataTables_wrapper .dataTables_paginate .paginate_button {
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  margin-left: 0.25rem;
+  padding: 0.35rem 0.75rem !important;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #475569 !important;
+  background: #fff !important;
+}
+
+.companies-page .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.companies-page .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  background: linear-gradient(135deg, #556ee6 0%, #6b5ce7 100%) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(85, 110, 230, 0.25);
+}
+
+.companies-page .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #1e293b !important;
+}
+
+.companies-table {
+  width: 100% !important;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 0.5rem !important;
+}
+
+.companies-table thead th {
+  background: #f8fafc;
+  border: none !important;
+  border-bottom: 1px solid #e8edf5 !important;
+  padding: 0.9rem 1rem !important;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.companies-table thead th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.companies-table thead th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.companies-table tbody td {
+  border: none !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding: 1rem !important;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.companies-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.companies-table tbody tr:hover {
+  background: rgba(85, 110, 230, 0.03);
+}
+
+.companies-table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+.companies-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+.companies-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+.company-id-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 28px;
+  padding: 0 0.5rem;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #556ee6;
+  background: rgba(85, 110, 230, 0.1);
+}
+
+.company-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.company-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #556ee6 0%, #764ba2 100%);
+  flex-shrink: 0;
+}
+
+.company-name-text {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.company-name-empty {
+  color: #94a3b8;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.company-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.85rem;
+  border: 1.5px solid rgba(85, 110, 230, 0.2);
+  border-radius: 10px;
+  background: rgba(85, 110, 230, 0.06);
+  color: #556ee6;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.company-action-btn:hover {
+  background: #556ee6;
+  border-color: #556ee6;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(85, 110, 230, 0.25);
+}
+
+.company-modal .modal-content {
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.18);
+}
+
+.company-modal .modal-header {
+  border-bottom: 1px solid #eef2f7;
+  padding: 1.35rem 1.5rem;
+  background: linear-gradient(180deg, rgba(85, 110, 230, 0.06) 0%, transparent 100%);
+}
+
+.company-modal .modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.company-modal .modal-title-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #fff;
+  background: linear-gradient(135deg, #556ee6 0%, #764ba2 100%);
+}
+
+.company-modal .modal-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.company-modal .modal-subtitle {
+  font-size: 0.8125rem;
+  color: #64748b;
+  margin: 0.15rem 0 0;
+  font-weight: 500;
+}
+
+.company-modal .modal-body {
+  padding: 1.5rem;
+}
+
+.company-modal .form-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 0.5rem;
+}
+
+.company-modal .form-control {
+  height: 48px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.625rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.company-modal .form-control:focus {
+  border-color: #556ee6;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(85, 110, 230, 0.12);
+}
+
+.company-modal .modal-footer {
+  border-top: 1px solid #eef2f7;
+  padding: 1rem 1.5rem 1.35rem;
+  gap: 0.5rem;
+}
+
+.company-modal .btn-cancel {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.55rem 1.1rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #fff;
+}
+
+.company-modal .btn-cancel:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+.company-modal .btn-submit {
+  border: none;
+  border-radius: 10px;
+  padding: 0.55rem 1.25rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #556ee6 0%, #6b5ce7 55%, #764ba2 100%);
+  box-shadow: 0 6px 16px rgba(85, 110, 230, 0.25);
+}
+
+.company-modal .btn-submit:hover {
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(85, 110, 230, 0.32);
+}
+
+@media (max-width: 767px) {
+  .companies-page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .companies-add-btn {
+    justify-content: center;
+  }
+
+  .companies-table-body {
+    padding: 1rem;
+  }
+
+  .companies-page .dataTables_wrapper .dataTables_length,
+  .companies-page .dataTables_wrapper .dataTables_filter {
+    text-align: left;
+    margin-bottom: 0.75rem;
+  }
+}

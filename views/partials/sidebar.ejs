@@ -1,64 +1,76 @@
 <!-- ========== Left Sidebar Start ========== -->
-<div class="vertical-menu">
+<div class="vertical-menu ef-sidebar">
   <div data-simplebar class="h-100">
-    <!--- Sidemenu -->
     <div id="sidebar-menu">
-      <!-- Left Menu Start -->
+      <p class="ef-sidebar-label">Navigation</p>
       <ul class="metismenu list-unstyled" id="side-menu">
-
         <li>
-          <a href="/companies" id="companiesLink" class="waves-effect">
-            <i class="fas fa-users"></i>
-            <span key="t-chat">Companies</span>
+          <a href="/companies" id="companiesLink" class="waves-effect ef-nav-link" data-title="Companies">
+            <span class="ef-nav-icon ef-icon-companies"><i class="mdi mdi-office-building-outline"></i></span>
+            <span class="ef-nav-text">Companies</span>
           </a>
         </li>
-        <!-- Only render the Account Type link if company_id exists in localStorage -->
+
         <li id="dashboardLink" class="d-none">
-          <a href="/companies/:id/dashboard" class="waves-effect">
-            <i class="bx bx-home-circle"></i>
-            <span key="t-chat">Dashboard</span>
+          <a href="/companies/:id/dashboard" class="waves-effect ef-nav-link" data-title="Dashboard">
+            <span class="ef-nav-icon ef-icon-dashboard"><i class="mdi mdi-view-dashboard-outline"></i></span>
+            <span class="ef-nav-text">Dashboard</span>
           </a>
         </li>
 
         <li id="accountsLink" class="d-none">
-          <a href="/companies/:id/accounts" class="waves-effect">
-            <i class="fas fa-book"></i>
-            <span key="t-chat">Accounts</span>
+          <a href="/companies/:id/accounts" class="waves-effect ef-nav-link" data-title="Accounts">
+            <span class="ef-nav-icon ef-icon-accounts"><i class="mdi mdi-book-open-variant"></i></span>
+            <span class="ef-nav-text">Accounts</span>
           </a>
         </li>
+
         <li id="transactionsLink" class="d-none">
-          <a href="/companies/:id/transactions" class="waves-effect">
-            <i class="fas fa-money-bill-wave"></i>
-            <span key="t-chat">Transactions</span>
+          <a href="/companies/:id/transactions" class="waves-effect ef-nav-link" data-title="Transactions">
+            <span class="ef-nav-icon ef-icon-transactions"><i class="mdi mdi-swap-horizontal"></i></span>
+            <span class="ef-nav-text">Transactions</span>
           </a>
         </li>
+
         <li id="accountstypeLink" class="d-none">
-          <a href="/companies/:id/account_type" class="waves-effect">
-            <i class="fas fa-link"></i>
-            <span key="t-chat">Account Type</span>
+          <a href="/companies/:id/account_type" class="waves-effect ef-nav-link" data-title="Account Type">
+            <span class="ef-nav-icon ef-icon-account-type"><i class="mdi mdi-shape-outline"></i></span>
+            <span class="ef-nav-text">Account Type</span>
           </a>
         </li>
+
         <li id="balanceLink" class="d-none">
-          <a href="/companies/:id/balance-sheet" class="waves-effect">
-            <i class="fas fa-money-check-alt"></i>
-            <span key="t-chat">Balance Sheet</span>
+          <a href="/companies/:id/balance-sheet" class="waves-effect ef-nav-link" data-title="Balance Sheet">
+            <span class="ef-nav-icon ef-icon-balance"><i class="mdi mdi-file-chart-outline"></i></span>
+            <span class="ef-nav-text">Balance Sheet</span>
           </a>
         </li>
+
         <li id="importLink" class="d-none">
-          <a href="/companies/:id/account_type" class="waves-effect">
-            <i class="fas fa-file-csv"></i>
-            <span key="t-chat">Import</span>
+          <a href="/companies/:id/account_type" class="waves-effect ef-nav-link" data-title="Import">
+            <span class="ef-nav-icon ef-icon-import"><i class="mdi mdi-file-import-outline"></i></span>
+            <span class="ef-nav-text">Import</span>
           </a>
         </li>
+
         <li id="usersLink" class="d-none">
-          <a href="/companies/:id/account_type" class="waves-effect">
-            <i class="fas fa-users"></i>
-            <span key="t-chat">Users</span>
+          <a href="/companies/:id/account_type" class="waves-effect ef-nav-link" data-title="Users">
+            <span class="ef-nav-icon ef-icon-users"><i class="mdi mdi-account-group-outline"></i></span>
+            <span class="ef-nav-text">Users</span>
           </a>
         </li>
       </ul>
+
+      <div class="ef-sidebar-footer">
+        <div class="ef-sidebar-footer-card">
+          <i class="mdi mdi-shield-check-outline"></i>
+          <div>
+            <span class="ef-sidebar-footer-title">Secure workspace</span>
+            <span class="ef-sidebar-footer-desc">eFinance admin panel</span>
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- Sidebar -->
   </div>
 </div>
 <!-- Left Sidebar End -->

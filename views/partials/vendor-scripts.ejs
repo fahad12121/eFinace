@@ -87,56 +87,84 @@
     } else {
       $("#usersLink").addClass("d-none");
     }
+
+    setActiveSidebarMenu();
     return permissions;
   }
 
-  // function showSidebarLinks(companyId) {
-  //   // Show the sidebar links for the selected company
-  //   $("#dashboardLink").removeClass("d-none");
-  //   $("#accountsLink").removeClass("d-none");
-  //   $("#transactionsLink").removeClass("d-none");
-  //   $("#accountstypeLink").removeClass("d-none");
-  //   $("#balanceLink").removeClass("d-none");
-  //   $("#importLink").removeClass("d-none");
-  //   $("#usersLink").removeClass("d-none");
-
-  //   // Set the correct href for each link
-  //   $("#dashboardLink a").attr("href", "/companies/" + companyId + "/dashboard");
-
-  //   $("#accountsLink a").attr("href", "/companies/" + companyId + "/accounts");
-
-  //   $("#transactionsLink a").attr(
-  //     "href",
-  //     "/companies/" + companyId + "/transactions"
-  //   );
-
-  //   $("#accountstypeLink a").attr(
-  //     "href",
-  //     "/companies/" + companyId + "/account_types"
-  //   );
-
-  //   $("#balanceLink a").attr(
-  //     "href",
-  //     "/companies/" + companyId + "/balance-sheet"
-  //   );
-  //   $("#importLink a").attr("href", "/companies/" + companyId + "/import");
-  //   $("#usersLink a").attr("href", "/companies/" + companyId + "/users");
-  // }
-
-  // Check if we are on the /companies page
-  if (window.location.pathname === "/companies") {
-    // If we are on the /companies page, remove company_id from localStorage
-    localStorage.removeItem("company_id");
-
-    // Optionally hide the sidebar links if no company_id is present
-    $("#dashboardLink").addClass("d-none");
-    $("#accountsLink").addClass("d-none");
-    $("#transactionsLink").addClass("d-none");
-    $("#accountstypeLink").addClass("d-none");
-    $("#balanceLink").addClass("d-none");
-    $("#importsLink").addClass("d-none");
-    $("#usersLink").addClass("d-none");
+  function normalizePath(path) {
+    if (!path) return "/";
+    return path.replace(/\/+$/, "") || "/";
   }
+
+  function setActiveSidebarMenu() {
+    const currentPath = normalizePath(window.location.pathname);
+
+    $("#sidebar-menu a").removeClass("active");
+    $("#sidebar-menu li").removeClass("mm-active mm-show");
+
+    let bestMatch = null;
+    let bestMatchLength = -1;
+
+    $("#sidebar-menu li:not(.d-none) > a.ef-nav-link").each(function () {
+      const href = $(this).attr("href");
+      if (!href || href.indexOf(":id") !== -1) return;
+
+      let linkPath;
+      try {
+        linkPath = normalizePath(new URL(href, window.location.origin).pathname);
+      } catch (error) {
+        return;
+      }
+
+      let isMatch = false;
+
+      if (linkPath === "/companies") {
+        isMatch = currentPath === "/companies";
+      } else {
+        isMatch =
+          currentPath === linkPath ||
+          currentPath.startsWith(linkPath + "/");
+      }
+
+      if (isMatch && linkPath.length > bestMatchLength) {
+        bestMatch = this;
+        bestMatchLength = linkPath.length;
+      }
+    });
+
+    if (bestMatch) {
+      const $link = $(bestMatch);
+      $link.addClass("active");
+      $link.parent("li").addClass("mm-active");
+    }
+  }
+
+  function initSidebarNavigation() {
+    const currentPath = normalizePath(window.location.pathname);
+
+    if (currentPath === "/companies") {
+      localStorage.removeItem("company_id");
+      $("#dashboardLink, #accountsLink, #transactionsLink, #accountstypeLink, #balanceLink, #importLink, #usersLink").addClass("d-none");
+      setActiveSidebarMenu();
+      return;
+    }
+
+    const companyMatch = currentPath.match(/^\/companies\/(\d+)/);
+    const companyId = companyMatch ? companyMatch[1] : localStorage.getItem("company_id");
+
+    if (companyId) {
+      localStorage.setItem("company_id", companyId);
+      showSidebarLinks(companyId);
+      return;
+    }
+
+    setActiveSidebarMenu();
+  }
+
+  $(window).on("load", function () {
+    initSidebarNavigation();
+  });
 </script>
 <script>
   // Ensure the script runs after the DOM is fully loaded

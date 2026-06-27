@@ -25,6 +25,11 @@
     <%- FooterJs %>
 <!-- App js -->
 <script src="/assets/js/app.js"></script>
+<script>
+  if (typeof initSidebarNavigation === "function") {
+    initSidebarNavigation();
+  }
+</script>
 </body>
 
 </html>
