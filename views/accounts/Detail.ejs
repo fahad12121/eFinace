@@ -1,64 +1,71 @@
-<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
-{"title":"Account Detail"}) %>
-<!-- DataTables -->
-<link
-  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+<%- contentFor('HeaderCss') %>
+<%- include ('../partials/title-meta', {"title":"Account Detail"}) %>
+<link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/accounts-page.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/account-detail-page.css" rel="stylesheet" type="text/css" />
 
-<!-- Responsive datatable examples -->
-<link
-  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
-<link
-  href="/assets/libs/select2/css/select2.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
-<style>
-  .select2-container--default .select2-dropdown {
-    z-index: 9999 !important; /* Ensure dropdown is above modal */
-  }
+<%- contentFor('body') %>
 
-  .select2-container--default .select2-selection--single {
-    height: auto !important;
-  }
-</style>
-<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
-"Account Detail" , "title" : "Account Detail" }) %>
+<% const displayName = account.username.charAt(0).toUpperCase() + account.username.slice(1); %>
+<% const accountInitial = account.username.charAt(0).toUpperCase(); %>
+<% const subCount = account.subAccounts.length; %>
+<% const roundedTotal = Math.round(totalBalance); %>
+<% const totalBalanceClass = roundedTotal > 0 ? 'positive' : roundedTotal < 0 ? 'negative' : 'zero'; %>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="row card-title mt-3">
-        <div class="col-md-8">
-          <h4 class="card-title">
-            <%- account.username.charAt(0).toUpperCase() +
-            account.username.slice(1) %> Account Detail
-          </h4>
-        </div>
+<div class="accounts-page account-detail-page">
+  <div class="accounts-page-header">
+    <div>
+      <p class="accounts-page-eyebrow">Account</p>
+      <h1 class="accounts-page-title"><%= displayName %> Account Detail</h1>
+      <p class="accounts-page-desc">View and manage sub-accounts linked to this account</p>
+    </div>
+  </div>
+
+  <div class="account-detail-hero">
+    <span class="account-detail-avatar"><%= accountInitial %></span>
+    <div>
+      <h2 class="account-detail-name"><%= displayName %></h2>
+      <p class="account-detail-meta">Account ID: <%= account.account_pk %> · <%= subCount %> sub-account<%= subCount === 1 ? '' : 's' %></p>
+    </div>
+  </div>
+
+  <div class="accounts-stats-row">
+    <div class="accounts-stat-card">
+      <div class="stat-icon count">
+        <i class="mdi mdi-account-multiple-outline"></i>
+      </div>
+      <div>
+        <span class="stat-value"><%= subCount %></span>
+        <span class="stat-label">Sub Accounts</span>
+      </div>
+    </div>
+    <div class="accounts-stat-card">
+      <div class="stat-icon balance">
+        <i class="mdi mdi-scale-balance"></i>
+      </div>
+      <div>
+        <span class="stat-value"><%= roundedTotal.toLocaleString() %></span>
+        <span class="stat-label">Total Balance</span>
+        <span class="stat-hint <%= roundedTotal >= 0 ? 'positive' : 'negative' %>">
+          <%= roundedTotal >= 0 ? 'Net positive' : 'Net negative' %>
+        </span>
       </div>
     </div>
   </div>
-  <!-- end col -->
-</div>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="row card-title mt-3">
-        <div class="col-md-8">
-          <h4 class="card-title">Sub Accounts</h4>
-        </div>
+  <div class="accounts-table-card">
+    <div class="accounts-table-card-header">
+      <div>
+        <h5><i class="mdi mdi-format-list-bulleted"></i> Sub Accounts</h5>
+        <p>Edit sub-accounts or open account statements</p>
       </div>
-      <div class="card-body">
-        <table
-          id="subdatatable"
-          class="table table-bordered dt-responsive nowrap w-100"
-        >
+      <span class="account-detail-count-badge"><%= subCount %> accounts</span>
+    </div>
+    <div class="accounts-table-body">
+      <div class="table-responsive">
+        <table id="subdatatable" class="table accounts-table dt-responsive nowrap w-100 mb-0">
           <thead>
             <tr>
               <th>#</th>
@@ -69,84 +76,95 @@
               <th>Actions</th>
             </tr>
           </thead>
-
           <tbody>
-            <% account.subAccounts.forEach(function(account) { %>
+            <% account.subAccounts.forEach(function(sub) { %>
+            <% const balance = Math.round(parseFloat(sub.balance === null ? 0 : String(sub.balance).replace(/,/g, ''))); %>
+            <% const balanceClass = balance > 0 ? 'positive' : balance < 0 ? 'negative' : 'zero'; %>
+            <% const subInitial = (sub.account_username || '?').charAt(0).toUpperCase(); %>
             <tr>
-              <td><%= account.sub_account_pk %></td>
-              <td><%= account.account_username %></td>
+              <td><span class="acct-id-badge"><%= sub.sub_account_pk %></span></td>
               <td>
-                <% 
-                  let balance = account.balance === null ? 0 : account.balance;  // Check if balance is null
-                  balance = parseFloat(balance).toFixed(balance % 1 === 0 ? 0 : 2);
-                  const balanceClass = balance === 0 ? '' : (balance < 0 ? 'danger' : 'success');  // Determine class based on balance
-                %>
-                <span class="badge bg-<%= balanceClass %> fs-5">
-                  <%= Math.round(balance).toLocaleString() %>
+                <div class="acct-title-cell">
+                  <span class="acct-avatar"><%= subInitial %></span>
+                  <span class="acct-title-text"><%= sub.account_username %></span>
+                </div>
+              </td>
+              <td>
+                <span class="acct-balance-badge <%= balanceClass %>">
+                  <%= balance.toLocaleString() %>
                 </span>
               </td>
-              <td><%= account?.AccountType?.name || 'N/A' %></td>
-              <td><%= account.notes %></td>
               <td>
-                <button
-                  class="btn btn-sm btn-warning edit-btn"
-                  data-id="<%= account.id %>"
-                  data-username="<%= account.account_username %>"
-                  title="Edit"
-                >
-                  <i class="fas fa-pencil-alt"></i>
-                </button>
-                <button
-                  class="btn btn-sm btn-primary st-btn"
-                  data-id="<%= account.id %>"
-                  title="Account Statement"
-                >
-                  Acc. St.
-                </button>
+                <span class="acct-type-badge">
+                  <i class="mdi mdi-web"></i>
+                  <%= sub?.AccountType?.name || 'N/A' %>
+                </span>
+              </td>
+              <td>
+                <% if (sub.notes) { %>
+                <span class="acct-notes-text" title="<%= sub.notes %>">
+                  <i class="mdi mdi-note-text-outline"></i>
+                  <%= sub.notes %>
+                </span>
+                <% } else { %>
+                <span class="acct-notes-empty">—</span>
+                <% } %>
+              </td>
+              <td>
+                <div class="acct-actions">
+                  <button
+                    class="acct-edit-btn edit-btn"
+                    data-id="<%= sub.id %>"
+                    data-username="<%= sub.account_username %>"
+                    title="Edit"
+                  >
+                    <i class="mdi mdi-pencil-outline"></i>
+                  </button>
+                  <button
+                    class="acct-stmt-btn st-btn"
+                    data-id="<%= sub.id %>"
+                    title="Account Statement"
+                  >
+                    <i class="mdi mdi-file-document-outline"></i>
+                    Statement
+                  </button>
+                </div>
               </td>
             </tr>
             <% }) %>
           </tbody>
           <tfoot>
-            <td></td>
-            <td>Total</td>
-            <td>
-              <span class="badge bg-<%= totalBalance > 0 ? 'success' : 'danger' %> fs-5"><%= totalBalance %></span>
-            </td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <tr>
+              <th></th>
+              <th>Total</th>
+              <th>
+                <span class="acct-total-value acct-balance-badge <%= totalBalanceClass %>">
+                  <%= roundedTotal.toLocaleString() %>
+                </span>
+              </th>
+              <th colspan="3"></th>
+            </tr>
           </tfoot>
         </table>
       </div>
     </div>
   </div>
-  <!-- end col -->
 </div>
-<!-- end row -->
 
-<!-- Start Sub Account Model -->
-<div
-  class="modal fade"
-  id="subAccountModal"
-  tabindex="-1"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog">
+<div class="modal fade accounts-modal" id="subAccountModal" tabindex="-1" aria-labelledby="subAccountModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="row px-2 mt-1">
-        <div class="col-md-11">
-          <strong>Edit</strong>
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-title-icon sub">
+            <i class="mdi mdi-pencil-outline"></i>
+          </div>
+          <div>
+            <h5 class="modal-title" id="subAccountModalTitle">Edit Sub Account</h5>
+            <p class="modal-subtitle">Update sub-account details</p>
+          </div>
         </div>
-        <div class="col-md-1">
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="subAccountmodalForm">
@@ -154,105 +172,75 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <input type="hidden" id="id" name="id" />
-                <label for="account_username" class="col-form-label"
-                  >Title:</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="account_username"
-                  name="account_username"
-                />
+                <label for="account_username" class="form-label">Title</label>
+                <input type="text" class="form-control" id="account_username" name="account_username" />
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="notes" class="col-form-label">Notes:</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="sub_notes"
-                  name="sub_notes"
-                />
+                <label for="sub_notes" class="form-label">Notes</label>
+                <input type="text" class="form-control" id="sub_notes" name="sub_notes" />
               </div>
             </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          id="closeModalButton"
-          data-bs-dismiss="modal"
-        >
-          Close
-        </button>
-        <button
-          type="submit"
-          class="btn btn-primary"
-          form="subAccountmodalForm"
-        >
-          Submit
-        </button>
+        <button type="button" class="btn btn-cancel" id="closeModalButton" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-submit" id="subAccountSubmitBtn" form="subAccountmodalForm">Submit</button>
       </div>
     </div>
   </div>
 </div>
-<!-- End Sub Account Model -->
 
 <%- contentFor('FooterJs') %>
-<!-- Required datatable js -->
 <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-
-<!-- Responsive examples -->
 <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
 <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-
-<!-- Datatable init js -->
-<script src="/assets/js/pages/datatables.init.js"></script>
-<!-- Select 2 -->
 <script src="/assets/libs/select2/js/select2.min.js"></script>
+
 <script>
   $(document).ready(function () {
-    // Initialize DataTable
-    const dataTable = $("#subdatatable").DataTable({
+    $("#subdatatable").DataTable({
       pageLength: 120,
-      lengthMenu: [
-        [120, 50, 100, -1],
-        [120, 50, 100, "All"],
-      ],
+      lengthMenu: [[120, 50, 100, -1], [120, 50, 100, "All"]],
       paging: true,
       searching: true,
-      // ordering: true,
       autoWidth: false,
+      order: [],
     });
 
-    // Function to extract companyId from URL
     function getCompanyIdFromUrl() {
-      return window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
+      return window.location.pathname.split("/")[2];
     }
 
-    const subAccountModal = new bootstrap.Modal(
-      document.getElementById("subAccountModal"),
-      { keyboard: false }
-    );
+    function setSubmitLoading($btn, loading) {
+      if (loading) {
+        $btn.prop("disabled", true).html(
+          '<i class="mdi mdi-loading mdi-spin"></i><span>Submitting...</span>'
+        );
+      } else {
+        $btn.prop("disabled", false).html("Submit");
+      }
+    }
+
+    const subAccountModal = new bootstrap.Modal(document.getElementById("subAccountModal"), { keyboard: false });
 
     $(document).on("click", ".edit-btn", function () {
       const userId = $(this).data("id");
-      account_username;
       const username = $(this).data("username");
       $("#id").val(userId);
-      let usernameInput = $("#account_username").val(username);
-      $("#subAccountModal .modal-dialog .modal-content strong").text(
-        "Edit Sub Account"
-      );
+      $("#account_username").val(username);
+      $("#subAccountModalTitle").text("Edit Sub Account");
+
+      const usernameInput = $("#account_username");
       if (username === "DASTI") {
-        usernameInput = $("#account_username");
         usernameInput.closest(".col-md-6").hide();
+      } else {
+        usernameInput.closest(".col-md-6").show();
       }
-      // Perform view action, for example, redirect to a view page
+
       subAccountModal.show();
     });
 
@@ -262,39 +250,38 @@
     });
 
     $("#subAccountModal").on("hidden.bs.modal", function () {
-      $("#subAccountmodalForm")[0].reset(); // Reset form
-      $("#id").val(""); // Clear hidden ID
-      $("#account_username").closest(".col-md-6").show(); // Show username field
+      $("#subAccountmodalForm")[0].reset();
+      $("#id").val("");
+      $("#account_username").closest(".col-md-6").show();
+      setSubmitLoading($("#subAccountSubmitBtn"), false);
     });
 
-    // Handle sub-account form submission
     $("#subAccountmodalForm").submit(function (event) {
       event.preventDefault();
 
-      const id = $("#id").val();
-      const notes = $("#sub_notes").val();
-      const account_username = $("#account_username").val();
+      const submitBtn = $("#subAccountSubmitBtn");
+      setSubmitLoading(submitBtn, true);
 
       $.ajax({
         type: "POST",
-        url: `/companies/${getCompanyIdFromUrl()}/sub_accounts`, // Correct endpoint for subaccounts
+        url: `/companies/${getCompanyIdFromUrl()}/sub_accounts`,
         data: {
-          id: id,
-          notes: notes,
-          account_username: account_username,
+          id: $("#id").val(),
+          notes: $("#sub_notes").val(),
+          account_username: $("#account_username").val(),
         },
-        success: function (response) {
+        success: function () {
           location.reload();
-          subAccountModal.hide();
-          $("#subAccountmodalForm")[0].reset(); // Reset the sub-account form
         },
-        error: function (error) {
+        error: function () {
           alert("Error submitting the sub-account. Please try again.");
+        },
+        complete: function () {
+          setSubmitLoading(submitBtn, false);
         },
       });
     });
 
-    // If company_id exists in localStorage, display the relevant links in the sidebar
     const storedCompanyId = localStorage.getItem("company_id");
     if (storedCompanyId) {
       showSidebarLinks(storedCompanyId);

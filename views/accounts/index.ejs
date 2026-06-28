@@ -1,139 +1,109 @@
-<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
-{"title":"Accounts"}) %>
-<!-- DataTables -->
-<link
-  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+<%- contentFor('HeaderCss') %>
+<%- include ('../partials/title-meta', {"title":"Accounts"}) %>
+<link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/accounts-page.css" rel="stylesheet" type="text/css" />
 
-<!-- Responsive datatable examples -->
-<link
-  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
-<link
-  href="/assets/libs/select2/css/select2.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
-<style>
-  .select2-container--default .select2-dropdown {
-    z-index: 9999 !important; /* Ensure dropdown is above modal */
-  }
+<%- contentFor('body') %>
 
-  .select2-container--default .select2-selection--single {
-    height: auto !important;
-  }
-  .btn-action {
-    margin-right: 5px;
-  }
-  @media (max-width: 768px) {
-    .header-actions {
-      margin-top: 10px;
-      width: 100%;
-    }
-    .header-actions .btn {
-      margin-bottom: 5px;
-    }
-  }
-</style>
-<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
-"Accounts Table" , "title" : "Accounts Table" }) %>
+<div class="accounts-page">
+  <div class="accounts-page-header">
+    <div>
+      <p class="accounts-page-eyebrow">Management</p>
+      <h1 class="accounts-page-title">Accounts Table</h1>
+      <p class="accounts-page-desc">Browse, manage, and favourite your company accounts</p>
+    </div>
+    <div class="accounts-header-actions">
+      <button class="accounts-header-btn accounts-header-btn-fav" id="addfavt" style="display: none">
+        <i class="mdi mdi-star-outline"></i>
+        Add to Favorites
+      </button>
+      <button class="accounts-header-btn accounts-header-btn-primary" id="openModal" style="display: none">
+        <i class="mdi mdi-plus"></i>
+        Add New Account
+      </button>
+      <button class="accounts-header-btn accounts-header-btn-secondary" id="openSubModal" style="display: none">
+        <i class="mdi mdi-account-plus-outline"></i>
+        Add New Sub-Account
+      </button>
+    </div>
+  </div>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="row align-items-center mb-4 card-title mt-2">
-        <div class="col-md-6">
-          <h4 class="card-title">Accounts</h4>
-        </div>
-        <div class="col-md-6">
-          <div class="d-flex flex-wrap justify-content-md-end header-actions">
-            <button class="btn btn-outline-success btn-action" id="addfavt">
-              <i class="bi bi-star"></i> Add to Favorites
-            </button>
-            <button class="btn btn-outline-primary btn-action" id="openModal">
-              <i class="bi bi-plus-circle"></i> Add New Account
-            </button>
-            <button class="btn btn-outline-info btn-action" id="openSubModal">
-              <i class="bi bi-plus-circle"></i> Add New Sub-Account
-            </button>
-          </div>
-        </div>
+  <div class="accounts-stats-row">
+    <div class="accounts-stat-card">
+      <div class="stat-icon count">
+        <i class="mdi mdi-account-group-outline"></i>
       </div>
-      <div class="card-body">
-        <table
-          id="accountsTable"
-          class="table table-bordered dt-responsive nowrap w-100"
-        >
-          <thead>
-            <tr>
-              <th style="width: 20px">
-                <div class="form-check font-size-16 align-middle">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="selectAllCheckbox"
-                  />
-                  <label
-                    class="form-check-label"
-                    for="selectAllCheckbox"
-                  ></label>
-                </div>
-              </th>
-              <th>ID</th>
-              <th>Title</th>
-              <th>Balance</th>
-              <th>Notes</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody></tbody>
-          <tfoot>
-            <tr>
-              <th></th>
-              <th></th>
-              <th>Total Balance</th>
-              <th id="totalBalance" class="fs-5">0</th>
-              <th></th>
-              <th></th>
-            </tr>
-          </tfoot>
-        </table>
+      <div>
+        <span class="stat-value" id="totalAccountsCount">0</span>
+        <span class="stat-label">Total Accounts</span>
+      </div>
+    </div>
+    <div class="accounts-stat-card">
+      <div class="stat-icon balance">
+        <i class="mdi mdi-scale-balance"></i>
+      </div>
+      <div>
+        <span class="stat-value" id="totalBalanceStat">0</span>
+        <span class="stat-label">Total Balance</span>
+        <span class="stat-hint" id="totalBalanceHint"></span>
       </div>
     </div>
   </div>
-  <!-- end col -->
+
+  <div class="accounts-table-card">
+    <div class="accounts-table-card-header">
+      <div>
+        <h5><i class="mdi mdi-format-list-bulleted"></i> All Accounts</h5>
+        <p>Select accounts to add to favourites or open to view details</p>
+      </div>
+    </div>
+    <div class="accounts-table-body">
+      <table id="accountsTable" class="table accounts-table dt-responsive nowrap w-100 mb-0">
+        <thead>
+          <tr>
+            <th style="width: 40px">
+              <input class="acct-checkbox" type="checkbox" id="selectAllCheckbox" />
+            </th>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Balance</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr>
+            <th></th>
+            <th></th>
+            <th>Total Balance</th>
+            <th><span class="acct-total-value" id="totalBalance">0</span></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
 </div>
-<!-- end row -->
-<!-- Start Model -->
-<div
-  class="modal fade"
-  id="userModal"
-  tabindex="-1"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog">
+
+<div class="modal fade accounts-modal" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="row px-2 mt-1">
-        <div class="col-md-4">
-          <span>A/C ID: <%- account_pk %></span>
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-title-icon">
+            <i class="mdi mdi-account-plus-outline"></i>
+          </div>
+          <div>
+            <h5 class="modal-title" id="userModalTitle">Add Account</h5>
+            <p class="modal-subtitle">Create or update an account</p>
+            <span class="modal-id-tag">A/C ID: <%- account_pk %></span>
+          </div>
         </div>
-        <div class="col-md-7">
-          <h3>ADD Account</h3>
-        </div>
-        <div class="col-md-1">
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="modalForm">
@@ -141,18 +111,13 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <input type="hidden" id="userId" name="userId" />
-                <label for="username" class="col-form-label">Title:</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="username"
-                  required
-                />
+                <label for="username" class="form-label">Title</label>
+                <input type="text" class="form-control" id="username" required />
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="notes" class="col-form-label">Notes:</label>
+                <label for="notes" class="form-label">Notes</label>
                 <input type="text" class="form-control" id="notes" />
               </div>
             </div>
@@ -160,75 +125,42 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          id="closeModalButton"
-          data-bs-dismiss="modal"
-        >
-          Close
-        </button>
-        <button type="submit" class="btn btn-primary" form="modalForm">
-          Submit
-        </button>
+        <button type="button" class="btn btn-cancel" id="closeModalButton" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-submit" id="userModalSubmitBtn" form="modalForm">Submit</button>
       </div>
     </div>
   </div>
 </div>
-<!-- End Modal -->
 
-<!-- Start Sub Account Model -->
-<div
-  class="modal fade"
-  id="subAccountModal"
-  tabindex="-1"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog">
+<div class="modal fade accounts-modal" id="subAccountModal" tabindex="-1" aria-labelledby="subAccountModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="row px-2 mt-1">
-        <div class="col-md-4">
-          <span>S. A/C: <%- sub_account_pk %></span>
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-title-icon sub">
+            <i class="mdi mdi-account-multiple-plus-outline"></i>
+          </div>
+          <div>
+            <h5 class="modal-title">Add New Sub-Account</h5>
+            <p class="modal-subtitle">Link a sub-account to a parent account</p>
+            <span class="modal-id-tag">S. A/C: <%- sub_account_pk %></span>
+          </div>
         </div>
-        <div class="col-md-7">
-          <strong>Add New Sub-Account</strong>
-        </div>
-        <div class="col-md-1">
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="subAccountmodalForm">
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="account_username" class="col-form-label"
-                  >Title:</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="account_username"
-                  name="account_username"
-                  required
-                />
+                <label for="account_username" class="form-label">Title</label>
+                <input type="text" class="form-control" id="account_username" name="account_username" required />
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="notes" class="col-form-label">Website:</label>
-                <select
-                  class="form-control select2 account_types"
-                  style="width: 100%"
-                  id="account_type_id"
-                  name="account_type_id"
-                >
+                <label for="account_type_id" class="form-label">Website</label>
+                <select class="form-control select2 account_types" style="width: 100%" id="account_type_id" name="account_type_id">
                   <option value="" selected disabled>--Select--</option>
                 </select>
               </div>
@@ -237,105 +169,116 @@
           <div class="row">
             <div class="col-md-6 mt-2">
               <div class="mb-3">
-                <label class="form-label">Parent Account</label>
-                <select
-                  class="form-control select2 parentAccounts"
-                  style="width: 100%"
-                  id="user_id"
-                  name="user_id"
-                >
+                <label for="user_id" class="form-label">Parent Account</label>
+                <select class="form-control select2 parentAccounts" style="width: 100%" id="user_id" name="user_id">
                   <option value="" selected disabled>--Select--</option>
                 </select>
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="notes" class="col-form-label">Notes:</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="sub_notes"
-                  name="sub_notes"
-                />
+                <label for="sub_notes" class="form-label">Notes</label>
+                <input type="text" class="form-control" id="sub_notes" name="sub_notes" />
               </div>
             </div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          id="closeModalButton"
-          data-bs-dismiss="modal"
-        >
-          Close
-        </button>
-        <button
-          type="submit"
-          class="btn btn-primary"
-          form="subAccountmodalForm"
-        >
-          Submit
-        </button>
+        <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-submit" id="subAccountSubmitBtn" form="subAccountmodalForm">Submit</button>
       </div>
     </div>
   </div>
 </div>
-<!-- End Sub Account Model -->
 
 <%- contentFor('FooterJs') %>
-<!-- Required datatable js -->
 <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-
-<!-- Responsive examples -->
 <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
 <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-
-<!-- Datatable init js -->
-<script src="/assets/js/pages/datatables.init.js"></script>
-<!-- Select 2 -->
 <script src="/assets/libs/select2/js/select2.min.js"></script>
+
 <script>
   $(document).ready(function () {
-    // Initialize DataTable
     const dataTable = $("#accountsTable").DataTable({
       pageLength: 800,
-      lengthMenu: [
-        [800, 300, 200, -1],
-        [800, 300, 200, "All"],
-      ],
+      lengthMenu: [[800, 300, 200, -1], [800, 300, 200, "All"]],
       paging: true,
       searching: true,
-      // ordering: true,
       autoWidth: false,
+      order: [],
     });
 
-    // If company_id exists in localStorage, display the relevant links in the sidebar
     const storedCompanyId = localStorage.getItem("company_id");
     const userType = localStorage.getItem("userType");
 
     if (userType === "Admin") {
-      $("#addfavt").css("display", "block");
+      $("#addfavt").css("display", "inline-flex");
     } else {
       $("#addfavt").css("display", "none");
     }
-    let permissions
+
+    let permissions;
     if (storedCompanyId) {
       permissions = showSidebarLinks(storedCompanyId);
-      
+
       if ((permissions.accounts && permissions.accounts.add == true) || userType === "Admin") {
-        $("#openModal").css("display", "block");
-        $("#openSubModal").css("display", "block");
+        $("#openModal").css("display", "inline-flex");
+        $("#openSubModal").css("display", "inline-flex");
       } else {
         $("#openModal").css("display", "none");
         $("#openSubModal").css("display", "none");
       }
-
     }
 
-    // Function to fetch users and update the DataTable
+    function balanceClass(value) {
+      const rounded = Math.round(parseFloat(value));
+      if (rounded > 0) return "positive";
+      if (rounded < 0) return "negative";
+      return "zero";
+    }
+
+    function formatBalanceBadge(value) {
+      const rounded = Math.round(parseFloat(value));
+      const cls = balanceClass(rounded);
+      return `<span class="acct-balance-badge ${cls}">${rounded.toLocaleString()}</span>`;
+    }
+
+    function formatNotes(notes) {
+      if (!notes) return `<span class="acct-notes-empty">—</span>`;
+      const escaped = String(notes).replace(/"/g, "&quot;");
+      return `<span class="acct-notes-text" title="${escaped}"><i class="mdi mdi-note-text-outline"></i>${notes}</span>`;
+    }
+
+    function formatTitle(username) {
+      const initial = (username || "?").charAt(0).toUpperCase();
+      return `<div class="acct-title-cell"><span class="acct-avatar">${initial}</span><span class="acct-title-text">${username || ""}</span></div>`;
+    }
+
+    function updateBalanceStats(totalBalance, count) {
+      const rounded = Math.round(totalBalance);
+      const formatted = rounded.toLocaleString();
+      $("#totalAccountsCount").text(count);
+      $("#totalBalanceStat").text(formatted);
+      $("#totalBalance").text(formatted);
+      const hint = $("#totalBalanceHint");
+      hint.removeClass("positive negative");
+      if (rounded > 0) hint.addClass("positive").text("Net positive");
+      else if (rounded < 0) hint.addClass("negative").text("Net negative");
+      else hint.text("Balanced at zero");
+    }
+
+    function setSubmitLoading($btn, loading) {
+      if (loading) {
+        $btn.prop("disabled", true).html(
+          '<i class="mdi mdi-loading mdi-spin"></i><span>Submitting...</span>'
+        );
+      } else {
+        $btn.prop("disabled", false).html("Submit");
+      }
+    }
+
     function fetchUsersTable() {
       const companyId = storedCompanyId;
       $.ajax({
@@ -345,36 +288,28 @@
           dataTable.clear();
           let totalBalance = 0;
           response.users.forEach(function (user) {
-            let balance = user.balance === null ? 0 : user.balance; // Handle null balance
-            balance = parseFloat(balance).toFixed(balance % 1 === 0 ? 0 : 2);
-            const balanceClass =
-              balance === 0 ? "" : balance < 0 ? "danger" : "success"; // No class for 0 balance
-              // Determine if the user can edit based on permissions
+            let balance = user.balance === null ? 0 : user.balance;
+            balance = parseFloat(balance);
             const canEdit = (permissions && permissions.accounts && permissions.accounts.edit) || userType === "Admin";
+
             dataTable.row.add([
-              `<input type="checkbox" class="fav-checkbox" data-id="${user.id}" />`,
-              user.account_pk,
-              user.username,
-              `<span class="badge bg-${balanceClass} fs-5">
-               ${Math.round(balance).toLocaleString()}
-               </span>`,
-              user.notes,
-              // Actions column with eye and pencil icons
-             `<button class="btn btn-sm btn-info view-btn" data-id="${user.id}" title="View">
-                <i class="fa fa-eye"></i>
+              `<input type="checkbox" class="acct-checkbox fav-checkbox" data-id="${user.id}" />`,
+              `<span class="acct-id-badge">${user.account_pk}</span>`,
+              formatTitle(user.username),
+              formatBalanceBadge(balance),
+              formatNotes(user.notes),
+              `<div class="acct-actions">
+                <button class="acct-view-btn view-btn" data-id="${user.id}" title="View">
+                  <i class="mdi mdi-eye-outline"></i>
                 </button>
-                ${canEdit ? 
-                `<button class="btn btn-sm btn-warning edit-btn" data-id="${user.id}" title="Edit">
-                    <i class="fas fa-pencil-alt"></i>
-                    </button>` 
-                : ''}`,
+                ${canEdit ? `<button class="acct-edit-btn edit-btn" data-id="${user.id}" title="Edit"><i class="mdi mdi-pencil-outline"></i></button>` : ""}
+              </div>`,
             ]);
-            // Add the balance to totalBalance
-            totalBalance += parseFloat(balance);
+
+            totalBalance += balance;
           });
-          // Update the total balance in the footer
-          // Update the total balance in the footer with rounded and formatted value
-          $("#totalBalance").text(Math.round(totalBalance).toLocaleString());
+
+          updateBalanceStats(totalBalance, response.users.length);
           dataTable.draw();
         },
         error: function (error) {
@@ -383,7 +318,6 @@
       });
     }
 
-    // Function to fetch account types based on companyId
     function fetchAccounttype() {
       const companyId = storedCompanyId;
       $.ajax({
@@ -396,11 +330,10 @@
             .append('<option value="" selected disabled>--Select--</option>');
 
           accountTypes.forEach(function (accountType) {
-            const option = `<option value="${accountType.id}">${accountType.name}</option>`;
-            $(".account_types").append(option);
+            $(".account_types").append(`<option value="${accountType.id}">${accountType.name}</option>`);
           });
 
-          $(".select2").select2(); // Re-initialize select2 after appending options
+          $(".select2").select2();
         },
         error: function (error) {
           console.log(error);
@@ -414,17 +347,15 @@
         type: "GET",
         url: `/companies/${companyId}/users/ajax?user_type=User`,
         success: function (response) {
-          const users = response.users;
           $(".parentAccounts")
             .empty()
             .append('<option value="" selected disabled>--Select--</option>');
 
-          users.forEach(function (user) {
-            const option = `<option value="${user.id}">${user?.username}</option>`;
-            $(".parentAccounts").append(option);
+          response.users.forEach(function (user) {
+            $(".parentAccounts").append(`<option value="${user.id}">${user?.username}</option>`);
           });
 
-          $(".select2").select2(); // Re-initialize select2 after appending options
+          $(".select2").select2();
         },
         error: function (error) {
           console.log(error);
@@ -434,66 +365,44 @@
 
     $(document).on("click", ".view-btn", function () {
       const userId = $(this).data("id");
-      // Perform view action, for example, redirect to a view page
       window.location.href = `/companies/${storedCompanyId}/accounts/${userId}`;
     });
 
-    // Modal logic
-    const modal = new bootstrap.Modal(document.getElementById("userModal"), {
-      keyboard: false,
-    });
+    const modal = new bootstrap.Modal(document.getElementById("userModal"), { keyboard: false });
 
     $(document).on("click", ".edit-btn", function () {
       const userId = $(this).data("id");
-      // Set hidden input value
       $("#userId").val(userId);
       modal.show();
-      // Change modal title to "Edit Account"
-      $("#userModal .modal-dialog .modal-content h3").text("Edit Account");
+      $("#userModalTitle").text("Edit Account");
 
-      // Hide the title field
-      // Hide the title field and remove required attribute
       const usernameInput = $("#username");
       usernameInput.closest(".col-md-6").hide();
       usernameInput.removeAttr("required");
     });
 
-    // Select/Deselect all checkboxes when the header checkbox is clicked
     $("#selectAllCheckbox").change(function () {
-      const isChecked = $(this).prop("checked");
-      $(".fav-checkbox").prop("checked", isChecked); // Check/uncheck all checkboxes
+      $(".fav-checkbox").prop("checked", $(this).prop("checked"));
     });
 
-    // Listen for the "Add to Favt" button click
     $("#addfavt").click(function () {
       const selectedAccounts = [];
-
-      // Get all checked checkboxes
       $(".fav-checkbox:checked").each(function () {
         selectedAccounts.push($(this).data("id"));
       });
 
-      // If no account is selected, show an alert
       if (selectedAccounts.length === 0) {
-        toastr.error(
-          "Please select at least one account to add to favorites",
-          "Error"
-        );
+        toastr.error("Please select at least one account to add to favorites", "Error");
         return;
       }
 
-      // Make the API call to add selected accounts to favorites
-      const companyId = storedCompanyId;
       $.ajax({
         type: "POST",
-        url: `/companies/${companyId}/add_to_favt`, // Update the URL as needed
-        data: {
-          accounts: selectedAccounts, // Send the array of selected account IDs
-        },
+        url: `/companies/${storedCompanyId}/add_to_favt`,
+        data: { accounts: selectedAccounts },
         success: function (response) {
           toastr.success(response.message, "Success");
-          // Optionally, refresh the DataTable or update the UI accordingly
-          fetchUsersTable(); // Reload the table to reflect any changes
+          fetchUsersTable();
         },
         error: function (error) {
           console.log(error);
@@ -502,17 +411,12 @@
       });
     });
 
-    const subAccountModal = new bootstrap.Modal(
-      document.getElementById("subAccountModal"),
-      { keyboard: false }
-    );
+    const subAccountModal = new bootstrap.Modal(document.getElementById("subAccountModal"), { keyboard: false });
 
-    // Open the modal when the "Add+" button is clicked
     $("#openModal").click(function () {
       modal.show();
     });
 
-    // Open the sub-account modal
     $("#openSubModal").click(function () {
       subAccountModal.show();
       $(".select2").select2({
@@ -521,19 +425,16 @@
       });
     });
 
-    // Close modal when "close" button (X) is clicked
     $("#closeModalButton").click(function () {
       modal.hide();
     });
 
-    // Close modal if clicked outside
     $(window).click(function (event) {
       if ($(event.target).is(modal._element)) {
         modal.hide();
       }
     });
 
-    // Handle form submission inside the modal (User Form)
     $("#modalForm").submit(function (event) {
       event.preventDefault();
 
@@ -541,73 +442,71 @@
       const notes = $("#notes").val();
       const user_type = "User";
       const companyId = storedCompanyId;
-      const userId = $("#userId").val(); // Get hidden value
+      const userId = $("#userId").val();
+      const submitBtn = $("#userModalSubmitBtn");
+
+      setSubmitLoading(submitBtn, true);
 
       $.ajax({
         type: "POST",
         url: `/companies/${companyId}/users`,
         data: {
-          userId: userId, // Get hidden value
+          userId: userId,
           company_id: companyId,
           username: username,
           user_type: user_type,
           notes: notes,
         },
-        success: function (response) {
-          fetchUsersTable(); // Update the users table after adding a new user
+        success: function () {
+          fetchUsersTable();
           modal.hide();
-          $("#modalForm")[0].reset(); // Reset the form
-          $("#userId").val(""); // Clear hidden userId
+          $("#modalForm")[0].reset();
+          $("#userId").val("");
 
-          // ✅ Show the username field again
           const usernameField = $("#username").closest(".col-md-6");
           usernameField.show();
           $("#username").attr("required", true);
-
-          // ✅ Reset the modal title
-          $("#userModal .modal-dialog .modal-content h3").text("ADD Account");
+          $("#userModalTitle").text("Add Account");
         },
-        error: function (error) {
+        error: function () {
           alert("Error submitting the user. Please try again.");
+        },
+        complete: function () {
+          setSubmitLoading(submitBtn, false);
         },
       });
     });
 
-    // Handle sub-account form submission
     $("#subAccountmodalForm").submit(function (event) {
       event.preventDefault();
-      $("button[type='submit']").prop("disabled", true).text("Submitting...");
-      const account_username = $("#account_username").val();
-      const user_id = $("#user_id").val();
-      const account_type_id = $("#account_type_id").val();
-      const notes = $("#sub_notes").val();
-      const companyId = storedCompanyId;
+      const submitBtn = $("#subAccountSubmitBtn");
+
+      setSubmitLoading(submitBtn, true);
 
       $.ajax({
         type: "POST",
-        url: `/companies/${companyId}/sub_accounts`, // Correct endpoint for subaccounts
+        url: `/companies/${storedCompanyId}/sub_accounts`,
         data: {
-          company_id: companyId,
-          account_username: account_username,
-          user_id: user_id,
-          account_type_id: account_type_id,
-          notes: notes,
+          company_id: storedCompanyId,
+          account_username: $("#account_username").val(),
+          user_id: $("#user_id").val(),
+          account_type_id: $("#account_type_id").val(),
+          notes: $("#sub_notes").val(),
         },
-        success: function (response) {
-          fetchUsersTable(); // Update the users table after adding a new sub-account
-          $("button[type='submit']").prop("disabled", false).text("Submit");
+        success: function () {
+          fetchUsersTable();
           subAccountModal.hide();
-          $("#subAccountmodalForm")[0].reset(); // Reset the sub-account form
+          $("#subAccountmodalForm")[0].reset();
         },
-        error: function (error) {
-          $("button[type='submit']").prop("disabled", false).text("Submit");
+        error: function () {
           alert("Error submitting the sub-account. Please try again.");
+        },
+        complete: function () {
+          setSubmitLoading(submitBtn, false);
         },
       });
     });
 
-
-    // Fetch and display the users table and account types
     fetchUsersTable();
     fetchAccounttype();
     fetchParentAccount();

@@ -1,115 +1,96 @@
-<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
-{"title":"Transactions"}) %>
-<!-- DataTables -->
-<link
-  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+<%- contentFor('HeaderCss') %>
+<%- include ('../partials/title-meta', {"title":"Transactions"}) %>
+<link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/accounts-page.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/dashboard-page.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/transactions-page.css" rel="stylesheet" type="text/css" />
 
-<!-- Responsive datatable examples -->
-<link
-  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+<%- contentFor('body') %>
 
-<link
-  href="/assets/libs/select2/css/select2.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+<div class="accounts-page transactions-page">
+  <div class="accounts-page-header">
+    <div>
+      <p class="accounts-page-eyebrow">Ledger</p>
+      <h1 class="accounts-page-title">Transactions Table</h1>
+      <p class="accounts-page-desc">View, filter, and record account transfers</p>
+    </div>
+    <div class="accounts-header-actions">
+      <button class="accounts-header-btn accounts-header-btn-primary" id="openModal">
+        <i class="mdi mdi-plus"></i>
+        Add Transaction
+      </button>
+    </div>
+  </div>
 
-<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
-"Transactions Table" , "title" : "Transactions Table" }) %>
-
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="row card-title mt-3">
-        <div class="col-md-2">
-          <input
-            type="date"
-            name="start_date"
-            class="form-control"
-            value=""
-            autocomplete="off"
-          />
-        </div>
-        <div class="col-md-2">
-          <input
-            type="date"
-            name="end_date"
-            class="form-control"
-            value=""
-            autocomplete="off"
-          />
-        </div>
-        <div class="col-md-1">
-          <button type="submit" class="btn btn-outline-info">Search</button>
-        </div>
-        <div class="col-md-5"></div>
-        <div class="col-md-2">
-          <button class="btn btn-outline-primary" id="openModal">
-            Add Transaction+
-          </button>
-        </div>
+  <div class="accounts-table-card">
+    <div class="accounts-table-card-header">
+      <div>
+        <h5><i class="mdi mdi-format-list-bulleted"></i> All Transactions</h5>
+        <p>Filter by date range or search within the table</p>
       </div>
-      <div class="card-body">
-        <table
-          id="transdatatable"
-          class="table table-bordered dt-responsive nowrap w-100"
-        >
+    </div>
+
+    <div class="transactions-filter-bar">
+      <div class="transactions-filter-left">
+        <div class="transactions-filter-group">
+          <label for="start_date">From</label>
+          <input type="date" id="start_date" name="start_date" autocomplete="off" />
+        </div>
+        <div class="transactions-filter-group">
+          <label for="end_date">To</label>
+          <input type="date" id="end_date" name="end_date" autocomplete="off" />
+        </div>
+        <button type="button" class="transactions-search-btn" id="searchTransactionBtn">
+          <i class="mdi mdi-magnify"></i>
+          Search
+        </button>
+      </div>
+    </div>
+
+    <div class="accounts-table-body transactions-table-wrap">
+      <table id="transdatatable" class="table transactions-table dashboard-transactions-table dt-responsive nowrap w-100 mb-0">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Plus</th>
-              <th>Sub Account</th>
-              <th>Amount</th>
-              <th>Minus</th>
-              <th>Sub Account</th>
-              <th>Narration</th>
-              <th>Notes</th>
+              <th class="tx-col-date">Date</th>
+              <th class="tx-col-plus">Plus</th>
+              <th class="tx-col-plus">Sub Account</th>
+              <th class="tx-col-amount">Amount</th>
+              <th class="tx-col-minus">Minus</th>
+              <th class="tx-col-minus">Sub Account</th>
+              <th class="tx-col-narration">Narration</th>
+              <th class="tx-col-notes">Notes</th>
               <th>Actions</th>
             </tr>
           </thead>
-
           <tbody></tbody>
         </table>
-      </div>
     </div>
   </div>
-  <!-- end col -->
 </div>
-<!-- end row -->
-<!-- Start Model -->
-<div
-  class="modal fade"
-  id="AccountTypeModal"
-  tabindex="-1"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-lg">
+
+<div class="modal fade accounts-modal transactions-modal" id="AccountTypeModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">New Transaction</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <div class="modal-title-wrap">
+          <div class="modal-title-icon">
+            <i class="mdi mdi-swap-horizontal"></i>
+          </div>
+          <div>
+            <h5 class="modal-title" id="transactionModalLabel">New Transaction</h5>
+            <p class="modal-subtitle">Transfer amount between sub-accounts</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="modalForm">
           <div class="row">
-            <!-- Sender Select -->
             <div class="col-md-4">
               <div class="mb-3">
-                <label for="sender_sub_account_id" class="col-form-label"
-                  >Sender</label
-                > <span class="text-danger">*</span>
+                <label for="sender_sub_account_id" class="form-label">Sender <span class="text-danger">*</span></label>
                 <select
                   class="form-control select2 sender_id"
                   style="width: 100%"
@@ -118,7 +99,6 @@
                   onchange="updateReceiverOptions(); showParentBalance();"
                 >
                   <option value="" selected disabled>--Select--</option>
-                  <!-- Options will be populated dynamically -->
                   <% sender_accounts.forEach(function(user) { %>
                   <option
                     value="<%= user.subaccount_id %>"
@@ -126,34 +106,20 @@
                     data-parent_name="<%= user.parent_name %>"
                   >
                     <%= user.account_username %>
-                    <!-- Display account_username -->
                   </option>
                   <% }) %>
                 </select>
               </div>
             </div>
-
             <div class="col-md-4">
               <div class="mb-3">
-                <label for="amount" class="col-form-label">Amount</label> <span class="text-danger">*</span>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="amount"
-                  name="amount"
-                  min="0"
-                  oninput="updateBalances()"
-                  disabled
-                />
+                <label for="amount" class="form-label">Amount <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="amount" name="amount" min="0" oninput="updateBalances()" disabled />
               </div>
             </div>
-
-            <!-- Receiver Select Select -->
             <div class="col-md-4">
               <div class="mb-3">
-                <label for="receiver_sub_account_id" class="col-form-label"
-                  >Receiver</label
-                > <span class="text-danger">*</span>
+                <label for="receiver_sub_account_id" class="form-label">Receiver <span class="text-danger">*</span></label>
                 <select
                   class="form-control select2 receiver_sub_account_id"
                   style="width: 100%"
@@ -162,7 +128,6 @@
                   onchange="showReceiverParentBalance(); enableAmountInput();"
                 >
                   <option value="" selected disabled>--Select--</option>
-                  <!-- Options will be populated dynamically -->
                   <% receiver_accounts.forEach(function(subAccount) { %>
                   <option
                     value="<%= subAccount.subaccount_id %>"
@@ -176,175 +141,111 @@
               </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-4" id="parent_sender" style="display: none">
-              <span class="ml-3" id="sender_parent_name"></span><br />
-              <span class="ml-3" id="sender_parent_balance"></span>
+
+          <div class="tx-modal-balance-row">
+            <div class="tx-modal-balance-card sender" id="parent_sender" style="display: none">
+              <span class="tx-modal-balance-label">Sender</span>
+              <span class="tx-modal-balance-name" id="sender_parent_name"></span>
+              <span class="tx-modal-balance-value" id="sender_parent_balance"></span>
             </div>
-            <div class="col-md-4"></div>
-            <div class="col-md-4" id="parent_receiver" style="display: none">
-              <span class="ml-3" id="receiver_parent_name"></span><br />
-              <span class="ml-3" id="receiver_parent_balance"></span>
+            <div class="tx-modal-balance-card receiver" id="parent_receiver" style="display: none">
+              <span class="tx-modal-balance-label">Receiver</span>
+              <span class="tx-modal-balance-name" id="receiver_parent_name"></span>
+              <span class="tx-modal-balance-value" id="receiver_parent_balance"></span>
             </div>
           </div>
+
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
               <div class="mb-3">
-                <label for="narration" class="col-form-label">Narration</label>
-                <input
-                  type="text"
-                  name="narration"
-                  class="form-control"
-                  id="narration"
-                />
+                <label for="narration" class="form-label">Narration</label>
+                <input type="text" name="narration" class="form-control" id="narration" />
               </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
               <div class="mb-3">
-                <label for="notes" class="col-form-label">Notes</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  name="notes"
-                  id="notes"
-                />
+                <label for="notes" class="form-label">Notes</label>
+                <input type="text" class="form-control" name="notes" id="notes" />
               </div>
             </div>
           </div>
         </form>
       </div>
-
       <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          id="closeModalButton"
-          data-bs-dismiss="modal"
-        >
-          Close
-        </button>
-        <button type="submit" class="btn btn-primary" form="modalForm">
-          Submit
-        </button>
+        <button type="button" class="btn btn-cancel" id="closeModalButton" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-submit" id="transactionSubmitBtn" form="modalForm">Submit</button>
       </div>
     </div>
   </div>
 </div>
-<!-- End Modal -->
 
-<!-- Start Model -->
-<div
-  class="modal fade"
-  id="editTransactionModal"
-  tabindex="-1"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-md">
+<div class="modal fade accounts-modal transactions-modal" id="editTransactionModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Edit Notes</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <div class="modal-title-wrap">
+          <div class="modal-title-icon">
+            <i class="mdi mdi-pencil-outline"></i>
+          </div>
+          <div>
+            <h5 class="modal-title">Edit Notes</h5>
+            <p class="modal-subtitle">Update transaction notes</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="editmodalForm">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="mb-3">
-                <label for="notes" class="col-form-label">Notes</label>
-                <input type="hidden" name="id" id="trans_id" />
-                <input
-                  type="text"
-                  class="form-control"
-                  name="notes"
-                  id="trans_notes"
-                />
-              </div>
-            </div>
+          <div class="mb-0">
+            <input type="hidden" name="id" id="trans_id" />
+            <label for="trans_notes" class="form-label">Notes</label>
+            <input type="text" class="form-control" name="notes" id="trans_notes" />
           </div>
         </form>
       </div>
-
       <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          id="closeModalButton"
-          data-bs-dismiss="modal"
-        >
-          Close
-        </button>
-        <button type="submit" class="btn btn-primary" form="editmodalForm">
-          Submit
-        </button>
+        <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-submit" id="editTransactionSubmitBtn" form="editmodalForm">Submit</button>
       </div>
     </div>
   </div>
 </div>
-<!-- End Modal -->
 
 <%- contentFor('FooterJs') %>
-<!-- Required datatable js -->
 <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-
-<!-- Responsive examples -->
 <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
 <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-
-<!-- Datatable init js -->
-<script src="/assets/js/pages/datatables.init.js"></script>
-<!-- Select 2 -->
 <script src="/assets/libs/select2/js/select2.min.js"></script>
+
 <script>
-  // Store original balances for sender and receiver
   let originalSenderBalance = 0;
   let originalReceiverBalance = 0;
   let oldAmount = 0;
 
-  // Function to update the sender's and receiver's balance when the amount is entered
   function updateBalances() {
     const amountInput = document.getElementById("amount");
     let amount = parseFloat(amountInput.value);
-
-    if (isNaN(amount) || amount <= 0) {
-      amount = 0;
-    }
+    if (isNaN(amount) || amount <= 0) amount = 0;
 
     const senderSelect = document.getElementById("sender_sub_account_id");
     const receiverSelect = document.getElementById("receiver_sub_account_id");
-
     const senderOption = senderSelect.options[senderSelect.selectedIndex];
     const receiverOption = receiverSelect.options[receiverSelect.selectedIndex];
 
-    const senderBalance = parseFloat(
-      senderOption.getAttribute("data-parent_balance")
-    );
-    const receiverBalance = parseFloat(
-      receiverOption.getAttribute("data-parent_balance")
-    );
-
+    const senderBalance = parseFloat(senderOption.getAttribute("data-parent_balance"));
+    const receiverBalance = parseFloat(receiverOption.getAttribute("data-parent_balance"));
     const newSenderBalance = senderBalance - oldAmount + amount;
     const newReceiverBalance = receiverBalance + oldAmount - amount;
     oldAmount = amount;
 
-    // Update balance attributes
     senderOption.setAttribute("data-parent_balance", newSenderBalance);
     receiverOption.setAttribute("data-parent_balance", newReceiverBalance);
 
-    // Update visible balances
-    document.getElementById("sender_parent_balance").innerText =
-      "Current Balance: " + newSenderBalance;
-    document.getElementById("receiver_parent_balance").innerText =
-      "Current Balance: " + newReceiverBalance;
+    document.getElementById("sender_parent_balance").innerText = "Current Balance: " + newSenderBalance;
+    document.getElementById("receiver_parent_balance").innerText = "Current Balance: " + newReceiverBalance;
   }
 
-  // Function to show the sender's parent balance
   function showParentBalance() {
     const selectElement = document.getElementById("sender_sub_account_id");
     const parentSender = document.getElementById("parent_sender");
@@ -353,22 +254,15 @@
     const parentName = selectedOption.getAttribute("data-parent_name");
 
     parentSender.style.display = "block";
-
-    // Store the original balance to reset later
     originalSenderBalance = parseFloat(parentBalance);
 
-    // Display the sender's parent balance in the span
     document.getElementById("sender_parent_balance").innerText =
-      "Current Balance: " +
-      parseFloat(parentBalance).toFixed(parentBalance % 1 === 0 ? 0 : 2);
-    document.getElementById("sender_parent_name").innerText =
-      "Parent Account: " + parentName;
+      "Current Balance: " + parseFloat(parentBalance).toFixed(parentBalance % 1 === 0 ? 0 : 2);
+    document.getElementById("sender_parent_name").innerText = "Parent Account: " + parentName;
 
-    // Enable the receiver options once sender is selected
     updateReceiverOptions();
   }
 
-  // Function to show the receiver's parent balance
   function showReceiverParentBalance() {
     const selectElement = document.getElementById("receiver_sub_account_id");
     const parentReceiver = document.getElementById("parent_receiver");
@@ -377,96 +271,96 @@
     const parentName = selectedOption.getAttribute("data-parent_name");
 
     parentReceiver.style.display = "block";
-
-    // Store the original balance to reset later
     originalReceiverBalance = parseFloat(parentBalance);
 
-    // Display the receiver's parent balance in the span
-    document.getElementById("receiver_parent_balance").innerText =
-      "Current Balance: " + parentBalance;
-    document.getElementById("receiver_parent_name").innerText =
-      "Parent Account: " + parentName;
+    document.getElementById("receiver_parent_balance").innerText = "Current Balance: " + parentBalance;
+    document.getElementById("receiver_parent_name").innerText = "Parent Account: " + parentName;
   }
 
-  // Function to update the receiver dropdown options based on selected sender
   function updateReceiverOptions() {
     const senderSelect = document.getElementById("sender_sub_account_id");
     const receiverSelect = document.getElementById("receiver_sub_account_id");
     const senderValue = senderSelect.value;
 
-    // Get all receiver options
-    const receiverOptions = receiverSelect.querySelectorAll("option");
-
-    // Enable all options by default
-    receiverOptions.forEach((option) => {
-      option.disabled = false;
-    });
-
-    // Disable the selected sender's subaccount in the receiver dropdown
-    receiverOptions.forEach((option) => {
-      if (option.value === senderValue) {
-        option.disabled = true;
-      }
+    receiverSelect.querySelectorAll("option").forEach((option) => {
+      option.disabled = option.value === senderValue;
     });
   }
 
-  // Function to enable the amount input field when both sender and receiver are selected
   function enableAmountInput() {
     const senderSelect = document.getElementById("sender_sub_account_id");
     const receiverSelect = document.getElementById("receiver_sub_account_id");
     const amountInput = document.getElementById("amount");
 
-    // Enable the amount input if both sender and receiver are selected
-    if (senderSelect.value && receiverSelect.value) {
-      amountInput.disabled = false;
-    } else {
-      amountInput.disabled = true;
-    }
+    amountInput.disabled = !(senderSelect.value && receiverSelect.value);
 
-    // Reset the parent balance if the amount is cleared
-    if (!amountInput.value) {
-      resetParentBalances();
-    }
+    if (!amountInput.value) resetParentBalances();
   }
 
-  // Function to reset parent balances if amount input is cleared
   function resetParentBalances() {
-    const senderSelect = document.getElementById("sender_sub_account_id");
-    const receiverSelect = document.getElementById("receiver_sub_account_id");
-
-    const senderOption = senderSelect.options[senderSelect.selectedIndex];
-    const receiverOption = receiverSelect.options[receiverSelect.selectedIndex];
-
-    // Reset the displayed balance in the parent balance sections to their original values
-    document.getElementById("sender_parent_balance").innerText =
-      "Current Balance: " + originalSenderBalance;
-    document.getElementById("receiver_parent_balance").innerText =
-      "Current Balance: " + originalReceiverBalance;
+    document.getElementById("sender_parent_balance").innerText = "Current Balance: " + originalSenderBalance;
+    document.getElementById("receiver_parent_balance").innerText = "Current Balance: " + originalReceiverBalance;
   }
 
   $(document).ready(function () {
-    // Check if a company_id exists in localStorage on page load
-    var storedCompanyId = localStorage.getItem("company_id");
-    // Initialize DataTable
+    const storedCompanyId = localStorage.getItem("company_id");
+    const searchBtn = $("#searchTransactionBtn");
+
     const dataTable = $("#transdatatable").DataTable({
       pageLength: 200,
-      lengthMenu: [
-        [200, 50, 100, -1],
-        [200, 50, 100, "All"],
-      ],
+      lengthMenu: [[200, 50, 100, -1], [200, 50, 100, "All"]],
       paging: true,
       searching: true,
-      // ordering: true,
       autoWidth: false,
+      order: [],
+      dom: "<'transactions-dt-controls'lf><'transactions-table-scroll't><'transactions-dt-footer'ip>",
+      createdRow: function (row) {
+        const cols = ["tx-col-date", "tx-col-plus", "tx-col-plus", "tx-col-amount", "tx-col-minus", "tx-col-minus", "tx-col-narration", "tx-col-notes", ""];
+        cols.forEach(function (cls, i) {
+          if (cls) $("td", row).eq(i).addClass(cls);
+        });
+      },
     });
-    // Function to fetch all companies and update the DataTable
 
-    // Function to fetch users and update the DataTable
+    function setSubmitLoading($btn, loading) {
+      if (loading) {
+        $btn.prop("disabled", true).html('<i class="mdi mdi-loading mdi-spin"></i><span>Submitting...</span>');
+      } else {
+        $btn.prop("disabled", false).html("Submit");
+      }
+    }
+
+    function setSearchLoading(loading) {
+      if (loading) {
+        searchBtn.prop("disabled", true).html('<i class="mdi mdi-loading mdi-spin"></i><span>Loading...</span>');
+      } else {
+        searchBtn.prop("disabled", false).html('<i class="mdi mdi-magnify"></i> Search');
+      }
+    }
+
+    function formatAmount(amount) {
+      if (amount === null || amount === undefined || amount === "") return "—";
+      const num = parseFloat(String(amount).replace(/,/g, ""));
+      if (isNaN(num)) return amount;
+      return Math.round(num).toLocaleString();
+    }
+
+    function formatMeta(text, type) {
+      if (!text) return '<span class="acct-notes-empty">—</span>';
+      const escaped = String(text).replace(/"/g, "&quot;");
+      const cls = type === "narration" ? "tx-narration-badge" : "tx-notes-badge";
+      const icon = type === "narration" ? "mdi-text-box-outline" : "mdi-note-text-outline";
+      return `<span class="tx-meta-badge ${cls}" title="${escaped}"><i class="mdi ${icon}"></i>${text}</span>`;
+    }
+
     function fetchTransactionTable(startDate, endDate) {
       let url = `/companies/${storedCompanyId}/transactions/ajax`;
       if (startDate !== undefined && endDate !== undefined) {
         url = `/companies/${storedCompanyId}/transactions/ajax?startDate=${startDate}&&endDate=${endDate}`;
       }
+
+      setSearchLoading(true);
+
       $.ajax({
         type: "GET",
         url: url,
@@ -474,19 +368,15 @@
           dataTable.clear();
           response.transactions.forEach(function (transaction) {
             dataTable.row.add([
-              transaction.transaction_date,
-              transaction.sender_user,
-              transaction.sender_sub_account,
-              `<span class="badge bg-success fs-6">
-               ${transaction.amount}
-               </span>`,
-              transaction.receiver_user,
-              transaction.receiver_sub_account,
-              transaction.narration,
-              transaction.notes,
-              `<button class="btn btn-sm btn-warning edit-btn" data-id="${transaction.id}" title="Edit">
-                 <i class="fas fa-pencil-alt"></i>
-              </button>`,
+              `<span class="tx-date-badge"><i class="mdi mdi-calendar-outline"></i>${transaction.transaction_date}</span>`,
+              `<span class="tx-user-badge tx-user-plus"><i class="mdi mdi-arrow-up-bold-circle-outline"></i>${transaction.sender_user || "—"}</span>`,
+              `<span class="tx-sub-badge tx-sub-plus">${transaction.sender_sub_account || "—"}</span>`,
+              `<span class="tx-amount-badge">${formatAmount(transaction.amount)}</span>`,
+              `<span class="tx-user-badge tx-user-minus"><i class="mdi mdi-arrow-down-bold-circle-outline"></i>${transaction.receiver_user || "—"}</span>`,
+              `<span class="tx-sub-badge tx-sub-minus">${transaction.receiver_sub_account || "—"}</span>`,
+              formatMeta(transaction.narration, "narration"),
+              formatMeta(transaction.notes, "notes"),
+              `<button class="acct-edit-btn edit-btn" data-id="${transaction.id}" title="Edit"><i class="mdi mdi-pencil-outline"></i></button>`,
             ]);
           });
 
@@ -495,156 +385,120 @@
         error: function (error) {
           console.log(error);
         },
+        complete: function () {
+          setSearchLoading(false);
+        },
       });
     }
 
-    // Get the modal and the open modal button
-    var modal = new bootstrap.Modal(
-      document.getElementById("AccountTypeModal"),
-      {
-        keyboard: false,
-      }
-    );
+    const modal = new bootstrap.Modal(document.getElementById("AccountTypeModal"), { keyboard: false });
 
     $(document).on("click", ".edit-btn", function () {
-      const userId = $(this).data("id");
-      // Set hidden input value
-      $("#trans_id").val(userId);
+      $("#trans_id").val($(this).data("id"));
       $("#editTransactionModal").modal("show");
-      // Change modal title to "Edit Account"
     });
 
-    // Extract company ID from URL
-
-    // Open the modal when the "Add+" button is clicked
     $("#openModal").click(function () {
-      modal.show(); // Show the modal using Bootstrap's modal API
+      modal.show();
       $(".select2").select2({
         minimumResultsForSearch: 0,
         dropdownParent: $("#AccountTypeModal"),
       });
     });
 
-    // Close the modal when the "close" button (X) is clicked
     $("#closeModalButton").click(function () {
-      modal.hide(); // Hide the modal using Bootstrap's modal API
+      modal.hide();
     });
 
-    // Close the modal when the user clicks outside of the modal
     $(window).click(function (event) {
-      if ($(event.target).is(modal._element)) {
-        modal.hide(); // Hide the modal if the user clicks outside of it
-      }
+      if ($(event.target).is(modal._element)) modal.hide();
     });
 
-    // Handle form submission inside the modal
     $("#modalForm").submit(function (event) {
-      event.preventDefault(); // Prevent the default form submission behavior
-      // Disable the submit button to prevent multiple submissions
-      $("button[type='submit']").prop("disabled", true).text("Submitting...");
-      // Get the value from the form input (company name)
-      var sender_sub_account_id = $("#sender_sub_account_id").val();
-      var amount = $("#amount").val();
-      var receiver_sub_account_id = $("#receiver_sub_account_id").val();
-      var narration = $("#narration").val();
-      var notes = $("#notes").val();
-      // Get the current date
-      // Get the current date and time
-      // Get the current date and time
-      var transaction_date = new Date();
+      event.preventDefault();
+      const submitBtn = $("#transactionSubmitBtn");
+      setSubmitLoading(submitBtn, true);
 
-      // Subtract one day to set it to the previous day
+      const transaction_date = new Date();
       transaction_date.setDate(transaction_date.getDate() - 1);
-
-      // Set the time to 5:00 AM on the previous day
       transaction_date.setHours(5, 0, 0, 0);
 
-      // Get the current time
       const currentTime = new Date();
-
-      // If the current time is past 5 AM today, the date should be today at 5 AM
       if (currentTime.getHours() >= 5) {
-        transaction_date.setDate(transaction_date.getDate() + 1); // Move to the next day at 5 AM
+        transaction_date.setDate(transaction_date.getDate() + 1);
       }
 
-      // Format the date to "YYYY-MM-DD" format
-      var formattedDate = transaction_date.toISOString().split("T")[0];
+      const formattedDate = transaction_date.toISOString().split("T")[0];
+      const companyId = window.location.pathname.split("/")[2];
 
-      var companyId = window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
-
-      // Example of submitting the form data to the backend (using AJAX)
       $.ajax({
         type: "POST",
-        url: `/companies/${companyId}/transactions`, // Adjust this to your API endpoint
+        url: `/companies/${companyId}/transactions`,
         data: {
-          sender_sub_account_id: sender_sub_account_id,
-          amount: amount,
-          receiver_sub_account_id: receiver_sub_account_id,
-          narration: narration,
-          notes: notes,
+          sender_sub_account_id: $("#sender_sub_account_id").val(),
+          amount: $("#amount").val(),
+          receiver_sub_account_id: $("#receiver_sub_account_id").val(),
+          narration: $("#narration").val(),
+          notes: $("#notes").val(),
           transaction_date: formattedDate,
           company_id: companyId,
         },
-        success: function (response) {
-          // Call the GET method to fetch and update the table
+        success: function () {
           location.reload();
         },
         error: function (error) {
-          // alert("Error submitting the company. Please try again.");
           toastr.error(error.responseJSON.error, "Error");
-          $("button[type='submit']").prop("disabled", false).text("Submit");
+        },
+        complete: function () {
+          setSubmitLoading(submitBtn, false);
         },
       });
     });
 
     $("#editmodalForm").submit(function (event) {
-      event.preventDefault(); // Prevent the default form submission behavior
-      var id = $("#trans_id").val();
-      var notes = $("#trans_notes").val();
-      // Get the value from the form input (company name)
-      var companyId = window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
+      event.preventDefault();
+      const submitBtn = $("#editTransactionSubmitBtn");
+      setSubmitLoading(submitBtn, true);
 
-      // Example of submitting the form data to the backend (using AJAX)
+      const companyId = window.location.pathname.split("/")[2];
+
       $.ajax({
         type: "POST",
-        url: `/companies/${companyId}/transactions/edit`, // Adjust this to your API endpoint
+        url: `/companies/${companyId}/transactions/edit`,
         data: {
           id: $("#trans_id").val(),
           notes: $("#trans_notes").val(),
           company_id: companyId,
         },
         success: function (response) {
-          // Call the GET method to fetch and update the table
           toastr.success(response.message, "Success");
           location.reload();
         },
-        error: function (error) {
-          alert("Error submitting the company. Please try again.");
+        error: function () {
+          alert("Error submitting the transaction. Please try again.");
+        },
+        complete: function () {
+          setSubmitLoading(submitBtn, false);
         },
       });
     });
 
-    // Search Statement handler
-    function SearchTransaction() {
-      const startDate = $('input[name="start_date"]').val(); // Get the date range value from the input
-      const endDate = $('input[name="end_date"]').val(); // Get the date range value from the input
+    function searchTransaction() {
+      const startDate = $('input[name="start_date"]').val();
+      const endDate = $('input[name="end_date"]').val();
       if (startDate && endDate) {
-        fetchTransactionTable(startDate, endDate); // Fetch account statement for the date range
+        fetchTransactionTable(startDate, endDate);
       } else {
-        // If no date range selected, fetch the current day's account statement
-        fetchTransactionTable("", ""); // Or you can define a default date range
+        fetchTransactionTable("", "");
       }
     }
 
-    // Bind the SearchStatement function to the button click event
-    $("button[type='submit']").on("click", function () {
-      SearchTransaction(); // Trigger search when the user clicks the button
-    });
+    $("#searchTransactionBtn").on("click", searchTransaction);
 
-    // If a company_id exists, display the relevant links in the sidebar
     if (storedCompanyId) {
       showSidebarLinks(storedCompanyId);
     }
+
     fetchTransactionTable();
   });
 </script>

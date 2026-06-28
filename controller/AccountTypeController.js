@@ -77,7 +77,12 @@ exports.show = asyncHandler(async (req, res, next) => {
                 company_id: companyId
             }
         });
-        res.render('accountType/Detail', { sub_accounts });
+
+        const accountType = await AccountTypes.findOne({
+            where: { id: type_id, company_id: companyId }
+        });
+
+        res.render('accountType/Detail', { sub_accounts, accountType });
         // Return the sub_accounts data as JSON (for AJAX response)
     } catch (error) {
         next(error); // Pass the error to the error handling middleware

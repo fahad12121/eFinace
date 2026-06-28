@@ -1,123 +1,144 @@
-<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
-{"title":"Account Type Detail"}) %>
-<!-- DataTables -->
-<link
-  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+<%- contentFor('HeaderCss') %>
+<%- include ('../partials/title-meta', {"title":"Account Type Detail"}) %>
+<link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/accounts-page.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/account-type-detail-page.css" rel="stylesheet" type="text/css" />
 
-<!-- Responsive datatable examples -->
-<link
-  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
-<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
-"Account Type Detail" , "title" : "Account Type Detail" }) %>
+<%- contentFor('body') %>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="row card-title mt-3">
-        <div class="col-md-8">
-          <h4 class="card-title">Account Type Detail</h4>
-        </div>
+<% const typeName = accountType?.name || 'Account Type'; %>
+<% const typeInitial = typeName.charAt(0).toUpperCase(); %>
+<% let totalTake = 0; let totalGive = 0; %>
+<% sub_accounts.forEach(function(account) {
+  const bal = parseFloat(account.balance === null ? 0 : String(account.balance).replace(/,/g, ''));
+  if (bal < 0) totalTake += bal;
+  else totalGive += bal;
+}); %>
+<% const subCount = sub_accounts.length; %>
+
+<div class="accounts-page account-type-detail-page">
+  <div class="accounts-page-header">
+    <div>
+      <p class="accounts-page-eyebrow">Configuration</p>
+      <h1 class="accounts-page-title">Account Type Detail</h1>
+      <p class="accounts-page-desc">Take and give balances for sub-accounts on this platform</p>
+    </div>
+  </div>
+
+  <div class="account-detail-hero">
+    <span class="account-detail-avatar"><%= typeInitial %></span>
+    <div>
+      <h2 class="account-detail-name"><%= typeName %></h2>
+      <p class="account-detail-meta"><%= subCount %> sub-account<%= subCount === 1 ? '' : 's' %> linked to this type</p>
+    </div>
+  </div>
+
+  <div class="accounts-stats-row">
+    <div class="accounts-stat-card">
+      <div class="stat-icon count">
+        <i class="mdi mdi-account-multiple-outline"></i>
+      </div>
+      <div>
+        <span class="stat-value"><%= subCount %></span>
+        <span class="stat-label">Sub Accounts</span>
+      </div>
+    </div>
+    <div class="accounts-stat-card">
+      <div class="stat-icon take">
+        <i class="mdi mdi-arrow-down-bold-circle-outline"></i>
+      </div>
+      <div>
+        <span class="stat-value"><%= Math.round(totalTake).toLocaleString() %></span>
+        <span class="stat-label">Total Take</span>
+      </div>
+    </div>
+    <div class="accounts-stat-card">
+      <div class="stat-icon give">
+        <i class="mdi mdi-arrow-up-bold-circle-outline"></i>
+      </div>
+      <div>
+        <span class="stat-value"><%= Math.round(totalGive).toLocaleString() %></span>
+        <span class="stat-label">Total Give</span>
       </div>
     </div>
   </div>
-  <!-- end col -->
-</div>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="row card-title mt-3">
-        <div class="col-md-8">
-          <h4 class="card-title">Account Type Detail</h4>
-        </div>
+  <div class="accounts-table-card">
+    <div class="accounts-table-card-header">
+      <div>
+        <h5><i class="mdi mdi-swap-vertical"></i> Take & Give Summary</h5>
+        <p>Negative balances appear in Take, positive in Give</p>
       </div>
-      <div class="card-body">
-        <table
-          id="subdatatable"
-          class="table table-bordered dt-responsive nowrap w-100"
-        >
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Take</th>
-              <th>Give</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <% sub_accounts.forEach(function(account) { %>
-            <tr>
-              <td><%= account.account_username %></td>
-              
-              <!-- Check if balance < 0 and display it in 'Take' -->
-              <td>
-                <% 
-                  let balance = account.balance === null ? 0 : account.balance;
-                  balance = parseFloat(balance).toFixed(balance % 1 === 0 ? 0 : 2); // Format the balance
-                  const balanceClass = balance === 0 ? '' : (balance < 0 ? 'danger' : 'success'); // Determine class based on balance
-                %>
-                <% if (balance < 0) { %>
-                  <span class="badge bg-<%= balanceClass %> fs-6">
-                    <%= balance %>
-                  </span>
-                <% } %>
-              </td>
-          
-              <!-- Check if balance > 0 and display it in 'Give' -->
-              <td>
-                <% if (balance >= 0) { %>
-                  <span class="badge bg-<%= balanceClass %> fs-6">
-                    <%= balance %>
-                  </span>
-                <% } %>
-              </td>
-            </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </div>
+      <span class="account-detail-count-badge"><%= subCount %> rows</span>
+    </div>
+    <div class="accounts-table-body">
+      <table id="subdatatable" class="table atd-table dt-responsive nowrap w-100 mb-0">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Take</th>
+            <th>Give</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% sub_accounts.forEach(function(account) { %>
+          <% const balance = parseFloat(account.balance === null ? 0 : String(account.balance).replace(/,/g, '')); %>
+          <% const rounded = Math.round(balance); %>
+          <% const initial = (account.account_username || '?').charAt(0).toUpperCase(); %>
+          <tr>
+            <td>
+              <div class="acct-title-cell">
+                <span class="acct-avatar"><%= initial %></span>
+                <span class="acct-title-text"><%= account.account_username %></span>
+              </div>
+            </td>
+            <td class="atd-col-take">
+              <% if (balance < 0) { %>
+              <span class="atd-take-badge"><%= rounded.toLocaleString() %></span>
+              <% } else { %>
+              <span class="atd-empty">—</span>
+              <% } %>
+            </td>
+            <td class="atd-col-give">
+              <% if (balance >= 0) { %>
+              <span class="atd-give-badge"><%= rounded.toLocaleString() %></span>
+              <% } else { %>
+              <span class="atd-empty">—</span>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Total</th>
+            <th><span class="atd-total-value take"><%= Math.round(totalTake).toLocaleString() %></span></th>
+            <th><span class="atd-total-value give"><%= Math.round(totalGive).toLocaleString() %></span></th>
+          </tr>
+        </tfoot>
+      </table>
     </div>
   </div>
-  <!-- end col -->
 </div>
-<!-- end row -->
-
 
 <%- contentFor('FooterJs') %>
-<!-- Required datatable js -->
 <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-
-<!-- Responsive examples -->
 <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
 <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 
-<!-- Datatable init js -->
-<script src="/assets/js/pages/datatables.init.js"></script>
-<!-- Select 2 -->
 <script>
   $(document).ready(function () {
-    // Initialize DataTable
-    const dataTable = $("#subdatatable").DataTable({
+    $("#subdatatable").DataTable({
       order: [],
       pageLength: 600,
-      lengthMenu: [
-        [600, 300, 100, -1],
-        [600, 300, 100, "All"],
-      ],
+      lengthMenu: [[600, 300, 100, -1], [600, 300, 100, "All"]],
       paging: true,
       searching: true,
-      // ordering: true,
       autoWidth: false,
     });
 
-    // If company_id exists in localStorage, display the relevant links in the sidebar
     const storedCompanyId = localStorage.getItem("company_id");
     if (storedCompanyId) {
       showSidebarLinks(storedCompanyId);

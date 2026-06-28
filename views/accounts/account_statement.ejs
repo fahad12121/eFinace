@@ -1,69 +1,77 @@
-<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
-{"title":"Account Statement"}) %>
+<%- contentFor('HeaderCss') %>
+<%- include ('../partials/title-meta', {"title":"Account Statement"}) %>
+<link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/accounts-page.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/account-statement-page.css" rel="stylesheet" type="text/css" />
 
-<!-- DataTables -->
-<link
-  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
-<!-- Responsive datatable examples -->
-<link
-  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+<%- contentFor('body') %>
 
-<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
-"Account Statement", "title" : "Account Statement" }) %>
+<div class="accounts-page statement-page">
+  <div class="accounts-page-header">
+    <div>
+      <p class="accounts-page-eyebrow">Reports</p>
+      <h1 class="accounts-page-title">Account Statement</h1>
+      <p class="accounts-page-desc">Review transactions, debits, credits, and running balance</p>
+    </div>
+  </div>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="row card-title mt-3">
-        <div class="col-md-8">
-          <h4 class="card-title">Account Statement</h4>
-        </div>
+  <div class="accounts-stats-row">
+    <div class="accounts-stat-card">
+      <div class="stat-icon minus">
+        <i class="mdi mdi-arrow-down-bold-circle-outline"></i>
+      </div>
+      <div>
+        <span class="stat-value" id="statTotalMinus">0</span>
+        <span class="stat-label">Total Minus</span>
+      </div>
+    </div>
+    <div class="accounts-stat-card">
+      <div class="stat-icon plus">
+        <i class="mdi mdi-arrow-up-bold-circle-outline"></i>
+      </div>
+      <div>
+        <span class="stat-value" id="statTotalPlus">0</span>
+        <span class="stat-label">Total Plus</span>
+      </div>
+    </div>
+    <div class="accounts-stat-card">
+      <div class="stat-icon balance">
+        <i class="mdi mdi-scale-balance"></i>
+      </div>
+      <div>
+        <span class="stat-value" id="statTotalBalance">0</span>
+        <span class="stat-label">Final Balance</span>
       </div>
     </div>
   </div>
-  <!-- end col -->
-</div>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="row card-title mt-3">
-        <div class="col-md-7">
-          <h4 class="card-title">Account Statements</h4>
-        </div>
-        <div class="col-md-2">
-          <input
-            type="date"
-            name="start_date"
-            class="form-control"
-            value=""
-            autocomplete="off"
-          />
-        </div>
-        <div class="col-md-2">
-          <input
-            type="date"
-            name="end_date"
-            class="form-control"
-            value=""
-            autocomplete="off"
-          />
-        </div>
-        <div class="col-md-1">
-          <button type="submit" class="btn btn-primary">Search</button>
-        </div>
+  <div class="accounts-table-card">
+    <div class="accounts-table-card-header">
+      <div>
+        <h5><i class="mdi mdi-file-document-outline"></i> Account Statements</h5>
+        <p>Filter by date range to load statement entries</p>
       </div>
-      <div class="card-body">
-        <table
-          id="transaction"
-          class="table table-bordered dt-responsive nowrap w-100"
-        >
+    </div>
+
+    <div class="statement-filter-bar">
+      <div class="statement-filter-group">
+        <label for="start_date">From</label>
+        <input type="date" id="start_date" name="start_date" autocomplete="off" />
+      </div>
+      <div class="statement-filter-group">
+        <label for="end_date">To</label>
+        <input type="date" id="end_date" name="end_date" autocomplete="off" />
+      </div>
+      <button type="button" class="statement-search-btn" id="searchStatementBtn">
+        <i class="mdi mdi-magnify"></i>
+        Search
+      </button>
+    </div>
+
+    <div class="accounts-table-body">
+      <div class="table-responsive">
+        <table id="transaction" class="table statement-table dt-responsive nowrap w-100 mb-0">
           <thead>
             <tr>
               <th>Date</th>
@@ -79,203 +87,197 @@
           <tfoot>
             <tr>
               <th colspan="4">Total</th>
-              <th>
-                <span id="total_minus" class="badge bg-danger fs-5"></span>
-              </th>
-              <th>
-                <span id="total_plus" class="badge bg-success fs-5"></span>
-              </th>
-              <th id="total_balance" class="fs-5"></th>
+              <th><span id="total_minus" class="stmt-total-value minus"></span></th>
+              <th><span id="total_plus" class="stmt-total-value plus"></span></th>
+              <th><span id="total_balance" class="stmt-total-value balance"></span></th>
             </tr>
           </tfoot>
         </table>
       </div>
     </div>
   </div>
-  <!-- end col -->
 </div>
+
 <%- contentFor('FooterJs') %>
-<!-- FooterJs -->
 <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
 <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-<script src="/assets/js/pages/datatables.init.js"></script>
+
 <script>
   $(document).ready(function () {
-    // Initialize DataTable
-    var dataTable = $("#transaction").DataTable({
+    const dataTable = $("#transaction").DataTable({
       order: [],
       pageLength: 120,
-      lengthMenu: [
-        [120, 50, 100, -1],
-        [120, 50, 100, "All"],
-      ],
+      lengthMenu: [[120, 50, 100, -1], [120, 50, 100, "All"]],
       paging: true,
       searching: true,
-      // ordering: true,
       autoWidth: false,
     });
+
     let subAccountsArray = [];
-    const get_opening_balance = (subAccountsArray) => {
-      let opening_balance_date = "";
-      const startDate = $('input[name="start_date"]').val(); // Get the date range value from the input
-      const endDate = $('input[name="end_date"]').val(); // Get the date range value from the input
-
-      if (!startDate || !endDate) {
-        opening_balance_date = new Date().toISOString().split("T")[0];
-      } else {
-        opening_balance_date = startDate.split("T")[0];
-      }
-
-      let opening_balance = ""; // Default balance
-      if (subAccountsArray?.length > 0) {
-        let opening_bal_row = subAccountsArray[0];
-        // Assuming balance and amount are stored directly as numbers or strings that can be converted to numbers
-        opening_balance =
-          parseFloat(opening_bal_row.account_statement_balance) -
-          parseFloat(opening_bal_row.account_statement_amount);
-      }
-
-      return [opening_balance, opening_balance_date];
-    };
-
     const storedCompanyId = localStorage.getItem("company_id");
+    const searchBtn = $("#searchStatementBtn");
 
     function getAccountIdFromUrl() {
-      return window.location.pathname.split("/")[4]; // Assuming URL format is /companies/:id
+      return window.location.pathname.split("/")[4];
     }
-    // Function to fetch the account statements from the API
+
+    function balanceClass(value) {
+      const num = Math.round(parseFloat(value) || 0);
+      if (num > 0) return "positive";
+      if (num < 0) return "negative";
+      return "zero";
+    }
+
+    function formatDateBadge(date) {
+      return `<span class="stmt-date-badge"><i class="mdi mdi-calendar-outline"></i>${date}</span>`;
+    }
+
+    function formatMinusBadge(amount) {
+      const num = parseFloat(amount);
+      if (!num || num >= 0) return `<span class="stmt-empty">—</span>`;
+      return `<span class="stmt-amount-badge minus">${Math.round(num).toLocaleString()}</span>`;
+    }
+
+    function formatPlusBadge(amount) {
+      const num = parseFloat(amount);
+      if (!num || num <= 0) return `<span class="stmt-empty">—</span>`;
+      return `<span class="stmt-amount-badge plus">${Math.round(num).toLocaleString()}</span>`;
+    }
+
+    function formatBalanceBadge(balance) {
+      const num = parseFloat(balance) || 0;
+      const cls = balanceClass(num);
+      return `<span class="stmt-amount-badge balance ${cls}">${Math.round(num).toLocaleString()}</span>`;
+    }
+
+    function formatNarration(text) {
+      if (!text) return `<span class="stmt-empty">—</span>`;
+      const escaped = String(text).replace(/"/g, "&quot;");
+      return `<span class="stmt-narration" title="${escaped}"><i class="mdi mdi-text-box-outline"></i>${text}</span>`;
+    }
+
+    function setSearchLoading(loading) {
+      if (loading) {
+        searchBtn.prop("disabled", true).html(
+          '<i class="mdi mdi-loading mdi-spin"></i><span>Loading...</span>'
+        );
+      } else {
+        searchBtn.prop("disabled", false).html(
+          '<i class="mdi mdi-magnify"></i> Search'
+        );
+      }
+    }
+
+    function updateStats(totalMinus, totalPlus, totalBalance) {
+      const minusFormatted = Math.round(totalMinus).toLocaleString();
+      const plusFormatted = Math.round(totalPlus).toLocaleString();
+      const balanceFormatted = Math.round(totalBalance).toLocaleString();
+
+      $("#statTotalMinus").text(minusFormatted);
+      $("#statTotalPlus").text(plusFormatted);
+      $("#statTotalBalance").text(balanceFormatted);
+      $("#total_minus").text(minusFormatted);
+      $("#total_plus").text(plusFormatted);
+      $("#total_balance").text(balanceFormatted);
+    }
+
+    function getOpeningBalance(subAccountsArray) {
+      let openingBalanceDate = "";
+      const startDate = $('input[name="start_date"]').val();
+      const endDate = $('input[name="end_date"]').val();
+
+      if (!startDate || !endDate) {
+        openingBalanceDate = new Date().toISOString().split("T")[0];
+      } else {
+        openingBalanceDate = startDate.split("T")[0];
+      }
+
+      let openingBalance = 0;
+      if (subAccountsArray?.length > 0) {
+        const openingRow = subAccountsArray[0];
+        openingBalance =
+          parseFloat(openingRow.account_statement_balance) -
+          parseFloat(openingRow.account_statement_amount);
+      }
+
+      return [openingBalance, openingBalanceDate];
+    }
+
     function fetchAccountStatement(startDate, endDate) {
+      setSearchLoading(true);
+
       $.ajax({
         type: "GET",
         url: `/companies/${storedCompanyId}/accounts/${getAccountIdFromUrl()}/account_statements/ajax`,
         data: {
-          startDate: startDate, // Pass start date from the input
-          endDate: endDate, // Pass end date from the input
+          startDate: startDate,
+          endDate: endDate,
           account_id: getAccountIdFromUrl(),
         },
         success: function (response) {
           subAccountsArray = response.sub_account;
-          // Clear DataTable before adding new data
           dataTable.clear();
 
           let totalMinus = 0;
           let totalPlus = 0;
           let totalBalance = 0;
-          // Get the opening balance
-          const openingBalance = get_opening_balance(subAccountsArray)[0];
-          const openingBalanceFormatted = parseFloat(openingBalance); // Ensure two decimal places
 
-          // Add the opening balance row (if it exists)
-          dataTable.row
-            .add([
-              get_opening_balance(subAccountsArray)[1], // Opening balance column
-              "O/B", // Label for opening balance
-              "", // Empty column
-              "Opening Balance", // Description for the row
-              `<span class="badge bg-danger fs-5">${
-                openingBalance < 0 ? openingBalanceFormatted.toLocaleString() : ""
-              }</span>`, // Negative balance
-              `<span class="badge bg-success fs-5">${
-                openingBalance > 0 ? openingBalanceFormatted.toLocaleString() : ""
-              }</span>`, // Positive balance
-              `<span class="badge bg-${
-                openingBalance
-                  ? openingBalance > 0
-                    ? "success"
-                    : "danger"
-                  : ""
-              } fs-5">${openingBalanceFormatted.toLocaleString()}</span>`, // Opening balance badge
-            ])
-            .draw(false); // Add row to DataTable
-          // Add each account statement to the DataTable
-          let secondLastBalance = '';
-          response.sub_account.forEach(function (account, index) {
+          const [openingBalance, openingBalanceDate] = getOpeningBalance(subAccountsArray);
+          const openingFormatted = parseFloat(openingBalance) || 0;
+
+          dataTable.row.add([
+            formatDateBadge(openingBalanceDate),
+            `<span class="stmt-ob-badge">O/B</span>`,
+            `<span class="stmt-empty">—</span>`,
+            formatNarration("Opening Balance"),
+            formatMinusBadge(openingFormatted),
+            formatPlusBadge(openingFormatted),
+            formatBalanceBadge(openingFormatted),
+          ]);
+
+          response.sub_account.forEach(function (account) {
             const amount = parseFloat(account.account_statement_amount);
-            // Add rows with the appropriate data
+
             dataTable.row.add([
-              account.account_statement_date, // Example date from the statement
-              account.receiver_user, // Example sub-account username
-              account.receiver_sub_account_username, // Example narration
-              account.account_statement_narration, // Example narration
-              `<span class="badge bg-danger fs-5">${
-                account.account_statement_amount < 0
-                  ? parseFloat(account.account_statement_amount).toLocaleString() 
-                  : ""
-              }</span>`, // Minus
-              `<span class="badge bg-success fs-5">${
-                account.account_statement_amount > 0
-                  ? parseFloat(account.account_statement_amount).toLocaleString() 
-                  : ""
-              }</span>`, // Plus
-              `<span class="badge bg-${
-                account.account_statement_balance >= 0 ? "success" : "danger"
-              } fs-5">
-                ${Math.round(account.account_statement_balance).toLocaleString()}
-              </span>`,
+              formatDateBadge(account.account_statement_date),
+              `<span class="stmt-text">${account.receiver_user || "—"}</span>`,
+              `<span class="stmt-sub-text">${account.receiver_sub_account_username || "—"}</span>`,
+              formatNarration(account.account_statement_narration),
+              formatMinusBadge(amount),
+              formatPlusBadge(amount),
+              formatBalanceBadge(account.account_statement_balance),
             ]);
-            // Add the balance to totalBalance
-            // Log the first balance of each index
-            // Log the first balance of each index
-            console.log(
-              `Index ${index + 1} Balance: ${account.account_statement_balance}`
-            );
 
-            // Get the second last index balance (if there are enough records)
-            if (index > 0) {
-              // Check to ensure there's a previous record
-              const secondLastBalance =
-                response.sub_account[index - 1].account_statement_balance;
-              console.log(
-                `Second Last Balance at Index ${
-                  index + 1
-                }: ${secondLastBalance}`
-              );
-            }
-            // Only add to totalMinus if the amount is less than 0
-            if (amount < 0) {
-              totalMinus += amount;
-            }
-
-            // Only add to totalPlus if the amount is greater than 0
-            if (amount > 0) {
-              totalPlus += amount;
-            }
+            if (amount < 0) totalMinus += amount;
+            if (amount > 0) totalPlus += amount;
             totalBalance += parseFloat(account.account_statement_balance);
           });
-          // After the loop, the secondLastBalance variable holds the second-to-last balance
-          // After the data is populated, update the opening balance row
-          // Draw the DataTable after populating the rows
-          $("#total_minus").text(Math.round(totalMinus).toLocaleString());
-          $("#total_plus").text(Math.round(totalPlus).toLocaleString());
-          $("#total_balance").text(Math.round(totalBalance).toLocaleString());
+
+          updateStats(totalMinus, totalPlus, totalBalance);
           dataTable.draw();
+
+          $("#transaction tbody tr:first").addClass("stmt-opening-row");
         },
         error: function (error) {
           console.log(error);
         },
+        complete: function () {
+          setSearchLoading(false);
+        },
       });
     }
 
-    // Search Statement handler
-    function SearchStatement() {
-      const startDate = $('input[name="start_date"]').val(); // Get the date range value from the input
-      const endDate = $('input[name="end_date"]').val(); // Get the date range value from the input
-      if (startDate && endDate) {
-        fetchAccountStatement(startDate, endDate); // Fetch account statement for the date range
-      } else {
-        // If no date range selected, fetch the current day's account statement
-        fetchAccountStatement("", ""); // Or you can define a default date range
-      }
+    function searchStatement() {
+      const startDate = $('input[name="start_date"]').val();
+      const endDate = $('input[name="end_date"]').val();
+      fetchAccountStatement(startDate || "", endDate || "");
     }
 
-    // Bind the SearchStatement function to the button click event
-    $("button[type='submit']").on("click", function () {
-      SearchStatement(); // Trigger search when the user clicks the button
-    });
+    $("#searchStatementBtn").on("click", searchStatement);
 
-    SearchStatement();
+    searchStatement();
 
     if (storedCompanyId) {
       showSidebarLinks(storedCompanyId);

@@ -1,0 +1,216 @@
+.account-type-detail-page .account-detail-hero {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.15rem 1.25rem;
+  margin-bottom: 1.5rem;
+  background: #fff;
+  border: 1px solid #e8edf5;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+}
+
+.account-type-detail-page .account-detail-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #556ee6 0%, #764ba2 100%);
+  flex-shrink: 0;
+}
+
+.account-type-detail-page .account-detail-name {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.2rem;
+  letter-spacing: -0.02em;
+}
+
+.account-type-detail-page .account-detail-meta {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #64748b;
+  margin: 0;
+}
+
+.account-type-detail-page .accounts-stat-card .stat-icon.take {
+  color: #dc2626;
+  background: linear-gradient(135deg, rgba(244, 106, 106, 0.14) 0%, rgba(239, 68, 68, 0.08) 100%);
+}
+
+.account-type-detail-page .accounts-stat-card .stat-icon.give {
+  color: #059669;
+  background: linear-gradient(135deg, rgba(52, 195, 143, 0.14) 0%, rgba(16, 185, 129, 0.08) 100%);
+}
+
+.account-type-detail-page .accounts-stat-card .stat-icon.count {
+  color: #556ee6;
+  background: linear-gradient(135deg, rgba(85, 110, 230, 0.12) 0%, rgba(118, 75, 162, 0.08) 100%);
+}
+
+.atd-table {
+  width: 100% !important;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 0.5rem !important;
+}
+
+.atd-table thead th {
+  background: #f8fafc;
+  border: none !important;
+  border-bottom: 1px solid #e8edf5 !important;
+  padding: 0.6rem 0.75rem !important;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.atd-table tbody td {
+  border: none !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding: 0.55rem 0.75rem !important;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.atd-table tbody tr:hover {
+  background: rgba(85, 110, 230, 0.03);
+}
+
+.atd-table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+.atd-table tbody td.atd-col-take {
+  background: rgba(244, 106, 106, 0.03);
+}
+
+.atd-table tbody td.atd-col-give {
+  background: rgba(52, 195, 143, 0.03);
+}
+
+.atd-take-badge,
+.atd-give-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.55rem;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.atd-take-badge {
+  color: #b91c1c;
+  background: rgba(244, 106, 106, 0.12);
+  border: 1px solid rgba(244, 106, 106, 0.22);
+}
+
+.atd-give-badge {
+  color: #047857;
+  background: rgba(52, 195, 143, 0.14);
+  border: 1px solid rgba(52, 195, 143, 0.24);
+}
+
+.atd-empty {
+  color: #cbd5e1;
+  font-size: 0.8125rem;
+}
+
+.atd-table tfoot th {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border: none !important;
+  border-top: 2px solid #e2e8f0 !important;
+  padding: 0.75rem !important;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.atd-total-value {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.atd-total-value.take {
+  color: #b91c1c;
+  background: rgba(244, 106, 106, 0.12);
+  border: 1px solid rgba(244, 106, 106, 0.22);
+}
+
+.atd-total-value.give {
+  color: #047857;
+  background: rgba(52, 195, 143, 0.14);
+  border: 1px solid rgba(52, 195, 143, 0.24);
+}
+
+.account-type-detail-page .dataTables_wrapper .dataTables_length label,
+.account-type-detail-page .dataTables_wrapper .dataTables_filter label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.account-type-detail-page .dataTables_wrapper .dataTables_length select,
+.account-type-detail-page .dataTables_wrapper .dataTables_filter input {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8125rem;
+  background: #f8fafc;
+}
+
+.account-type-detail-page .dataTables_wrapper .dataTables_info {
+  font-size: 0.75rem;
+  color: #64748b;
+  padding-top: 0.75rem;
+}
+
+.account-type-detail-page .dataTables_wrapper .dataTables_paginate {
+  padding-top: 0.75rem;
+}
+
+.account-type-detail-page .dataTables_wrapper .dataTables_paginate .paginate_button {
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 0.25rem 0.55rem !important;
+  font-size: 0.75rem;
+}
+
+.account-type-detail-page .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.account-type-detail-page .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  background: linear-gradient(135deg, #556ee6 0%, #6b5ce7 100%) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+
+.account-detail-count-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #556ee6;
+  background: rgba(85, 110, 230, 0.1);
+  border: 1px solid rgba(85, 110, 230, 0.15);
+}
