@@ -1,150 +1,179 @@
-<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
-{"title":"Users"}) %>
-<!-- DataTables -->
-<link
-  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+<%- contentFor('HeaderCss') %>
+<%- include ('../partials/title-meta', {"title":"Users"}) %>
+<link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/accounts-page.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/users-page.css" rel="stylesheet" type="text/css" />
 
-<!-- Responsive datatable examples -->
-<link
-  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+<%- contentFor('body') %>
 
-<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
-"Users Table" , "title" : "Users Table" }) %>
+<div class="accounts-page users-page">
+  <div class="accounts-page-header">
+    <div>
+      <p class="accounts-page-eyebrow">Administration</p>
+      <h1 class="accounts-page-title">Users Table</h1>
+      <p class="accounts-page-desc">Manage company users, access, and account status</p>
+    </div>
+    <div class="accounts-header-actions">
+      <button class="accounts-header-btn accounts-header-btn-primary" id="openModal">
+        <i class="mdi mdi-plus"></i>
+        Add User
+      </button>
+    </div>
+  </div>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="row card-title mt-3">
-        <div class="col-md-11">
-          <h4 class="card-title">Users</h4>
-        </div>
-        <div class="col-md-1">
-          <button class="btn btn-primary" id="openModal">Add+</button>
-        </div>
+  <div class="accounts-stats-row">
+    <div class="accounts-stat-card">
+      <div class="stat-icon count">
+        <i class="mdi mdi-account-group-outline"></i>
       </div>
-      <div class="card-body">
-        <table
-          id="datatable"
-          class="table table-bordered dt-responsive nowrap w-100"
-        >
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Name</th>
-              <th>Status</th>
-              <th>Created At</th>
-              <th>Last Login</th>
-              <th>Last IP</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody></tbody>
-        </table>
+      <div>
+        <span class="stat-value" id="totalUsersCount">0</span>
+        <span class="stat-label">Total Users</span>
       </div>
     </div>
   </div>
-  <!-- end col -->
+
+  <div class="accounts-table-card">
+    <div class="accounts-table-card-header">
+      <div>
+        <h5><i class="mdi mdi-shield-account-outline"></i> All Users</h5>
+        <p>Toggle status, edit details, or manage permissions</p>
+      </div>
+    </div>
+    <div class="accounts-table-body">
+      <table id="datatable" class="table users-table dt-responsive nowrap w-100 mb-0">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Created At</th>
+            <th>Last Login</th>
+            <th>Last IP</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 </div>
-<!-- end row -->
-<!-- Start Model -->
-<div
-  class="modal fade"
-  id="userModal"
-  tabindex="-1"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog">
+
+<div class="modal fade accounts-modal" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">New User</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <div class="modal-title-wrap">
+          <div class="modal-title-icon">
+            <i class="mdi mdi-account-plus-outline"></i>
+          </div>
+          <div>
+            <h5 class="modal-title" id="userModalTitle">New User</h5>
+            <p class="modal-subtitle">Create or update a company user</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="modalForm">
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="name" class="col-form-label">Name:</label>
-                <input type="hidden" class="form-control" id="user_id" required />
+                <input type="hidden" id="user_id" />
+                <label for="name" class="form-label">Name</label>
                 <input type="text" class="form-control" id="name" required />
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="username" class="col-form-label">Username:</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="username"
-                  required
-                />
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" required />
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
-                <label for="password" class="col-form-label">Password:</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="password"
-                  required
-                />
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" required />
               </div>
             </div>
           </div>
-        
         </form>
       </div>
       <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          id="closeModalButton"
-          data-bs-dismiss="modal"
-        >
-          Close
-        </button>
-        <button type="submit" class="btn btn-primary" form="modalForm">
-          Submit
-        </button>
+        <button type="button" class="btn btn-cancel" id="closeModalButton" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-submit" id="userSubmitBtn" form="modalForm">Submit</button>
       </div>
     </div>
   </div>
 </div>
-<!-- End Modal -->
 
 <%- contentFor('FooterJs') %>
-<!-- Required datatable js -->
 <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-
-<!-- Responsive examples -->
 <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
 <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 
-<!-- Datatable init js -->
-<script src="/assets/js/pages/datatables.init.js"></script>
 <script>
   const storedUserToken = localStorage.getItem("accessToken");
 
   $(document).ready(function () {
-    // Initialize DataTable
-    const dataTable = $("#datatable").DataTable();
-    // Function to fetch all companies and update the DataTable
-    var companyId = window.location.pathname.split("/")[2]; // Assuming URL format is /companies/:id
+    const companyId = window.location.pathname.split("/")[2];
+    const storedCompanyId = localStorage.getItem("company_id");
+
+    const dataTable = $("#datatable").DataTable({
+      pageLength: 10,
+      lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+      paging: true,
+      searching: true,
+      autoWidth: false,
+      order: [],
+      createdRow: function (row) {
+        $("td", row).eq(2).addClass("user-status-cell");
+      },
+    });
+
+    function setSubmitLoading($btn, loading) {
+      if (loading) {
+        $btn.prop("disabled", true).html('<i class="mdi mdi-loading mdi-spin"></i><span>Submitting...</span>');
+      } else {
+        $btn.prop("disabled", false).html("Submit");
+      }
+    }
+
+    function formatDate(value) {
+      if (!value) return '<span class="user-ip-empty">—</span>';
+      const date = new Date(value);
+      if (isNaN(date.getTime())) return `<span class="user-date-badge">${value}</span>`;
+      const formatted = date.toLocaleString();
+      return `<span class="user-date-badge"><i class="mdi mdi-calendar-clock"></i>${formatted}</span>`;
+    }
+
+    function formatName(name) {
+      const initial = (name || "?").charAt(0).toUpperCase();
+      return `<div class="user-name-cell"><span class="user-avatar">${initial}</span><span class="user-name-text">${name || "—"}</span></div>`;
+    }
+
+    function formatIp(ip) {
+      if (!ip) return '<span class="user-ip-empty">—</span>';
+      return `<span class="user-ip-badge"><i class="mdi mdi-ip-network-outline"></i>${ip}</span>`;
+    }
+
+    function formatStatus(user) {
+      const isActive = user.status === false;
+      const switchChecked = isActive ? "checked" : "";
+      const stateClass = isActive ? "active" : "suspended";
+      const label = isActive ? "Active" : "Suspended";
+      const icon = isActive ? "mdi-check-circle" : "mdi-pause-circle";
+      return `<label class="user-status-chip ${stateClass}" for="user-status-${user.id}">
+        <input type="checkbox" class="status-switch" id="user-status-${user.id}" data-id="${user.id}" ${switchChecked} />
+        <span class="user-status-chip-face">
+          <i class="mdi ${icon}"></i>
+          <span>${label}</span>
+        </span>
+      </label>`;
+    }
+
     function fetchUsersTable() {
       $.ajax({
         type: "GET",
@@ -152,162 +181,152 @@
           "Content-Type": "application/json",
           Authorization: `${storedUserToken}`,
         },
-        url: `/companies/${companyId}/users/ajax?user_type=Company`, // Adjust the endpoint to fetch all companies
+        url: `/companies/${companyId}/users/ajax?user_type=Company`,
         success: function (response) {
-          // Clear the current table data
           dataTable.clear();
 
-          // Loop through all companies and append them to the table
           response.users.forEach(function (user) {
-            const createdAt = new Date(user.createdAt);
-            const formattedDate = createdAt.toLocaleString();
-            const last_login = new Date(user.last_login);
-            const loginDate = last_login.toLocaleString();
-            // Check the status: 0 = Active, 1 = Suspended
-            const isActive = user.status === false; // status 0 means active
-            const switchChecked = isActive ? "checked" : ""; // Set the switch to checked if active (0)
             dataTable.row.add([
-              user.username, // Company ID
-              user.name, // Company Name
-              `<div class="square-switch">
-                <input type="checkbox" class="status-switch" id="square-switch-${user.id}" data-id=${user.id} switch="bool" ${switchChecked} />
-                <label for="square-switch-${user.id}" data-on-label="Active" data-off-label="Suspended"></label>
+              `<span class="user-username-badge"><i class="mdi mdi-at"></i>${user.username}</span>`,
+              formatName(user.name),
+              formatStatus(user),
+              formatDate(user.createdAt),
+              formatDate(user.last_login),
+              formatIp(user.last_ip),
+              `<div class="user-actions">
+                <button class="user-lock-btn lock-btn" data-id="${user.id}" title="Manage access">
+                  <i class="mdi mdi-shield-key-outline"></i>
+                </button>
+                <button class="user-edit-btn edit-btn" data-id="${user.id}" data-name="${user.name || ""}" title="Edit user">
+                  <i class="mdi mdi-pencil-outline"></i>
+                </button>
               </div>`,
-              formattedDate,
-              loginDate,
-              user.last_ip,
-              // Add a new column with a lock icon
-              `<button class="btn btn-sm btn-warning lock-btn" data-id="${user.id}" title="Lock Account">
-                <i class="fas fa-user-lock"></i>
-               </button> 
-               <button class="btn btn-sm btn-success edit-btn" data-id="${user.id}" data-name="${user.name}" title="Edit User">
-                <i class="fas fa-pencil-alt"></i>
-               </button>`,
             ]);
           });
 
-          // Draw the table to display the updated data
+          $("#totalUsersCount").text(response.users.length);
           dataTable.draw();
-          // Add event listener to the "show" links
         },
         error: function (error) {
           console.log(error);
-          // alert("Error fetching updated companies list.");
         },
       });
     }
-    // Check if a company_id exists in localStorage on page load
-    var storedCompanyId = localStorage.getItem("company_id");
 
     $(document).on("click", ".lock-btn", function () {
-      const userId = $(this).data("id");
-      // Perform view action, for example, redirect to a view page
-      window.location.href = `/companies/${storedCompanyId}/user/${userId}`;
+      window.location.href = `/companies/${storedCompanyId}/user/${$(this).data("id")}`;
     });
 
-    $(document).on("click", ".status-switch", function () {
-      const userId = $(this).data("id");
-      const newStatus = $(this).prop("checked") ? 0 : 1;
+    $(document).on("change", ".status-switch", function () {
+      const $input = $(this);
+      const userId = $input.data("id");
+      const newStatus = $input.prop("checked") ? 0 : 1;
+      const $chip = $input.closest(".user-status-chip");
+      const isActive = $input.prop("checked");
 
-      // Call the API to update the user's status
+      $chip
+        .toggleClass("active suspended", false)
+        .addClass(isActive ? "active" : "suspended")
+        .find(".user-status-chip-face i")
+        .attr("class", `mdi ${isActive ? "mdi-check-circle" : "mdi-pause-circle"}`)
+        .end()
+        .find(".user-status-chip-face span")
+        .text(isActive ? "Active" : "Suspended");
+
       $.ajax({
         type: "post",
-        url: `/companies/${companyId}/user/${userId}/status`, // Adjust the URL as per your API
-        data: { status: newStatus }, // Send the new status (0 or 1)
+        url: `/companies/${companyId}/user/${userId}/status`,
+        data: { status: newStatus },
         success: function (updateResponse) {
-          // Optionally show a success message or handle the response
           toastr.success(updateResponse.message, "Success");
-          fetchUsersTable();
         },
         error: function (error) {
           console.error("Error updating user status:", error);
+          const revertActive = !$input.prop("checked");
+          $input.prop("checked", revertActive);
+          $chip
+            .toggleClass("active suspended", false)
+            .addClass(revertActive ? "active" : "suspended")
+            .find(".user-status-chip-face i")
+            .attr("class", `mdi ${revertActive ? "mdi-check-circle" : "mdi-pause-circle"}`)
+            .end()
+            .find(".user-status-chip-face span")
+            .text(revertActive ? "Active" : "Suspended");
         },
       });
     });
 
-    // Get the modal and the open modal button
-    var modal = new bootstrap.Modal(document.getElementById("userModal"), {
-      keyboard: false,
-    });
+    const modal = new bootstrap.Modal(document.getElementById("userModal"), { keyboard: false });
+
+    function resetUserModal() {
+      $("#modalForm")[0].reset();
+      $("#user_id").val("");
+      $("#userModalTitle").text("New User");
+      $("#username").closest(".col-md-6").show().find("#username").attr("required", true);
+      $("#password").attr("required", true);
+    }
 
     $(document).on("click", ".edit-btn", function () {
-      const userId = $(this).data("id");
-      const name = $(this).data("name");
-      // Set hidden input value
-      $("#user_id").val(userId);
+      $("#user_id").val($(this).data("id"));
+      $("#name").val($(this).data("name"));
+      $("#userModalTitle").text("Edit User");
+      $("#username").closest(".col-md-6").hide();
+      $("#username").removeAttr("required");
+      $("#password").removeAttr("required");
       modal.show();
-      // Change modal title to "Edit Account"
-      $("#userModal .modal-dialog .modal-content h5").text("Edit User");
-
-      // Hide the title field
-      // Hide the title field and remove required attribute
-      $("#name").val(name);
-      const usernameInput = $("#username");
-      const passwordInput = $("#password");
-      usernameInput.closest(".col-md-6").hide();
-      usernameInput.removeAttr("required");
-      passwordInput.removeAttr("required");
     });
 
-    // Open the modal when the "Add+" button is clicked
     $("#openModal").click(function () {
-      modal.show(); // Show the modal using Bootstrap's modal API
+      resetUserModal();
+      modal.show();
     });
 
-    // Close the modal when the "close" button (X) is clicked
     $("#closeModalButton").click(function () {
-      modal.hide(); // Hide the modal using Bootstrap's modal API
+      modal.hide();
     });
 
-    // Close the modal when the user clicks outside of the modal
+    $("#userModal").on("hidden.bs.modal", function () {
+      resetUserModal();
+      setSubmitLoading($("#userSubmitBtn"), false);
+    });
+
     $(window).click(function (event) {
-      if ($(event.target).is(modal._element)) {
-        modal.hide(); // Hide the modal if the user clicks outside of it
-      }
+      if ($(event.target).is(modal._element)) modal.hide();
     });
 
-    // Handle form submission inside the modal
     $("#modalForm").submit(function (event) {
-      event.preventDefault(); // Prevent the default form submission behavior
+      event.preventDefault();
+      const submitBtn = $("#userSubmitBtn");
+      setSubmitLoading(submitBtn, true);
 
-      // Get the value from the form input (company name)
-      var user_id = $("#user_id").val();
-      var name = $("#name").val();
-      var username = $("#username").val();
-      var password = $("#password").val();
-      var user_type = "Company";
-      var companyId = storedCompanyId; // Assuming URL format is /companies/:id
-
-      // Example of submitting the form data to the backend (using AJAX)
       $.ajax({
         type: "POST",
-        url: `/companies/${companyId}/users`, // Adjust this to your API endpoint
+        url: `/companies/${storedCompanyId}/users`,
         data: {
-          userId: user_id,
-          name: name,
-          company_id: companyId,
-          username: username,
-          password: password,
-          user_type: user_type,
+          userId: $("#user_id").val(),
+          name: $("#name").val(),
+          company_id: storedCompanyId,
+          username: $("#username").val(),
+          password: $("#password").val(),
+          user_type: "Company",
         },
-        success: function (response) {
-          // Call the GET method to fetch and update the table
-          // fetchUsersTable();
-          //   alert("Company submitted successfully!");
-          modal.hide(); // Hide the modal after successful submission
-          $("#modalForm")[0].reset(); // Reset the form
+        success: function () {
+          modal.hide();
           location.reload();
         },
-        error: function (error) {
-          alert("Error submitting the company. Please try again.");
+        error: function () {
+          alert("Error submitting the user. Please try again.");
+        },
+        complete: function () {
+          setSubmitLoading(submitBtn, false);
         },
       });
     });
 
-    // If a company_id exists, display the relevant links in the sidebar
     if (storedCompanyId) {
       showSidebarLinks(storedCompanyId);
     }
+
     fetchUsersTable();
   });
 </script>

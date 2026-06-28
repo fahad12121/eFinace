@@ -63,7 +63,9 @@ exports.getAccessbilityAccounts = asyncHandler(async (req, res, next) => {
                 where: { user_id: currentUser.id } // Use logged-in user's ID
             });
         }
-        res.render('users/accountAccess', { accessibility });
+        const user_id = req.params.user_id;
+        const company_id = req.params.company_id;
+        res.render('users/accountAccess', { accessibility, user_id, company_id });
 
     } catch (error) {
         console.log(error);

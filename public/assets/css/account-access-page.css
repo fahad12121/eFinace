@@ -1,0 +1,239 @@
+.account-access-page .accounts-stat-card .stat-icon.total {
+  color: #556ee6;
+  background: linear-gradient(135deg, rgba(85, 110, 230, 0.12) 0%, rgba(118, 75, 162, 0.08) 100%);
+}
+
+.account-access-page .accounts-stat-card .stat-icon.selected {
+  color: #059669;
+  background: linear-gradient(135deg, rgba(52, 195, 143, 0.14) 0%, rgba(16, 185, 129, 0.08) 100%);
+}
+
+.account-access-table {
+  width: 100% !important;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 0.5rem !important;
+}
+
+.account-access-table thead th {
+  background: #f8fafc;
+  border: none !important;
+  border-bottom: 1px solid #e8edf5 !important;
+  padding: 0.65rem 0.75rem !important;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.account-access-table thead th.aa-check-col {
+  width: 72px;
+  text-align: center;
+}
+
+.account-access-table tbody td {
+  border: none !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding: 0.65rem 0.75rem !important;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.account-access-table tbody td.aa-check-cell {
+  text-align: center;
+}
+
+.account-access-table tbody tr:hover {
+  background: rgba(85, 110, 230, 0.03);
+}
+
+.account-access-table tbody tr.is-selected {
+  background: rgba(52, 195, 143, 0.04);
+}
+
+.account-access-table tbody tr.is-selected:hover {
+  background: rgba(52, 195, 143, 0.07);
+}
+
+.account-access-table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+.aa-check-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.aa-check-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.aa-check-face {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid #dbe3ef;
+  background: #f8fafc;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.aa-check-face i {
+  font-size: 0.85rem;
+  color: transparent;
+  transition: color 0.15s ease;
+}
+
+.aa-check-toggle:hover .aa-check-face {
+  border-color: #94a3b8;
+  background: #fff;
+}
+
+.aa-check-toggle input:checked + .aa-check-face {
+  background: linear-gradient(135deg, #34c38f 0%, #059669 100%);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(52, 195, 143, 0.28);
+}
+
+.aa-check-toggle input:checked + .aa-check-face i {
+  color: #fff;
+}
+
+.aa-check-toggle input:focus-visible + .aa-check-face {
+  outline: 2px solid rgba(52, 195, 143, 0.45);
+  outline-offset: 2px;
+}
+
+.aa-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.aa-user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #556ee6 0%, #764ba2 100%);
+  flex-shrink: 0;
+}
+
+.aa-user-name {
+  font-weight: 600;
+  font-size: 0.8125rem;
+  color: #1e293b;
+}
+
+.aa-table-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #059669;
+  background: rgba(52, 195, 143, 0.1);
+  border: 1px solid rgba(52, 195, 143, 0.2);
+}
+
+.aa-table-badge i {
+  font-size: 0.85rem;
+}
+
+.account-access-page .dataTables_wrapper .dataTables_length label,
+.account-access-page .dataTables_wrapper .dataTables_filter label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.account-access-page .dataTables_wrapper .dataTables_length select,
+.account-access-page .dataTables_wrapper .dataTables_filter input {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #1e293b;
+  background: #f8fafc;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.account-access-page .dataTables_wrapper .dataTables_filter input:focus {
+  border-color: #556ee6;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(85, 110, 230, 0.12);
+}
+
+.account-access-page .dataTables_wrapper .dataTables_info {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+  padding-top: 1rem;
+}
+
+.account-access-page .dataTables_wrapper .dataTables_paginate {
+  padding-top: 1rem;
+}
+
+.account-access-page .dataTables_wrapper .dataTables_paginate .paginate_button {
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  margin-left: 0.25rem;
+  padding: 0.25rem 0.6rem !important;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569 !important;
+  background: #fff !important;
+}
+
+.account-access-page .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.account-access-page .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  background: linear-gradient(135deg, #556ee6 0%, #6b5ce7 100%) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(85, 110, 230, 0.25);
+}
+
+.account-access-page .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #1e293b !important;
+}
+
+@media (max-width: 767.98px) {
+  .account-access-page .accounts-page-header {
+    flex-direction: column;
+  }
+
+  .account-access-page .accounts-header-actions {
+    width: 100%;
+  }
+
+  .account-access-page .accounts-header-btn {
+    flex: 1;
+    justify-content: center;
+  }
+}

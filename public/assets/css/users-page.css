@@ -1,0 +1,299 @@
+.users-page .accounts-stat-card .stat-icon.count {
+  color: #556ee6;
+  background: linear-gradient(135deg, rgba(85, 110, 230, 0.12) 0%, rgba(118, 75, 162, 0.08) 100%);
+}
+
+.users-table {
+  width: 100% !important;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 0.5rem !important;
+}
+
+.users-table thead th {
+  background: #f8fafc;
+  border: none !important;
+  border-bottom: 1px solid #e8edf5 !important;
+  padding: 0.6rem 0.75rem !important;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.users-table tbody td {
+  border: none !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding: 0.55rem 0.75rem !important;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.users-table tbody tr:hover {
+  background: rgba(85, 110, 230, 0.03);
+}
+
+.users-table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+.user-username-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #556ee6;
+  background: rgba(85, 110, 230, 0.1);
+  border: 1px solid rgba(85, 110, 230, 0.14);
+}
+
+.user-username-badge i {
+  font-size: 0.85rem;
+}
+
+.user-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #556ee6 0%, #764ba2 100%);
+  flex-shrink: 0;
+}
+
+.user-name-text {
+  font-weight: 600;
+  font-size: 0.8125rem;
+  color: #1e293b;
+}
+
+.users-table tbody td.user-status-cell {
+  min-width: 110px;
+}
+
+.user-status-chip {
+  display: inline-flex;
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.user-status-chip input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.user-status-chip-face {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.user-status-chip-face i {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.user-status-chip.active .user-status-chip-face {
+  color: #047857;
+  background: rgba(52, 195, 143, 0.16);
+  border: 1px solid rgba(52, 195, 143, 0.28);
+}
+
+.user-status-chip.active .user-status-chip-face i {
+  color: #059669;
+}
+
+.user-status-chip.suspended .user-status-chip-face {
+  color: #991b1b;
+  background: rgba(244, 106, 106, 0.14);
+  border: 1px solid rgba(244, 106, 106, 0.26);
+}
+
+.user-status-chip.suspended .user-status-chip-face i {
+  color: #dc2626;
+}
+
+.user-status-chip:hover .user-status-chip-face {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.user-status-chip:active .user-status-chip-face {
+  transform: translateY(0);
+}
+
+.user-date-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.22rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #475569;
+  background: rgba(100, 116, 139, 0.1);
+  border: 1px solid rgba(100, 116, 139, 0.14);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.user-date-badge i {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.user-ip-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.22rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.user-ip-empty {
+  color: #cbd5e1;
+  font-size: 0.8125rem;
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.user-lock-btn,
+.user-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-lock-btn {
+  border: 1.5px solid rgba(245, 158, 11, 0.25);
+  background: rgba(245, 158, 11, 0.08);
+  color: #d97706;
+}
+
+.user-lock-btn:hover {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.25);
+}
+
+.user-edit-btn {
+  border: 1.5px solid rgba(52, 195, 143, 0.25);
+  background: rgba(52, 195, 143, 0.08);
+  color: #059669;
+}
+
+.user-edit-btn:hover {
+  background: #34c38f;
+  border-color: #34c38f;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(52, 195, 143, 0.25);
+}
+
+.users-page .dataTables_wrapper .dataTables_length label,
+.users-page .dataTables_wrapper .dataTables_filter label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.users-page .dataTables_wrapper .dataTables_length select,
+.users-page .dataTables_wrapper .dataTables_filter input {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8125rem;
+  background: #f8fafc;
+}
+
+.users-page .dataTables_wrapper .dataTables_filter input:focus {
+  border-color: #556ee6;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(85, 110, 230, 0.12);
+  outline: none;
+}
+
+.users-page .dataTables_wrapper .dataTables_info {
+  font-size: 0.75rem;
+  color: #64748b;
+  padding-top: 0.75rem;
+}
+
+.users-page .dataTables_wrapper .dataTables_paginate {
+  padding-top: 0.75rem;
+}
+
+.users-page .dataTables_wrapper .dataTables_paginate .paginate_button {
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 0.25rem 0.55rem !important;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569 !important;
+  background: #fff !important;
+}
+
+.users-page .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.users-page .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  background: linear-gradient(135deg, #556ee6 0%, #6b5ce7 100%) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+
+@media (max-width: 767px) {
+  .users-page .accounts-page-header {
+    flex-direction: column;
+  }
+
+  .users-page .accounts-header-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

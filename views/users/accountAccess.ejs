@@ -1,117 +1,159 @@
-<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
-{"title":"Account Access"}) %>
-<!-- DataTables -->
-<link
-  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+<%- contentFor('HeaderCss') %>
+<%- include ('../partials/title-meta', {"title":"Account Access"}) %>
+<link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/accounts-page.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/account-access-page.css" rel="stylesheet" type="text/css" />
 
-<!-- Responsive datatable examples -->
-<link
-  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+<%- contentFor('body') %>
 
-<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
-"Account Access" , "title" : "Account Access" }) %>
+<%
+  let viewableAccounts = accessibility.viewable_accounts || [];
+  if (typeof viewableAccounts === 'string') {
+    viewableAccounts = JSON.parse(viewableAccounts);
+  }
+%>
 
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="row card-title mt-3">
-        <div class="col-md-10">
-          <h4 class="card-title">Accounts</h4>
-        </div>
-        <div class="col-md-2">
-          <div class="d-flex flex-wrap justify-content-md-end header-actions">
-            <button class="btn btn-outline-success btn-action" id="addfavt">
-              <i class="bi bi-star"></i> Add Access
-            </button>
-          </div>
-        </div>
+<div class="accounts-page account-access-page">
+  <div class="accounts-page-header">
+    <div>
+      <p class="accounts-page-eyebrow">User Management</p>
+      <h1 class="accounts-page-title">Account Access</h1>
+      <p class="accounts-page-desc">Choose which accounts this user can view and manage</p>
+    </div>
+    <div class="accounts-header-actions">
+      <a href="/companies/<%= company_id %>/user/<%= user_id %>" class="accounts-header-btn accounts-header-btn-secondary">
+        <i class="mdi mdi-arrow-left"></i>
+        Back to Accessibility
+      </a>
+      <button class="accounts-header-btn accounts-header-btn-fav" id="addAccess">
+        <i class="mdi mdi-shield-check-outline"></i>
+        Save Access
+      </button>
+    </div>
+  </div>
+
+  <div class="accounts-stats-row">
+    <div class="accounts-stat-card">
+      <div class="stat-icon total">
+        <i class="mdi mdi-account-group-outline"></i>
       </div>
-      <div class="card-body">
-        <table
-          id="accountsTable"
-          class="table table-bordered dt-responsive nowrap w-100"
-        >
-          <thead>
-            <tr>
-              <th style="width: 100px">
-                <div class="form-check font-size-16 align-middle">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="selectAllCheckbox"
-                  />
-                  <label
-                    class="form-check-label"
-                    for="selectAllCheckbox"
-                  ></label>
-                </div>
-              </th>
-              <th>Username</th>
-            </tr>
-          </thead>
-
-          <tbody></tbody>
-        </table>
+      <div>
+        <span class="stat-value" id="totalAccountsCount">0</span>
+        <span class="stat-label">Total Accounts</span>
+      </div>
+    </div>
+    <div class="accounts-stat-card">
+      <div class="stat-icon selected">
+        <i class="mdi mdi-account-check-outline"></i>
+      </div>
+      <div>
+        <span class="stat-value" id="selectedAccountsCount"><%= viewableAccounts.length %></span>
+        <span class="stat-label">Access Granted</span>
       </div>
     </div>
   </div>
-  <!-- end col -->
+
+  <div class="accounts-table-card">
+    <div class="accounts-table-card-header">
+      <div>
+        <h5><i class="mdi mdi-account-key-outline"></i> Viewable Accounts</h5>
+        <p>Select accounts, then click Save Access to apply changes</p>
+      </div>
+      <span class="aa-table-badge" id="selectedBadge">
+        <i class="mdi mdi-check-circle-outline"></i>
+        <span id="selectedBadgeText"><%= viewableAccounts.length %> selected</span>
+      </span>
+    </div>
+    <div class="accounts-table-body">
+      <table id="accountsTable" class="table account-access-table dt-responsive nowrap w-100 mb-0">
+        <thead>
+          <tr>
+            <th class="aa-check-col">
+              <label class="aa-check-toggle" title="Select all">
+                <input type="checkbox" id="selectAllCheckbox" />
+                <span class="aa-check-face"><i class="mdi mdi-check-bold"></i></span>
+              </label>
+            </th>
+            <th>Username</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 </div>
-<!-- end row -->
+
 <%- contentFor('FooterJs') %>
-<!-- Required datatable js -->
 <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-
-<!-- Responsive examples -->
 <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
 <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-
-<!-- Datatable init js -->
-<script src="/assets/js/pages/datatables.init.js"></script>
 <script>
   $(document).ready(function () {
-    const viewableAccounts =
-      "<%= JSON.parse(JSON.stringify(accessibility.viewable_accounts)) %>"; // Pass accessibility data
-    console.log(viewableAccounts);
-    // Initialize DataTable
+    const viewableAccounts = <%- JSON.stringify(viewableAccounts) %>;
+    const storedCompanyId = localStorage.getItem("company_id");
+    const addAccessDefaultHtml = $("#addAccess").html();
+
     const dataTable = $("#accountsTable").DataTable({
       order: [],
       pageLength: 500,
-      lengthMenu: [
-        [500, 200, 100, -1],
-        [500, 200, 100, "All"],
-      ],
+      lengthMenu: [[500, 200, 100, -1], [500, 200, 100, "All"]],
       paging: true,
       searching: true,
-      // ordering: true,
       autoWidth: false,
     });
-    var storedCompanyId = localStorage.getItem("company_id");
 
-    // Function to fetch users and update the DataTable
+    function formatCheckbox(id, checked) {
+      return (
+        '<label class="aa-check-toggle">' +
+          '<input type="checkbox" class="fav-checkbox aa-checkbox" data-id="' + id + '"' + (checked ? " checked" : "") + " />" +
+          '<span class="aa-check-face"><i class="mdi mdi-check-bold"></i></span>' +
+        "</label>"
+      );
+    }
+
+    function formatUserCell(username) {
+      const initial = (username || "?").charAt(0).toUpperCase();
+      return (
+        '<div class="aa-user-cell">' +
+          '<span class="aa-user-avatar">' + initial + "</span>" +
+          '<span class="aa-user-name">' + username + "</span>" +
+        "</div>"
+      );
+    }
+
+    function updateSelectedStats() {
+      const count = $(".fav-checkbox:checked").length;
+      $("#selectedAccountsCount").text(count);
+      $("#selectedBadgeText").text(count + " selected");
+    }
+
+    function syncRowHighlight() {
+      $("#accountsTable tbody tr").each(function () {
+        const $row = $(this);
+        const checked = $row.find(".fav-checkbox").prop("checked");
+        $row.toggleClass("is-selected", checked);
+      });
+    }
+
     function fetchUsersTable() {
       $.ajax({
         type: "GET",
-        url: `/companies/${storedCompanyId}/users/ajax?user_type=User`,
+        url: "/companies/" + storedCompanyId + "/users/ajax?user_type=User",
         success: function (response) {
           dataTable.clear();
           response.users.forEach(function (user) {
             const isChecked = viewableAccounts.includes(user.id);
             dataTable.row.add([
-              `<input type="checkbox" class="fav-checkbox" data-id="${
-                user.id
-              }" ${isChecked ? "checked" : ""} />`,
-              user.username,
+              formatCheckbox(user.id, isChecked),
+              formatUserCell(user.username),
             ]);
           });
+          $("#totalAccountsCount").text(response.users.length);
           dataTable.draw();
+          updateSelectedStats();
+          syncRowHighlight();
         },
         error: function (error) {
           console.log(error);
@@ -119,60 +161,64 @@
       });
     }
 
-    // Select/Deselect all checkboxes when the header checkbox is clicked
     $("#selectAllCheckbox").change(function () {
       const isChecked = $(this).prop("checked");
-      $(".fav-checkbox").prop("checked", isChecked); // Check/uncheck all checkboxes
+      $(".fav-checkbox").prop("checked", isChecked);
+      updateSelectedStats();
+      syncRowHighlight();
     });
 
-    // Listen for the "Add to Favt" button click
-    $("#addfavt").click(function () {
+    $(document).on("change", ".fav-checkbox", function () {
+      const total = $(".fav-checkbox").length;
+      const checked = $(".fav-checkbox:checked").length;
+      $("#selectAllCheckbox").prop("checked", total > 0 && checked === total);
+      updateSelectedStats();
+      syncRowHighlight();
+    });
+
+    $("#addAccess").click(function () {
+      const $btn = $(this);
       const selectedAccounts = [];
 
-      // Get all checked checkboxes and push the accountId to the array
       $(".fav-checkbox:checked").each(function () {
-        const accountId = $(this).data("id");
-
-        // Push only accountId (without any key) to the array
-        selectedAccounts.push(parseInt(accountId));
+        selectedAccounts.push(parseInt($(this).data("id"), 10));
       });
 
-      // If no account is selected, show an alert
       if (selectedAccounts.length === 0) {
-        toastr.error(
-          "Please select at least one account to add to favorites",
-          "Error"
-        );
+        toastr.error("Please select at least one account to grant access", "Error");
         return;
       }
 
       const user_id = window.location.pathname.split("/")[4];
+      $btn.prop("disabled", true).html('<i class="mdi mdi-loading mdi-spin"></i> Saving...');
+
       $.ajax({
         type: "POST",
-        url: `/companies/${storedCompanyId}/users/${user_id}/accessibility`, // Update the URL as needed
+        url: "/companies/" + storedCompanyId + "/users/" + user_id + "/accessibility",
         data: {
           resource: "viewable_accounts",
-          selectedAccounts: selectedAccounts, // Send the array of selected account IDs
+          selectedAccounts: selectedAccounts,
         },
         success: function (response) {
-          toastr.success(response.message, "Success");
-          // Optionally, refresh the DataTable or update the UI accordingly
-          //   fetchUsersTable(); // Reload the table to reflect any changes
+          toastr.success(response.message || "Access updated successfully", "Success");
           setTimeout(function () {
             location.reload();
-          }, 1000); // 3000 milliseconds = 3 seconds
+          }, 1000);
         },
         error: function (error) {
           console.log(error);
-          alert("Error adding accounts to favorites. Please try again.");
+          toastr.error("Error saving account access. Please try again.", "Error");
+        },
+        complete: function () {
+          $btn.prop("disabled", false).html(addAccessDefaultHtml);
         },
       });
     });
 
-    // If a company_id exists, display the relevant links in the sidebar
     if (storedCompanyId) {
       showSidebarLinks(storedCompanyId);
     }
+
     fetchUsersTable();
   });
 </script>

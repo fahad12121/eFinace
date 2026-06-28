@@ -1,162 +1,215 @@
-<%- contentFor('HeaderCss') %> <%- include ('../partials/title-meta',
-{"title":"Accessbility"}) %>
-<!-- DataTables -->
-<link
-  href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+<%- contentFor('HeaderCss') %>
+<%- include ('../partials/title-meta', {"title":"Accessibility"}) %>
+<link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/accounts-page.css" rel="stylesheet" type="text/css" />
+<link href="/assets/css/accessibility-page.css" rel="stylesheet" type="text/css" />
 
-<!-- Responsive datatable examples -->
-<link
-  href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css"
-  rel="stylesheet"
-  type="text/css"
-/>
+<%- contentFor('body') %>
 
-<%- contentFor('body') %> <%- include ('../partials/page-title', {"pagetitle":
-"Accessbility" , "title" : "Accessbility" }) %>
+<%
+  const modules = [
+    { name: 'accounts', label: 'Accounts', icon: 'mdi-account-group-outline' },
+    { name: 'transactions', label: 'Transactions', icon: 'mdi-swap-horizontal-bold' },
+    { name: 'account_types', label: 'Account Types', icon: 'mdi-layers-outline' },
+    { name: 'balance_sheet', label: 'Balance Sheet', icon: 'mdi-scale-balance' },
+    { name: 'import', label: 'Import', icon: 'mdi-upload-outline' }
+  ];
 
-<div class="row">
-  <div class="col-12">
-    <div class="card">
-      <div class="row card-title mt-3">
-        <div class="col-md-10">
-          <h4 class="card-title">Accessbilities</h4>
-        </div>
-        <div class="col-md-2">
-          <a href="/companies/<%= company_id %>/user/<%= user_id%>/account-access" class="btn btn-outline-primary">Account Access</a>
-        </div>
+  let grantedCount = 0;
+
+  modules.forEach(function(module) {
+    let moduleData = accessibility[module.name] || {};
+    if (typeof moduleData === 'string') {
+      moduleData = JSON.parse(moduleData);
+    }
+    if (module.name !== 'import' && moduleData.view_only === true) grantedCount++;
+    if (module.name !== 'import' && module.name !== 'balance_sheet' && moduleData.edit === true) grantedCount++;
+    if (module.name !== 'balance_sheet' && moduleData.add === true) grantedCount++;
+  });
+%>
+
+<div class="accounts-page accessibility-page">
+  <div class="accounts-page-header">
+    <div>
+      <p class="accounts-page-eyebrow">User Management</p>
+      <h1 class="accounts-page-title">Accessibility</h1>
+      <p class="accounts-page-desc">Configure module permissions for this user</p>
+    </div>
+    <div class="accounts-header-actions">
+      <a href="/companies/<%= company_id %>/users" class="accounts-header-btn accounts-header-btn-secondary">
+        <i class="mdi mdi-arrow-left"></i>
+        Back to Users
+      </a>
+      <a href="/companies/<%= company_id %>/user/<%= user_id %>/account-access" class="accounts-header-btn accounts-header-btn-primary">
+        <i class="mdi mdi-account-key-outline"></i>
+        Account Access
+      </a>
+    </div>
+  </div>
+
+  <div class="accounts-stats-row">
+    <div class="accounts-stat-card">
+      <div class="stat-icon modules">
+        <i class="mdi mdi-view-grid-outline"></i>
       </div>
-      <div class="card-body">
-        <table
-          id="datatable"
-          class="table table-bordered dt-responsive nowrap w-100"
-        >
-          <thead>
-            <tr>
-              <th>Module</th>
-              <th>View</th>
-              <th>Edit</th>
-              <th>Add</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% const modules = [
-                { name: 'accounts', label: 'Accounts' },
-                { name: 'transactions', label: 'Transactions' },
-                { name: 'account_types', label: 'Account Types' },
-                { name: 'balance_sheet', label: 'Balance Sheet' },
-                { name: 'import', label: 'Import' }  <!-- Import has only the 'add' permission -->
-            ]; %>
-        
-            <% modules.forEach(function(module) { %>
-                <% 
-                    let moduleData = accessibility[module.name] || {}; // Default to an empty object if not found
-                    // Check if it's a string before parsing
-                    if (typeof moduleData === 'string') {
-                        moduleData = JSON.parse(moduleData); // Parse only if it's a string
-                    }
-                %>
-        
-                <tr>
-                    <td><%= module.label %></td>
-        
-                    <!-- 'View' Permission: Only for non-import modules -->
-                    <td>
-                        <% if (module.name !== 'import') { %> 
-                            <input type="checkbox" 
-                                class="permission-checkbox"
-                                data-module="<%= module.name %>"
-                                data-permission="view_only"
-                                data-id="<%= moduleData %>"
-                                <% if (moduleData.view === true) { %> checked <% } %> />
-                        <% } %> <!-- End of 'if' for view_only -->
-                    </td>
-        
-                    <!-- 'Edit' Permission: Only for non-import modules -->
-                    <td>
-                        <% if (module.name !== 'import' && module.name !== 'balance_sheet') { %>
-                            <input type="checkbox" 
-                                class="permission-checkbox"
-                                data-module="<%= module.name %>"
-                                data-permission="edit"
-                                data-id="<%= moduleData %>"
-                                <% if (moduleData.edit === true) { %> checked <% } %> />
-                        <% } %> <!-- End of 'if' for edit -->
-                    </td>
-        
-                    <!-- 'Add' Permission: For all modules, including Import -->
-                    <td>
-                        <!-- Add permission for all modules, including Import -->
-                        <% if (module.name !== 'balance_sheet') { %>
-                          <input type="checkbox" 
-                              class="permission-checkbox"
-                              data-module="<%= module.name %>"
-                              data-permission="add"
-                              data-id="<%= moduleData %>"
-                              <% if (moduleData.add === true) { %> checked <% } %> />
-                        <% } %> <!-- End of 'if' for edit -->
-                    </td>
-                </tr>
-            <% }); %> <!-- Close the forEach loop -->
-        </tbody>
-        
-        </table>
+      <div>
+        <span class="stat-value"><%= modules.length %></span>
+        <span class="stat-label">Modules</span>
+      </div>
+    </div>
+    <div class="accounts-stat-card">
+      <div class="stat-icon granted">
+        <i class="mdi mdi-shield-check-outline"></i>
+      </div>
+      <div>
+        <span class="stat-value" id="grantedPermissionsCount"><%= grantedCount %></span>
+        <span class="stat-label">Permissions Granted</span>
       </div>
     </div>
   </div>
-  <!-- end col -->
+
+  <div class="accounts-table-card">
+    <div class="accounts-table-card-header">
+      <div>
+        <h5><i class="mdi mdi-shield-lock-outline"></i> Module Permissions</h5>
+        <p>Toggle view, edit, and add access per module — changes save automatically</p>
+      </div>
+    </div>
+    <div class="accounts-table-body">
+      <table id="datatable" class="table accessibility-table dt-responsive nowrap w-100 mb-0">
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th class="perm-col"><i class="mdi mdi-eye-outline"></i> View</th>
+            <th class="perm-col"><i class="mdi mdi-pencil-outline"></i> Edit</th>
+            <th class="perm-col"><i class="mdi mdi-plus"></i> Add</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% modules.forEach(function(module) { %>
+            <%
+              let moduleData = accessibility[module.name] || {};
+              if (typeof moduleData === 'string') {
+                moduleData = JSON.parse(moduleData);
+              }
+            %>
+            <tr>
+              <td>
+                <div class="acc-module-cell">
+                  <div class="acc-module-icon <%= module.name %>">
+                    <i class="mdi <%= module.icon %>"></i>
+                  </div>
+                  <div>
+                    <span class="acc-module-name"><%= module.label %></span>
+                    <span class="acc-module-key"><%= module.name.replace(/_/g, ' ') %></span>
+                  </div>
+                </div>
+              </td>
+
+              <td class="perm-cell">
+                <% if (module.name !== 'import') { %>
+                  <label class="perm-toggle">
+                    <input
+                      type="checkbox"
+                      class="permission-checkbox"
+                      data-module="<%= module.name %>"
+                      data-permission="view_only"
+                      <% if (moduleData.view_only === true) { %> checked <% } %>
+                    />
+                    <span class="perm-toggle-face"><i class="mdi mdi-check-bold"></i></span>
+                  </label>
+                <% } else { %>
+                  <span class="perm-na" title="Not applicable">—</span>
+                <% } %>
+              </td>
+
+              <td class="perm-cell">
+                <% if (module.name !== 'import' && module.name !== 'balance_sheet') { %>
+                  <label class="perm-toggle">
+                    <input
+                      type="checkbox"
+                      class="permission-checkbox"
+                      data-module="<%= module.name %>"
+                      data-permission="edit"
+                      <% if (moduleData.edit === true) { %> checked <% } %>
+                    />
+                    <span class="perm-toggle-face"><i class="mdi mdi-check-bold"></i></span>
+                  </label>
+                <% } else { %>
+                  <span class="perm-na" title="Not applicable">—</span>
+                <% } %>
+              </td>
+
+              <td class="perm-cell">
+                <% if (module.name !== 'balance_sheet') { %>
+                  <label class="perm-toggle">
+                    <input
+                      type="checkbox"
+                      class="permission-checkbox"
+                      data-module="<%= module.name %>"
+                      data-permission="add"
+                      <% if (moduleData.add === true) { %> checked <% } %>
+                    />
+                    <span class="perm-toggle-face"><i class="mdi mdi-check-bold"></i></span>
+                  </label>
+                <% } else { %>
+                  <span class="perm-na" title="Not applicable">—</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
-<!-- end row -->
 
 <%- contentFor('FooterJs') %>
-<!-- Required datatable js -->
 <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-
-<!-- Responsive examples -->
 <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
 <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-
-<!-- Datatable init js -->
 <script src="/assets/js/pages/datatables.init.js"></script>
 <script>
   $(document).ready(function () {
-    // Check if a company_id exists in localStorage on page load
     var storedCompanyId = localStorage.getItem("company_id");
 
-    // If a company_id exists, display the relevant links in the sidebar
     if (storedCompanyId) {
       showSidebarLinks(storedCompanyId);
     }
-    // Event listener for checkbox change
+
+    function updateGrantedCount() {
+      var count = $(".permission-checkbox:checked").length;
+      $("#grantedPermissionsCount").text(count);
+    }
+
     $(document).on("change", ".permission-checkbox", function () {
-      const module = $(this).data("module");
-      const permission = $(this).data("permission");
-      const isChecked = $(this).prop("checked"); // Get whether the checkbox is checked or not
-      const user_id = window.location.pathname.split("/")[4];
-      // Create the payload to send to the server
-      const data = {
-        user_id: user_id,
-        resource: module,
-        action: permission,
-        is_checked: isChecked, // Whether the checkbox is checked (true or false)
-      };
+      var $toggle = $(this).closest(".perm-toggle");
+      var module = $(this).data("module");
+      var permission = $(this).data("permission");
+      var isChecked = $(this).prop("checked");
+      var user_id = window.location.pathname.split("/")[4];
 
+      $toggle.addClass("is-saving");
 
-      // Send the updated data to the server
       $.ajax({
         type: "POST",
-        url: `/companies/${storedCompanyId}/users/${user_id}/accessibility`, // URL for handling permission updates on the server
-        data: data, // Send data as JSON
-        success: function (response) {
-          // Handle success (e.g., show a success message or update the UI)
-          console.log("Permission updated successfully");
+        url: "/companies/" + storedCompanyId + "/users/" + user_id + "/accessibility",
+        data: {
+          user_id: user_id,
+          resource: module,
+          action: permission,
+          is_checked: isChecked,
+        },
+        success: function () {
+          updateGrantedCount();
         },
         error: function (error) {
-          // Handle error (e.g., show an error message)
           console.error("Error updating permission:", error);
+        },
+        complete: function () {
+          $toggle.removeClass("is-saving");
         },
       });
     });
