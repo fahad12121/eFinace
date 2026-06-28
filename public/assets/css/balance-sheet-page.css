@@ -1,0 +1,339 @@
+.balance-sheet-page .accounts-stat-card .stat-icon.minus {
+  color: #dc2626;
+  background: linear-gradient(135deg, rgba(244, 106, 106, 0.14) 0%, rgba(239, 68, 68, 0.08) 100%);
+}
+
+.balance-sheet-page .accounts-stat-card .stat-icon.plus {
+  color: #059669;
+  background: linear-gradient(135deg, rgba(52, 195, 143, 0.14) 0%, rgba(16, 185, 129, 0.08) 100%);
+}
+
+.balance-sheet-page .accounts-stat-card .stat-icon.net {
+  color: #556ee6;
+  background: linear-gradient(135deg, rgba(85, 110, 230, 0.12) 0%, rgba(118, 75, 162, 0.08) 100%);
+}
+
+.balance-sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.balance-sheet-card {
+  background: #fff;
+  border: 1px solid #e8edf5;
+  border-radius: 18px;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.balance-sheet-card.minus .balance-sheet-card-header {
+  background: linear-gradient(180deg, rgba(244, 106, 106, 0.06) 0%, transparent 100%);
+  border-bottom-color: rgba(244, 106, 106, 0.12);
+}
+
+.balance-sheet-card.plus .balance-sheet-card-header {
+  background: linear-gradient(180deg, rgba(52, 195, 143, 0.06) 0%, transparent 100%);
+  border-bottom-color: rgba(52, 195, 143, 0.12);
+}
+
+.balance-sheet-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.balance-sheet-card-header h5 {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.balance-sheet-card.minus .balance-sheet-card-header h5 i {
+  color: #dc2626;
+}
+
+.balance-sheet-card.plus .balance-sheet-card-header h5 i {
+  color: #059669;
+}
+
+.balance-sheet-card-header p {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.balance-sheet-count-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.balance-sheet-count-badge.minus {
+  color: #b91c1c;
+  background: rgba(244, 106, 106, 0.1);
+  border: 1px solid rgba(244, 106, 106, 0.18);
+}
+
+.balance-sheet-count-badge.plus {
+  color: #047857;
+  background: rgba(52, 195, 143, 0.1);
+  border: 1px solid rgba(52, 195, 143, 0.18);
+}
+
+.balance-sheet-card-body {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.balance-sheet-table {
+  width: 100% !important;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 0.35rem !important;
+}
+
+.balance-sheet-table thead th {
+  background: #f8fafc;
+  border: none !important;
+  border-bottom: 1px solid #e8edf5 !important;
+  padding: 0.55rem 0.65rem !important;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.balance-sheet-table tbody td {
+  border: none !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  padding: 0.45rem 0.65rem !important;
+  font-size: 0.8125rem;
+  vertical-align: middle;
+}
+
+.balance-sheet-table tbody tr:hover {
+  background: rgba(85, 110, 230, 0.03);
+}
+
+.balance-sheet-table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+.balance-sheet-table.minus-table tbody td.bs-col-amount {
+  background: rgba(244, 106, 106, 0.03);
+  text-align: right;
+}
+
+.balance-sheet-table.plus-table tbody td.bs-col-amount {
+  background: rgba(52, 195, 143, 0.03);
+  text-align: right;
+}
+
+.bs-account-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bs-checkbox {
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+  accent-color: #556ee6;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.bs-account-link {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+}
+
+.bs-account-link:hover .bs-account-name {
+  color: #556ee6;
+}
+
+.bs-account-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.balance-sheet-card.minus .bs-account-avatar {
+  background: linear-gradient(135deg, #f46a6a 0%, #dc2626 100%);
+}
+
+.balance-sheet-card.plus .bs-account-avatar {
+  background: linear-gradient(135deg, #34c38f 0%, #059669 100%);
+}
+
+.bs-account-name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #1e293b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.bs-minus-badge,
+.bs-plus-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.22rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.bs-minus-badge {
+  color: #b91c1c;
+  background: rgba(244, 106, 106, 0.12);
+  border: 1px solid rgba(244, 106, 106, 0.22);
+}
+
+.bs-plus-badge {
+  color: #047857;
+  background: rgba(52, 195, 143, 0.14);
+  border: 1px solid rgba(52, 195, 143, 0.24);
+}
+
+.bs-plain-amount {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+}
+
+.balance-sheet-table tfoot th {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border: none !important;
+  border-top: 2px solid #e2e8f0 !important;
+  padding: 0.7rem 0.65rem !important;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bs-total-value {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.bs-total-value.minus {
+  color: #b91c1c;
+  background: rgba(244, 106, 106, 0.12);
+  border: 1px solid rgba(244, 106, 106, 0.22);
+}
+
+.bs-total-value.plus {
+  color: #047857;
+  background: rgba(52, 195, 143, 0.14);
+  border: 1px solid rgba(52, 195, 143, 0.24);
+}
+
+.balance-sheet-page .dataTables_wrapper .dataTables_length label,
+.balance-sheet-page .dataTables_wrapper .dataTables_filter label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.balance-sheet-page .dataTables_wrapper .dataTables_length select,
+.balance-sheet-page .dataTables_wrapper .dataTables_filter input {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  background: #f8fafc;
+}
+
+.balance-sheet-page .dataTables_wrapper .dataTables_info {
+  font-size: 0.6875rem;
+  color: #64748b;
+  padding-top: 0.65rem;
+}
+
+.balance-sheet-page .dataTables_wrapper .dataTables_paginate {
+  padding-top: 0.65rem;
+}
+
+.balance-sheet-page .dataTables_wrapper .dataTables_paginate .paginate_button {
+  padding: 0.2rem 0.5rem !important;
+  font-size: 0.6875rem;
+  border-radius: 8px !important;
+}
+
+.balance-sheet-page .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.balance-sheet-page .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  background: linear-gradient(135deg, #556ee6 0%, #6b5ce7 100%) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+
+.balance-sheet-page .accounts-header-btn-fav {
+  color: #059669;
+  background: rgba(52, 195, 143, 0.1);
+  border: 1.5px solid rgba(52, 195, 143, 0.25);
+}
+
+.balance-sheet-page .accounts-header-btn-fav:hover {
+  background: #34c38f;
+  border-color: #34c38f;
+  color: #fff;
+}
+
+@media (max-width: 991px) {
+  .balance-sheet-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .balance-sheet-page .accounts-page-header {
+    flex-direction: column;
+  }
+
+  .balance-sheet-page .accounts-header-actions {
+    width: 100%;
+  }
+
+  .balance-sheet-page .accounts-header-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
