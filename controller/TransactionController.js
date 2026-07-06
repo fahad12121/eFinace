@@ -289,12 +289,24 @@ exports.getTransactionAjax = asyncHandler(async (req, res, next) => {
 
 exports.getSubAccountStatement = asyncHandler(async (req, res, next) => {
     try {
+        const subAccountId = req.params.account_id;
+        const companyId = req.params.id;
 
+        const subAccount = await SubAccount.findOne({
+            where: { id: subAccountId, company_id: companyId },
+            include: [{ model: AccountType, attributes: ['id', 'name'] }],
+        });
 
-        res.render('accounts/account_statement');
+        const parentUser = subAccount
+            ? await User.findOne({
+                where: { id: subAccount.user_id },
+                attributes: ['id', 'username', 'account_pk'],
+            })
+            : null;
 
+        res.render('accounts/account_statement', { subAccount, parentUser });
     } catch (error) {
-        next(error); // Handle errors
+        next(error);
     }
 });
 

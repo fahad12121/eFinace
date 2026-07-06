@@ -79,6 +79,7 @@
             <th>Username</th>
             <th>Take</th>
             <th>Give</th>
+            <th>Updated At</th>
           </tr>
         </thead>
         <tbody>
@@ -107,6 +108,17 @@
               <span class="atd-empty">—</span>
               <% } %>
             </td>
+            <td>
+              <% if (account.updatedAt) { %>
+              <% const updatedAt = new Date(account.updatedAt); %>
+              <span class="atd-date-badge" data-order="<%= updatedAt.getTime() %>">
+                <i class="mdi mdi-calendar-clock"></i>
+                <%= formatRelativeDate(account.updatedAt) %>
+              </span>
+              <% } else { %>
+              <span class="atd-empty">—</span>
+              <% } %>
+            </td>
           </tr>
           <% }) %>
         </tbody>
@@ -115,6 +127,7 @@
             <th>Total</th>
             <th><span class="atd-total-value take"><%= Math.round(totalTake).toLocaleString() %></span></th>
             <th><span class="atd-total-value give"><%= Math.round(totalGive).toLocaleString() %></span></th>
+            <th></th>
           </tr>
         </tfoot>
       </table>

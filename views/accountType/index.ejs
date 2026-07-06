@@ -48,6 +48,7 @@
             <th>ID</th>
             <th>Name</th>
             <th>Status</th>
+            <th>Updated At</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -93,6 +94,7 @@
 <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
 <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+<script src="/assets/js/format-relative-date.js"></script>
 
 <script>
   $(document).ready(function () {
@@ -120,6 +122,14 @@
       return `<div class="at-name-cell"><span class="at-avatar">${initial}</span><span class="at-name-text">${name || "—"}</span></div>`;
     }
 
+    function formatDate(value) {
+      if (!value) return '<span class="at-date-empty">—</span>';
+      const date = new Date(value);
+      if (isNaN(date.getTime())) return `<span class="at-date-badge">${value}</span>`;
+      const formatted = formatRelativeDate(value);
+      return `<span class="at-date-badge" data-order="${date.getTime()}"><i class="mdi mdi-calendar-clock"></i>${formatted}</span>`;
+    }
+
     function setSubmitLoading($btn, loading) {
       if (loading) {
         $btn.prop("disabled", true).html('<i class="mdi mdi-loading mdi-spin"></i><span>Submitting...</span>');
@@ -140,6 +150,7 @@
               `<span class="at-id-badge">${account.id}</span>`,
               formatName(account.name),
               formatStatus(account.status),
+              formatDate(account.updatedAt),
               `<a href="javascript:void(0);" class="at-view-btn accountbtn" data-id="${account.id}" title="View details"><i class="mdi mdi-eye-outline"></i></a>`,
             ]);
           });

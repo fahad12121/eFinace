@@ -1,7 +1,6 @@
 <%- contentFor('HeaderCss') %>
 <%- include ('../partials/title-meta', {"title": "Dashboard"}) %>
 <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 <link href="/assets/css/dashboard-page.css" rel="stylesheet" type="text/css" />
 
 <%- contentFor('body') %>
@@ -62,7 +61,7 @@
     </div>
     <div class="dashboard-table-body">
       <div class="table-responsive">
-        <table id="dashboardTransTable" class="table dashboard-transactions-table dt-responsive nowrap w-100 mb-0">
+        <table id="dashboardTransTable" class="table dashboard-transactions-table nowrap w-100 mb-0">
           <thead>
             <tr>
               <th class="tx-col-date">Date</th>
@@ -130,9 +129,6 @@
 <script src="/assets/js/pages/dashboard.init.js"></script>
 <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-<script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-<script src="/assets/js/pages/datatables.init.js"></script>
 <script>
   $(document).ready(function () {
     $("#dashboardTransTable").DataTable({
@@ -145,6 +141,8 @@
       paging: true,
       searching: true,
       autoWidth: false,
+      responsive: false,
+      scrollX: true,
       language: {
         search: "",
         searchPlaceholder: "Search...",

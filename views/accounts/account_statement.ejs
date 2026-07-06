@@ -7,12 +7,32 @@
 
 <%- contentFor('body') %>
 
+<%
+  const subName = subAccount?.account_username || 'Sub Account';
+  const parentName = parentUser?.username || '—';
+  const accountTypeName = subAccount?.AccountType?.name || '';
+  const subPk = subAccount?.sub_account_pk || '';
+  const subInitial = (subName || '?').charAt(0).toUpperCase();
+%>
+
 <div class="accounts-page statement-page">
   <div class="accounts-page-header">
     <div>
       <p class="accounts-page-eyebrow">Reports</p>
       <h1 class="accounts-page-title">Account Statement</h1>
       <p class="accounts-page-desc">Review transactions, debits, credits, and running balance</p>
+    </div>
+  </div>
+
+  <div class="statement-account-hero">
+    <span class="statement-account-avatar"><%= subInitial %></span>
+    <div>
+      <h2 class="statement-account-name"><%= subName %></h2>
+      <p class="statement-account-meta">
+        Parent account: <strong><%= parentName %></strong>
+        <% if (subPk) { %> · <%= subPk %><% } %>
+        <% if (accountTypeName) { %> · <%= accountTypeName %><% } %>
+      </p>
     </div>
   </div>
 
@@ -49,9 +69,13 @@
   <div class="accounts-table-card">
     <div class="accounts-table-card-header">
       <div>
-        <h5><i class="mdi mdi-file-document-outline"></i> Account Statements</h5>
-        <p>Filter by date range to load statement entries</p>
+        <h5><i class="mdi mdi-file-document-outline"></i> <%= subName %> — Statements</h5>
+        <p>Viewing statement for <strong><%= subName %></strong> under <%= parentName %></p>
       </div>
+      <span class="statement-user-badge">
+        <i class="mdi mdi-account-outline"></i>
+        <%= subName %>
+      </span>
     </div>
 
     <div class="statement-filter-bar">

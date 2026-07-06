@@ -212,6 +212,58 @@
   font-weight: 500;
 }
 
+.acct-hide-zero-toggle {
+  display: inline-flex;
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.acct-hide-zero-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.acct-hide-zero-face {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.acct-hide-zero-face i {
+  font-size: 0.9rem;
+}
+
+.acct-hide-zero-toggle:hover .acct-hide-zero-face {
+  border-color: #cbd5e1;
+  background: #fff;
+}
+
+.acct-hide-zero-toggle input:checked + .acct-hide-zero-face {
+  color: #556ee6;
+  background: rgba(85, 110, 230, 0.1);
+  border-color: rgba(85, 110, 230, 0.28);
+  box-shadow: 0 4px 12px rgba(85, 110, 230, 0.12);
+}
+
+.acct-hide-zero-toggle input:focus-visible + .acct-hide-zero-face {
+  outline: 2px solid rgba(85, 110, 230, 0.45);
+  outline-offset: 2px;
+}
+
 .accounts-table-body {
   padding: 1.25rem 1.5rem 1.5rem;
 }
@@ -420,6 +472,31 @@
 
 .acct-notes-empty {
   color: #cbd5e1;
+}
+
+.acct-date-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.22rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #475569;
+  background: rgba(100, 116, 139, 0.1);
+  border: 1px solid rgba(100, 116, 139, 0.14);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.acct-date-badge i {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.acct-date-empty {
+  color: #cbd5e1;
+  font-size: 0.8125rem;
 }
 
 .acct-actions {

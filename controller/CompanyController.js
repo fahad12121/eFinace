@@ -1,5 +1,6 @@
 const Company = require("../models/Company");
 const asyncHandler = require("../middleware/async");
+const { Op } = require("sequelize");
 
 exports.createCompany = asyncHandler(async (req, res, next) => {
     // Validate required fields (if needed)
@@ -47,12 +48,20 @@ exports.getCompanies = asyncHandler(async (req, res, next) => {
 });
 exports.getCompaniesAjax = asyncHandler(async (req, res, next) => {
     try {
-        const companies = await Company.findAll(); // Fetch all companies from the DB
+        const companies = await Company.findAll({
+            where: {
+                name: {
+                    [Op.and]: [
+                        { [Op.ne]: null },
+                        { [Op.ne]: "" },
+                    ],
+                },
+            },
+        });
 
-        // Return the companies data as JSON (for AJAX response)
         res.status(200).json({
             success: true,
-            companies: companies
+            companies: companies.filter((company) => company.name && company.name.trim()),
         });
     } catch (error) {
         next(error);

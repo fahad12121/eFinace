@@ -58,6 +58,13 @@
         <h5><i class="mdi mdi-format-list-bulleted"></i> All Accounts</h5>
         <p>Select accounts to add to favourites or open to view details</p>
       </div>
+      <label class="acct-hide-zero-toggle" title="Hide accounts with zero balance">
+        <input type="checkbox" id="hideZeroAccountsToggle" />
+        <span class="acct-hide-zero-face">
+          <i class="mdi mdi-filter-outline"></i>
+          Hide 0 balance
+        </span>
+      </label>
     </div>
     <div class="accounts-table-body">
       <table id="accountsTable" class="table accounts-table dt-responsive nowrap w-100 mb-0">
@@ -70,6 +77,7 @@
             <th>Title</th>
             <th>Balance</th>
             <th>Notes</th>
+            <th>Updated At</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -80,6 +88,7 @@
             <th></th>
             <th>Total Balance</th>
             <th><span class="acct-total-value" id="totalBalance">0</span></th>
+            <th></th>
             <th></th>
             <th></th>
           </tr>
@@ -198,6 +207,7 @@
 <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
 <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 <script src="/assets/libs/select2/js/select2.min.js"></script>
+<script src="/assets/js/format-relative-date.js"></script>
 
 <script>
   $(document).ready(function () {
@@ -212,6 +222,10 @@
 
     const storedCompanyId = localStorage.getItem("company_id");
     const userType = localStorage.getItem("userType");
+    let allUsers = [];
+    let hideZeroAccounts = localStorage.getItem("hideZeroAccounts") === "true";
+
+    $("#hideZeroAccountsToggle").prop("checked", hideZeroAccounts);
 
     if (userType === "Admin") {
       $("#addfavt").css("display", "inline-flex");
@@ -256,6 +270,14 @@
       return `<div class="acct-title-cell"><span class="acct-avatar">${initial}</span><span class="acct-title-text">${username || ""}</span></div>`;
     }
 
+    function formatDate(value) {
+      if (!value) return '<span class="acct-date-empty">—</span>';
+      const date = new Date(value);
+      if (isNaN(date.getTime())) return `<span class="acct-date-badge">${value}</span>`;
+      const formatted = formatRelativeDate(value);
+      return `<span class="acct-date-badge" data-order="${date.getTime()}"><i class="mdi mdi-calendar-clock"></i>${formatted}</span>`;
+    }
+
     function updateBalanceStats(totalBalance, count) {
       const rounded = Math.round(totalBalance);
       const formatted = rounded.toLocaleString();
@@ -279,44 +301,63 @@
       }
     }
 
+    function renderUsersTable() {
+      dataTable.clear();
+      let totalBalance = 0;
+      const users = hideZeroAccounts
+        ? allUsers.filter(function (user) {
+            const balance = parseFloat(user.balance === null ? 0 : user.balance);
+            return Math.round(balance) !== 0;
+          })
+        : allUsers;
+
+      users.forEach(function (user) {
+        let balance = user.balance === null ? 0 : user.balance;
+        balance = parseFloat(balance);
+        const canEdit = (permissions && permissions.accounts && permissions.accounts.edit) || userType === "Admin";
+
+        dataTable.row.add([
+          `<input type="checkbox" class="acct-checkbox fav-checkbox" data-id="${user.id}" />`,
+          `<span class="acct-id-badge">${user.account_pk}</span>`,
+          formatTitle(user.username),
+          formatBalanceBadge(balance),
+          formatNotes(user.notes),
+          formatDate(user.updatedAt),
+          `<div class="acct-actions">
+            <button class="acct-view-btn view-btn" data-id="${user.id}" title="View">
+              <i class="mdi mdi-eye-outline"></i>
+            </button>
+            ${canEdit ? `<button class="acct-edit-btn edit-btn" data-id="${user.id}" title="Edit"><i class="mdi mdi-pencil-outline"></i></button>` : ""}
+          </div>`,
+        ]);
+
+        totalBalance += balance;
+      });
+
+      updateBalanceStats(totalBalance, users.length);
+      dataTable.draw();
+    }
+
     function fetchUsersTable() {
       const companyId = storedCompanyId;
       $.ajax({
         type: "GET",
         url: `/companies/${companyId}/users/ajax?user_type=User`,
         success: function (response) {
-          dataTable.clear();
-          let totalBalance = 0;
-          response.users.forEach(function (user) {
-            let balance = user.balance === null ? 0 : user.balance;
-            balance = parseFloat(balance);
-            const canEdit = (permissions && permissions.accounts && permissions.accounts.edit) || userType === "Admin";
-
-            dataTable.row.add([
-              `<input type="checkbox" class="acct-checkbox fav-checkbox" data-id="${user.id}" />`,
-              `<span class="acct-id-badge">${user.account_pk}</span>`,
-              formatTitle(user.username),
-              formatBalanceBadge(balance),
-              formatNotes(user.notes),
-              `<div class="acct-actions">
-                <button class="acct-view-btn view-btn" data-id="${user.id}" title="View">
-                  <i class="mdi mdi-eye-outline"></i>
-                </button>
-                ${canEdit ? `<button class="acct-edit-btn edit-btn" data-id="${user.id}" title="Edit"><i class="mdi mdi-pencil-outline"></i></button>` : ""}
-              </div>`,
-            ]);
-
-            totalBalance += balance;
-          });
-
-          updateBalanceStats(totalBalance, response.users.length);
-          dataTable.draw();
+          allUsers = response.users;
+          renderUsersTable();
         },
         error: function (error) {
           console.log(error);
         },
       });
     }
+
+    $("#hideZeroAccountsToggle").on("change", function () {
+      hideZeroAccounts = $(this).prop("checked");
+      localStorage.setItem("hideZeroAccounts", hideZeroAccounts);
+      renderUsersTable();
+    });
 
     function fetchAccounttype() {
       const companyId = storedCompanyId;
