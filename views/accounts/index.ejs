@@ -67,6 +67,12 @@
       </label>
     </div>
     <div class="accounts-table-body">
+      <div class="accounts-table-loader" id="accountsTableLoader">
+        <div class="accounts-loader-inner">
+          <i class="mdi mdi-loading mdi-spin"></i>
+          <span>Loading accounts...</span>
+        </div>
+      </div>
       <table id="accountsTable" class="table accounts-table dt-responsive nowrap w-100 mb-0">
         <thead>
           <tr>
@@ -301,6 +307,23 @@
       }
     }
 
+    function setTableLoading(loading) {
+      const $loader = $("#accountsTableLoader");
+      const $body = $(".accounts-table-body");
+
+      if (loading) {
+        $loader.removeClass("is-hidden");
+        $body.addClass("is-loading");
+        $("#totalAccountsCount, #totalBalanceStat, #totalBalance").html(
+          '<i class="mdi mdi-loading mdi-spin accounts-stat-spinner"></i>'
+        );
+        $("#totalBalanceHint").text("");
+      } else {
+        $loader.addClass("is-hidden");
+        $body.removeClass("is-loading");
+      }
+    }
+
     function renderUsersTable() {
       dataTable.clear();
       let totalBalance = 0;
@@ -340,6 +363,8 @@
 
     function fetchUsersTable() {
       const companyId = storedCompanyId;
+      setTableLoading(true);
+
       $.ajax({
         type: "GET",
         url: `/companies/${companyId}/users/ajax?user_type=User`,
@@ -349,6 +374,10 @@
         },
         error: function (error) {
           console.log(error);
+          toastr.error("Failed to load accounts. Please try again.", "Error");
+        },
+        complete: function () {
+          setTableLoading(false);
         },
       });
     }

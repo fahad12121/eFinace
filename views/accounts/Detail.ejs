@@ -63,7 +63,13 @@
       </div>
       <span class="account-detail-count-badge"><%= subCount %> accounts</span>
     </div>
-    <div class="accounts-table-body">
+    <div class="accounts-table-body is-loading">
+      <div class="accounts-table-loader" id="subAccountsTableLoader">
+        <div class="accounts-loader-inner">
+          <i class="mdi mdi-loading mdi-spin"></i>
+          <span>Loading sub-accounts...</span>
+        </div>
+      </div>
       <div class="table-responsive">
         <table id="subdatatable" class="table accounts-table dt-responsive nowrap w-100 mb-0">
           <thead>
@@ -214,6 +220,21 @@
 
 <script>
   $(document).ready(function () {
+    function setTableLoading(loading) {
+      const $loader = $("#subAccountsTableLoader");
+      const $body = $(".account-detail-page .accounts-table-body");
+
+      if (loading) {
+        $loader.removeClass("is-hidden");
+        $body.addClass("is-loading");
+      } else {
+        $loader.addClass("is-hidden");
+        $body.removeClass("is-loading");
+      }
+    }
+
+    setTableLoading(true);
+
     $("#subdatatable").DataTable({
       pageLength: 120,
       lengthMenu: [[120, 50, 100, -1], [120, 50, 100, "All"]],
@@ -221,6 +242,9 @@
       searching: true,
       autoWidth: false,
       order: [],
+      initComplete: function () {
+        setTableLoading(false);
+      },
     });
 
     function getCompanyIdFromUrl() {
