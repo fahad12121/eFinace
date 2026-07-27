@@ -6,6 +6,7 @@ const AccountType = require("../models/AccountType");
 const Accessibility = require("../models/Accessbility");
 const asyncHandler = require("../middleware/async");
 const { Op } = require('sequelize');
+const sequelize = require('../db');
 const jwt = require('jsonwebtoken');
 
 // User Crud Starts here
@@ -42,11 +43,39 @@ exports.createUser = asyncHandler(async (req, res, next) => {
         }
 
         // ✅ Else → Create new user
+        const trimmedUsername = typeof username === "string" ? username.trim() : "";
+
+        if (!trimmedUsername) {
+            return res.status(400).json({
+                success: false,
+                message: "Title is required!"
+            });
+        }
+
+        const existingUser = await User.findOne({
+            where: {
+                company_id: company_id,
+                user_type: user_type || "User",
+                [Op.and]: [
+                    sequelize.where(
+                        sequelize.fn("LOWER", sequelize.col("username")),
+                        trimmedUsername.toLowerCase()
+                    )
+                ]
+            }
+        });
+
+        if (existingUser) {
+            return res.status(409).json({
+                success: false,
+                message: "This account title already exists"
+            });
+        }
 
         // Prepare user data
         let userData = {
             user_type,
-            username,
+            username: trimmedUsername,
             company_id,
             notes
         };

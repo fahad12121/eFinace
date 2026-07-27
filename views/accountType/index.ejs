@@ -77,7 +77,8 @@
         <form id="modalForm">
           <div class="mb-0">
             <label for="name" class="form-label">Name</label>
-            <input type="text" class="form-control" id="name" placeholder="e.g. playfair, ff.live" required />
+            <input type="text" class="form-control" id="name" placeholder="e.g. playfair, ff.live" required autocomplete="off" />
+            <p class="accounts-modal-field-error" id="accountTypeNameError" aria-live="polite"></p>
           </div>
         </form>
       </div>
@@ -130,6 +131,8 @@
       return `<span class="at-date-badge" data-order="${date.getTime()}"><i class="mdi mdi-calendar-clock"></i>${formatted}</span>`;
     }
 
+    let allAccountTypes = [];
+
     function setSubmitLoading($btn, loading) {
       if (loading) {
         $btn.prop("disabled", true).html('<i class="mdi mdi-loading mdi-spin"></i><span>Submitting...</span>');
@@ -138,14 +141,33 @@
       }
     }
 
+    function clearAccountTypeNameError() {
+      $("#name").removeClass("is-invalid");
+      $("#accountTypeNameError").removeClass("is-visible").text("");
+    }
+
+    function showAccountTypeNameError(message) {
+      $("#name").addClass("is-invalid").trigger("focus");
+      $("#accountTypeNameError").addClass("is-visible").text(message);
+    }
+
+    function accountTypeNameExists(name) {
+      const normalized = String(name || "").trim().toLowerCase();
+      if (!normalized) return false;
+      return allAccountTypes.some(function (account) {
+        return String(account.name || "").trim().toLowerCase() === normalized;
+      });
+    }
+
     function fetchAccounttype() {
       $.ajax({
         type: "GET",
         url: `/companies/${storedCompanyId}/account_types/ajax`,
         success: function (response) {
           dataTable.clear();
+          allAccountTypes = response.accountTypes || [];
 
-          response.accountTypes.forEach(function (account) {
+          allAccountTypes.forEach(function (account) {
             dataTable.row.add([
               `<span class="at-id-badge">${account.id}</span>`,
               formatName(account.name),
@@ -155,7 +177,7 @@
             ]);
           });
 
-          $("#totalAccountTypesCount").text(response.accountTypes.length);
+          $("#totalAccountTypesCount").text(allAccountTypes.length);
           dataTable.draw();
         },
         error: function (error) {
@@ -171,11 +193,17 @@
     const modal = new bootstrap.Modal(document.getElementById("AccountTypeModal"), { keyboard: false });
 
     $("#openModal").click(function () {
+      clearAccountTypeNameError();
+      $("#modalForm")[0].reset();
       modal.show();
     });
 
     $("#closeModalButton").click(function () {
       modal.hide();
+    });
+
+    $("#name").on("input", function () {
+      clearAccountTypeNameError();
     });
 
     $(window).click(function (event) {
@@ -184,6 +212,14 @@
 
     $("#modalForm").submit(function (event) {
       event.preventDefault();
+      clearAccountTypeNameError();
+
+      const nameValue = $("#name").val();
+      if (accountTypeNameExists(nameValue)) {
+        showAccountTypeNameError("This account type already exists");
+        return;
+      }
+
       const submitBtn = $("#accountTypeSubmitBtn");
       setSubmitLoading(submitBtn, true);
 
@@ -192,14 +228,24 @@
       $.ajax({
         type: "POST",
         url: `/companies/${companyId}/account_types`,
-        data: { name: $("#name").val(), company_id: companyId },
+        data: { name: nameValue, company_id: companyId },
         success: function () {
           fetchAccounttype();
           modal.hide();
           $("#modalForm")[0].reset();
+          clearAccountTypeNameError();
         },
-        error: function () {
-          alert("Error submitting the account type. Please try again.");
+        error: function (xhr) {
+          const message =
+            (xhr.responseJSON && xhr.responseJSON.message) ||
+            "Error submitting the account type. Please try again.";
+
+          if (xhr.status === 409 || xhr.status === 400) {
+            showAccountTypeNameError(message);
+            return;
+          }
+
+          showAccountTypeNameError(message);
         },
         complete: function () {
           setSubmitLoading(submitBtn, false);

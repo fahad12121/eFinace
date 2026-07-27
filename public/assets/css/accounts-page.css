@@ -704,6 +704,25 @@
   box-shadow: 0 0 0 4px rgba(85, 110, 230, 0.12);
 }
 
+.accounts-modal .form-control.is-invalid {
+  border-color: #ef4444;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+}
+
+.accounts-modal-field-error {
+  display: none;
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #dc2626;
+  line-height: 1.35;
+}
+
+.accounts-modal-field-error.is-visible {
+  display: block;
+}
+
 .accounts-modal .select2-container--default .select2-selection--single .select2-selection__rendered {
   line-height: 46px !important;
   padding-left: 0 !important;

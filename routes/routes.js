@@ -69,6 +69,8 @@ module.exports = function (route) {
 
     //sub accounts Routes
     route.post('/companies/:id/sub_accounts', subAccountController.createSubaccount);
+    route.get('/companies/:company_id/sub_accounts/ajax', subAccountController.getCompanySubAccountsAjax);
+    route.get('/companies/:company_id/users/:user_id/sub_accounts/ajax', subAccountController.getSubAccountsByParentAjax);
 
 
     //import file Routes

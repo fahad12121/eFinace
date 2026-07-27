@@ -127,7 +127,8 @@
               <div class="mb-3">
                 <input type="hidden" id="userId" name="userId" />
                 <label for="username" class="form-label">Title</label>
-                <input type="text" class="form-control" id="username" required />
+                <input type="text" class="form-control" id="username" required autocomplete="off" />
+                <p class="accounts-modal-field-error" id="accountTitleError" aria-live="polite"></p>
               </div>
             </div>
             <div class="col-md-6">
@@ -169,7 +170,8 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="account_username" class="form-label">Title</label>
-                <input type="text" class="form-control" id="account_username" name="account_username" required />
+                <input type="text" class="form-control" id="account_username" name="account_username" required autocomplete="off" />
+                <p class="accounts-modal-field-error" id="subAccountTitleError" aria-live="polite"></p>
               </div>
             </div>
             <div class="col-md-6">
@@ -307,6 +309,88 @@
       }
     }
 
+    function clearAccountTitleError() {
+      $("#username").removeClass("is-invalid");
+      $("#accountTitleError").removeClass("is-visible").text("");
+    }
+
+    function showAccountTitleError(message) {
+      $("#username").addClass("is-invalid").trigger("focus");
+      $("#accountTitleError").addClass("is-visible").text(message);
+    }
+
+    function accountTitleExists(title) {
+      const normalized = String(title || "").trim().toLowerCase();
+      if (!normalized) return false;
+      return allUsers.some(function (user) {
+        return String(user.username || "").trim().toLowerCase() === normalized;
+      });
+    }
+
+    function clearSubAccountTitleError() {
+      $("#account_username").removeClass("is-invalid");
+      $("#subAccountTitleError").removeClass("is-visible").text("");
+    }
+
+    function showSubAccountTitleError(message) {
+      $("#account_username").addClass("is-invalid");
+      $("#subAccountTitleError").addClass("is-visible").text(message);
+    }
+
+    let companySubAccounts = [];
+
+    function findDuplicateSubAccount(title) {
+      const normalized = String(title || "").trim().toLowerCase();
+      if (!normalized) return null;
+      return companySubAccounts.find(function (sub) {
+        return String(sub.account_username || "").trim().toLowerCase() === normalized;
+      }) || null;
+    }
+
+    function getParentNameFromSub(sub) {
+      if (!sub) return "";
+      return sub.parent_name || "";
+    }
+
+    function validateSubAccountTitle() {
+      const title = $("#account_username").val();
+
+      if (!String(title || "").trim()) {
+        clearSubAccountTitleError();
+        return false;
+      }
+
+      const duplicate = findDuplicateSubAccount(title);
+      if (duplicate) {
+        const parentName = getParentNameFromSub(duplicate);
+        const message = parentName
+          ? `Title already exists in ${parentName}`
+          : "Title already exists in a parent account";
+        showSubAccountTitleError(message);
+        return true;
+      }
+
+      clearSubAccountTitleError();
+      return false;
+    }
+
+    function loadCompanySubAccounts(thenValidate) {
+      $.ajax({
+        type: "GET",
+        url: `/companies/${storedCompanyId}/sub_accounts/ajax`,
+        success: function (response) {
+          companySubAccounts = response.subAccounts || [];
+          if (thenValidate) {
+            validateSubAccountTitle();
+          }
+        },
+        error: function (error) {
+          console.log(error);
+          companySubAccounts = [];
+        },
+      });
+    }
+
     function setTableLoading(loading) {
       const $loader = $("#accountsTableLoader");
       const $body = $(".accounts-table-body");
@@ -442,6 +526,7 @@
 
     $(document).on("click", ".edit-btn", function () {
       const userId = $(this).data("id");
+      clearAccountTitleError();
       $("#userId").val(userId);
       modal.show();
       $("#userModalTitle").text("Edit Account");
@@ -484,10 +569,20 @@
     const subAccountModal = new bootstrap.Modal(document.getElementById("subAccountModal"), { keyboard: false });
 
     $("#openModal").click(function () {
+      clearAccountTitleError();
+      $("#modalForm")[0].reset();
+      $("#userId").val("");
+      $("#username").closest(".col-md-6").show();
+      $("#username").attr("required", true);
+      $("#userModalTitle").text("Add Account");
       modal.show();
     });
 
     $("#openSubModal").click(function () {
+      clearSubAccountTitleError();
+      $("#subAccountmodalForm")[0].reset();
+      $(".account_types, .parentAccounts").val(null).trigger("change");
+      loadCompanySubAccounts(false);
       subAccountModal.show();
       $(".select2").select2({
         minimumResultsForSearch: 0,
@@ -499,6 +594,18 @@
       modal.hide();
     });
 
+    $("#username").on("input", function () {
+      clearAccountTitleError();
+    });
+
+    $("#account_username").on("input", function () {
+      validateSubAccountTitle();
+    });
+
+    $("#user_id").on("change", function () {
+      validateSubAccountTitle();
+    });
+
     $(window).click(function (event) {
       if ($(event.target).is(modal._element)) {
         modal.hide();
@@ -507,6 +614,7 @@
 
     $("#modalForm").submit(function (event) {
       event.preventDefault();
+      clearAccountTitleError();
 
       const username = $("#username").val();
       const notes = $("#notes").val();
@@ -514,6 +622,11 @@
       const companyId = storedCompanyId;
       const userId = $("#userId").val();
       const submitBtn = $("#userModalSubmitBtn");
+
+      if (!userId && accountTitleExists(username)) {
+        showAccountTitleError("This account title already exists");
+        return;
+      }
 
       setSubmitLoading(submitBtn, true);
 
@@ -532,14 +645,24 @@
           modal.hide();
           $("#modalForm")[0].reset();
           $("#userId").val("");
+          clearAccountTitleError();
 
           const usernameField = $("#username").closest(".col-md-6");
           usernameField.show();
           $("#username").attr("required", true);
           $("#userModalTitle").text("Add Account");
         },
-        error: function () {
-          alert("Error submitting the user. Please try again.");
+        error: function (xhr) {
+          const message =
+            (xhr.responseJSON && xhr.responseJSON.message) ||
+            "Error submitting the user. Please try again.";
+
+          if (!userId && (xhr.status === 409 || xhr.status === 400)) {
+            showAccountTitleError(message);
+            return;
+          }
+
+          showAccountTitleError(message);
         },
         complete: function () {
           setSubmitLoading(submitBtn, false);
@@ -549,7 +672,19 @@
 
     $("#subAccountmodalForm").submit(function (event) {
       event.preventDefault();
+
       const submitBtn = $("#subAccountSubmitBtn");
+      const parentId = $("#user_id").val();
+      const title = $("#account_username").val();
+
+      if (!parentId) {
+        showSubAccountTitleError("Please select a parent account");
+        return;
+      }
+
+      if (validateSubAccountTitle()) {
+        return;
+      }
 
       setSubmitLoading(submitBtn, true);
 
@@ -558,18 +693,24 @@
         url: `/companies/${storedCompanyId}/sub_accounts`,
         data: {
           company_id: storedCompanyId,
-          account_username: $("#account_username").val(),
-          user_id: $("#user_id").val(),
+          account_username: title,
+          user_id: parentId,
           account_type_id: $("#account_type_id").val(),
           notes: $("#sub_notes").val(),
         },
         success: function () {
           fetchUsersTable();
+          loadCompanySubAccounts(false);
           subAccountModal.hide();
           $("#subAccountmodalForm")[0].reset();
+          clearSubAccountTitleError();
         },
-        error: function () {
-          alert("Error submitting the sub-account. Please try again.");
+        error: function (xhr) {
+          const message =
+            (xhr.responseJSON && xhr.responseJSON.message) ||
+            "Error submitting the sub-account. Please try again.";
+
+          showSubAccountTitleError(message);
         },
         complete: function () {
           setSubmitLoading(submitBtn, false);
@@ -580,5 +721,6 @@
     fetchUsersTable();
     fetchAccounttype();
     fetchParentAccount();
+    loadCompanySubAccounts(false);
   });
 </script>

@@ -1,38 +1,58 @@
 const AccountTypes = require("../models/AccountType");
 const subAccount = require("../models/subAccounts");
 const asyncHandler = require("../middleware/async");
+const sequelize = require("../db");
+const { Op } = require("sequelize");
 
 exports.createAccountType = asyncHandler(async (req, res, next) => {
-    // Validate required fields (if needed)
-    const { name } = req.body;
+    const { name, company_id } = req.body;
+    const trimmedName = typeof name === "string" ? name.trim() : "";
 
-    if (!name) {
-        // If required fields are missing, send a response with an error message
+    if (!trimmedName) {
         return res.status(400).json({
             success: false,
-            message: 'Name are required!'
+            message: "Name is required!"
         });
     }
 
     try {
-        // Create the company in the database
-        const AccountType = await AccountTypes.create(req.body);
+        const existing = await AccountTypes.findOne({
+            where: {
+                company_id: company_id,
+                [Op.and]: [
+                    sequelize.where(
+                        sequelize.fn("LOWER", sequelize.col("name")),
+                        trimmedName.toLowerCase()
+                    )
+                ]
+            }
+        });
 
-        // If company is successfully created
+        if (existing) {
+            return res.status(409).json({
+                success: false,
+                message: "This account type already exists"
+            });
+        }
+
+        const AccountType = await AccountTypes.create({
+            ...req.body,
+            name: trimmedName
+        });
+
         if (AccountType) {
             return res.status(201).json({
                 success: true,
-                message: 'Account Type created successfully!',
+                message: "Account Type created successfully!",
                 AccountType: AccountType
             });
         }
 
     } catch (error) {
-        // Handle any errors (e.g., database errors)
         console.error(error);
         return res.status(500).json({
             success: false,
-            message: 'An error occurred while creating the company.'
+            message: "An error occurred while creating the account type."
         });
     }
 });
