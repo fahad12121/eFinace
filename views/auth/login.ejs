@@ -55,10 +55,11 @@
               <button
                 class="login-toggle-password"
                 type="button"
-                id="password-addon"
+                id="loginPasswordToggle"
                 aria-label="Toggle password visibility"
+                aria-pressed="false"
               >
-                <i class="mdi mdi-eye-outline"></i>
+                <i class="mdi mdi-eye-outline" aria-hidden="true"></i>
               </button>
             </div>
           </div>
@@ -107,15 +108,20 @@
   };
 
   $(document).ready(function () {
-    $("#password-addon").on("click", function () {
+    $("#loginPasswordToggle").on("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
       const passwordInput = $("#password");
       const icon = $(this).find("i");
+      const isHidden = passwordInput.attr("type") === "password";
 
-      if (passwordInput.attr("type") === "password") {
-        passwordInput.attr("type", "text");
+      passwordInput.attr("type", isHidden ? "text" : "password");
+      $(this).attr("aria-pressed", isHidden ? "true" : "false");
+
+      if (isHidden) {
         icon.removeClass("mdi-eye-outline").addClass("mdi-eye-off-outline");
       } else {
-        passwordInput.attr("type", "password");
         icon.removeClass("mdi-eye-off-outline").addClass("mdi-eye-outline");
       }
     });

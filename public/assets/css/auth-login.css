@@ -200,11 +200,19 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  z-index: 2;
+  cursor: pointer;
+  padding: 0;
 }
 
 .login-toggle-password:hover {
   color: #556ee6;
   background: rgba(85, 110, 230, 0.08);
+}
+
+.login-toggle-password:focus-visible {
+  outline: 2px solid rgba(85, 110, 230, 0.45);
+  outline-offset: 2px;
 }
 
 .login-remember {
